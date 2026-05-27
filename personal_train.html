@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Личные местоимения — 4 ступени</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    background-color: #fff;
+    background-image: linear-gradient(#b3d1f7 1px, transparent 1px), linear-gradient(90deg, #b3d1f7 1px, transparent 1px);
+    background-size: 28px 28px;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 2rem 1rem 3rem;
+  }
+  .card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 16px;
+    border: 1.5px solid #c8dff7;
+    padding: 2rem 2rem 2.5rem;
+    max-width: 680px; width: 100%;
+    box-shadow: 0 4px 24px rgba(55,138,221,0.10);
+  }
+  h1 { text-align: center; font-size: 20px; font-weight: 700; color: #185FA5; margin-bottom: 0.2rem; }
+  .subtitle { text-align: center; font-size: 13px; color: #5b8dc7; margin-bottom: 1.5rem; }
+  .progress-bar { height: 7px; background: #dbeafe; border-radius: 99px; margin-bottom: 1rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: #378ADD; border-radius: 99px; transition: width 0.4s ease; }
+  .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .q-tag { font-size: 11px; background: #e0eeff; color: #185FA5; padding: 2px 9px; border-radius: 99px; font-weight: 600; }
+  .q-text { font-size: 17px; font-weight: 600; color: #1a2e4a; margin-bottom: 1.2rem; line-height: 1.6; }
+  .q-text code { font-family: Arial, sans-serif; background: #e8f2ff; color: #185FA5; padding: 1px 7px; border-radius: 5px; font-weight: 700; font-size: 17px; }
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .opt-btn {
+    padding: 11px 16px; border: 1.5px solid #c8dff7; border-radius: 10px;
+    background: #f5f9ff; color: #1a2e4a; font-size: 15px; cursor: pointer;
+    text-align: left; transition: background 0.13s, border-color 0.13s, transform 0.1s;
+    font-family: Arial, sans-serif;
+  }
+  .opt-btn:hover:not(:disabled) { background: #dbeafe; border-color: #378ADD; transform: translateX(3px); }
+  .opt-btn.correct { background: #d1fadf; border-color: #22c55e; color: #14532d; font-weight: 600; }
+  .opt-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #7f1d1d; }
+  .opt-btn:disabled { cursor: default; transform: none; }
+  .feedback { margin-top: 0.8rem; font-size: 14px; min-height: 20px; line-height: 1.6; }
+  .feedback.ok { color: #15803d; font-weight: 500; }
+  .feedback.err { color: #b91c1c; }
+  .next-btn {
+    margin-top: 1.1rem; padding: 10px 26px; border-radius: 10px;
+    border: 1.5px solid #378ADD; background: #378ADD; color: #fff;
+    font-size: 14px; font-weight: 600; cursor: pointer; display: none;
+    font-family: Arial, sans-serif; transition: background 0.15s;
+  }
+  .next-btn:hover { background: #185FA5; }
+  .result-card { text-align: center; padding: 1.5rem 0.5rem 0.5rem; }
+  .result-emoji { font-size: 52px; margin-bottom: 0.8rem; }
+  .result-score { font-size: 40px; font-weight: 700; color: #185FA5; }
+  .result-label { font-size: 14px; color: #7aa8d4; margin: 0.3rem 0 1.2rem; }
+  .result-msg { font-size: 15px; color: #1a2e4a; margin-bottom: 1.5rem; line-height: 1.7; max-width: 440px; margin-left: auto; margin-right: auto; }
+  .restart-btn {
+    padding: 11px 32px; border-radius: 10px; border: 1.5px solid #378ADD;
+    background: #378ADD; color: #fff; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: Arial, sans-serif; transition: background 0.15s;
+  }
+  .restart-btn:hover { background: #185FA5; }
+  .mistakes-list { text-align: left; border-top: 1px solid #dbeafe; padding-top: 1.2rem; margin-top: 1.2rem; }
+  .mistakes-list h3 { font-size: 14px; font-weight: 600; color: #7aa8d4; margin-bottom: 0.75rem; }
+  .mistake-item { font-size: 13px; color: #1a2e4a; padding: 9px 13px; background: #f5f9ff; border-radius: 8px; margin-bottom: 7px; border-left: 3px solid #22c55e; }
+  .mistake-item .m-q { color: #7aa8d4; margin-bottom: 3px; font-size: 12px; }
+  .mistake-item .m-a { color: #15803d; font-weight: 600; }
+  #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+  .hud { display:flex; flex-wrap:wrap; gap:7px; align-items:center; margin-bottom:.75rem; }
+  .hud-chip { font-size:12px; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; font-weight:600; }
+  .streak-badge { font-size:12px; font-weight:700; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; transition:all .3s; }
+  .streak-badge.hot  { background:#fff3dc; color:#b45309; }
+  .streak-badge.fire { background:linear-gradient(135deg,#fef3c7,#fde68a); color:#92400e; animation:sBurst .45s ease; }
+  @keyframes sBurst { 0%{transform:scale(1)} 40%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .timer-chip { font-size:12px; font-weight:700; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; transition:background .3s,color .3s; margin-left:auto; }
+  .timer-chip.warn   { background:#fff3dc; color:#b45309; }
+  .timer-chip.danger { background:#fee2e2; color:#b91c1c; }
+  .xp-row { display:flex; align-items:center; gap:8px; margin-bottom:.6rem; }
+  .xp-label { font-size:11px; color:#7aa8d4; font-weight:600; white-space:nowrap; }
+  .xp-track { flex:1; height:5px; background:#dbeafe; border-radius:4px; overflow:hidden; }
+  .xp-fill  { height:100%; background:linear-gradient(90deg,#378ADD,#a855f7); border-radius:4px; transition:width .5s ease; }
+  .xp-val   { font-size:12px; font-weight:700; color:#a855f7; min-width:38px; text-align:right; }
+  .hint-btn { font-size:12px; font-weight:600; background:#f5f9ff; border:1.5px solid #c8dff7; border-radius:8px; padding:6px 13px; cursor:pointer; color:#7aa8d4; font-family:Arial,sans-serif; transition:background .12s; }
+  .hint-btn:hover:not(:disabled) { background:#dbeafe; }
+  .hint-btn:disabled { opacity:.35; cursor:default; }
+  .xp-popup { position:fixed; pointer-events:none; font-weight:700; font-size:.95rem; border-radius:10px; padding:3px 13px; z-index:9999; animation:floatUp 1s ease forwards; }
+  .xp-popup.ok    { background:#d1fadf; color:#14532d; }
+  .xp-popup.bonus { background:#fef3c7; color:#92400e; }
+  .xp-popup.err   { background:#fee2e2; color:#7f1d1d; }
+  @keyframes floatUp { 0%{opacity:1;transform:translateY(0)} 80%{opacity:1} 100%{opacity:0;transform:translateY(-55px)} }
+  .stars-row { display:flex; justify-content:center; gap:6px; font-size:2rem; margin:.4rem 0 .5rem; }
+  .star { filter:grayscale(1) opacity(.3); display:inline-block; }
+  .star.lit { filter:none; animation:starPop .4s ease; }
+  @keyframes starPop { 0%{transform:scale(.5) rotate(-20deg)} 70%{transform:scale(1.3) rotate(5deg)} 100%{transform:scale(1) rotate(0deg)} }
+  .rank-badge { display:inline-block; padding:3px 16px; border-radius:99px; font-size:12px; font-weight:700; letter-spacing:.05em; margin-bottom:.4rem; }
+  .result-xp { font-size:14px; color:#a855f7; font-weight:700; margin-bottom:.3rem; }
+  .retry-btn { margin-top:.6rem; padding:10px 24px; border-radius:10px; border:1.5px solid #f59e0b; background:#fff3dc; color:#92400e; font-size:14px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; transition:background .15s; display:none; }
+  .retry-btn:hover { background:#fde68a; }
+  .next-stage-btn { margin-top:.6rem; padding:10px 24px; border-radius:10px; border:1.5px solid #22c55e; background:#d1fadf; color:#14532d; font-size:14px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; transition:background .15s; }
+  .next-stage-btn:hover { background:#bbf7d0; }
+  .ref-btn { margin-top:.7rem; display:block; width:100%; padding:9px 0; border-radius:10px; border:1.5px solid #c8dff7; background:#f5f9ff; color:#7aa8d4; font-size:13px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; transition:background .12s; text-align:center; }
+  .ref-btn:hover { background:#dbeafe; color:#185FA5; }
+  #start-screen { text-align:center; padding:.5rem 0 1rem; }
+  .start-btn { padding:12px 36px; border-radius:10px; border:1.5px solid #378ADD; background:#378ADD; color:#fff; font-size:15px; font-weight:700; cursor:pointer; font-family:Arial,sans-serif; transition:background .15s; margin-bottom:1rem; }
+  .start-btn:hover { background:#185FA5; }
+  .start-btn:disabled { background:#9dc6ee; border-color:#9dc6ee; cursor:default; }
+  .record-box { background:#f5f9ff; border:1.5px solid #dbeafe; border-radius:10px; padding:10px 16px; font-size:13px; color:#7aa8d4; margin-bottom:1rem; }
+  .record-box b { color:#185FA5; }
+  .toggle-row { display:flex; align-items:center; gap:10px; background:#f5f9ff; border:1.5px solid #dbeafe; border-radius:10px; padding:10px 14px; margin-bottom:1rem; }
+  .toggle-label { flex:1; text-align:left; font-size:13px; color:#1a2e4a; font-weight:600; }
+  .toggle-sub   { font-size:11px; color:#7aa8d4; font-weight:400; display:block; margin-top:1px; }
+  .toggle-switch { position:relative; width:44px; height:24px; flex-shrink:0; }
+  .toggle-switch input { opacity:0; width:0; height:0; }
+  .toggle-slider { position:absolute; inset:0; background:#c8dff7; border-radius:99px; cursor:pointer; transition:background .25s; }
+  .toggle-slider:before { content:''; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform .25s; box-shadow:0 1px 4px rgba(0,0,0,.15); }
+  .toggle-switch input:checked + .toggle-slider { background:#378ADD; }
+  .toggle-switch input:checked + .toggle-slider:before { transform:translateX(20px); }
+
+  #stage-panel { margin-bottom: 1.2rem; }
+  .hub-tabs { display:flex; border-bottom:2px solid #dbeafe; margin-bottom:1.2rem; }
+  .hub-tab { flex:1; background:none; border:none; padding:9px 0; font-size:13px; font-weight:500; color:#7aa8d4; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; font-family:Arial,sans-serif; transition:color .15s,border-color .15s; }
+  .hub-tab.active { color:#185FA5; border-bottom-color:#378ADD; font-weight:700; }
+  .hub-panel { display:none; }
+  .hub-panel.active { display:block; }
+  .unlock-rule { font-size:12px; color:#5b8dc7; background:#f0f7ff; border:1.5px solid #c8dff7; border-radius:10px; padding:8px 13px; margin-bottom:1rem; line-height:1.6; }
+  .ref-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .ref-table th { background:#e0eeff; color:#185FA5; padding:6px 10px; font-weight:700; text-align:left; }
+  .ref-table td { padding:6px 10px; border-bottom:1px solid #dbeafe; color:#1a2e4a; vertical-align:top; }
+  .ref-table tr:last-child td { border-bottom:none; }
+
+  /* ── STAGE SELECTOR ── */
+  .stage-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:1.2rem; }
+  .stage-card {
+    border: 1.5px solid #c8dff7; border-radius: 12px; padding: 14px 10px 12px;
+    background: #f5f9ff; cursor: pointer; text-align: center;
+    transition: background .15s, border-color .15s, transform .1s;
+    font-family: Arial, sans-serif;
+  }
+  .stage-card:hover { background: #dbeafe; border-color: #378ADD; transform: translateY(-2px); }
+  .stage-card.locked { opacity: .4; cursor: default; }
+  .stage-card.locked:hover { background: #f5f9ff; border-color: #c8dff7; transform: none; }
+  .stage-card.done { border-color: #22c55e; background: #f0fdf4; }
+  .stage-card.active-stage { border-color: #378ADD; background: #e0eeff; }
+  .stage-icon { font-size: 1.8rem; display: block; margin-bottom: 5px; }
+  .stage-title { font-size: 13px; font-weight: 700; color: #185FA5; margin-bottom: 2px; }
+  .stage-desc { font-size: 11px; color: #7aa8d4; line-height: 1.4; }
+  .stage-badge { display:inline-block; font-size:10px; font-weight:700; padding:1px 8px; border-radius:99px; margin-top:5px; }
+  .stage-badge.done-badge { background:#d1fadf; color:#14532d; }
+  .stage-badge.lock-badge { background:#e0eeff; color:#7aa8d4; }
+  .stage-badge.open-badge { background:#e0eeff; color:#185FA5; }
+
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+<div class="card">
+
+  <!-- ══ ПОСТОЯННАЯ ПАНЕЛЬ СТУПЕНЕЙ ══ -->
+  <div id="stage-panel">
+    <h1>Личные местоимения</h1>
+    <p class="subtitle">Английский язык · 4 ступени · вопросы перемешиваются</p>
+    <div class="stage-grid" id="stage-grid">
+      <div class="stage-card" id="sc0" onclick="pickStage(0)">
+        <span class="stage-icon">🔤</span>
+        <div class="stage-title">Ступень 1</div>
+        <div class="stage-desc">Перевод: he — он, she — она…</div>
+        <span class="stage-badge open-badge" id="sb0">10 вопросов</span>
+      </div>
+      <div class="stage-card locked" id="sc1" onclick="pickStage(1)">
+        <span class="stage-icon">🇷🇺</span>
+        <div class="stage-title">Ступень 2</div>
+        <div class="stage-desc">Слова на русском языке</div>
+        <span class="stage-badge lock-badge" id="sb1">🔒 нужно 70% в ступени 1</span>
+      </div>
+      <div class="stage-card locked" id="sc2" onclick="pickStage(2)">
+        <span class="stage-icon">🇬🇧</span>
+        <div class="stage-title">Ступень 3</div>
+        <div class="stage-desc">Слова на английском языке</div>
+        <span class="stage-badge lock-badge" id="sb2">🔒 нужно 70% в ступени 2</span>
+      </div>
+      <div class="stage-card locked" id="sc3" onclick="pickStage(3)">
+        <span class="stage-icon">🌍</span>
+        <div class="stage-title">Ступень 4</div>
+        <div class="stage-desc">Вперемешку: рус. + англ.</div>
+        <span class="stage-badge lock-badge" id="sb3">🔒 нужно 70% в ступени 3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ START SCREEN ══ -->
+  <div id="start-screen">
+    <div class="hub-tabs">
+      <button class="hub-tab active" onclick="switchHubTab('play')">📝 Тест</button>
+      <button class="hub-tab" onclick="switchHubTab('table')">📋 Таблица</button>
+    </div>
+    <div class="hub-panel active" id="htab-play">
+      <div class="unlock-rule">🔓 <b>Правило:</b> ступень 2 открывается после набора <b>70%</b> в ступени 1, ступень 3 — после <b>70%</b> в ступени 2. Каждую ступень можно перепроходить любое количество раз.</div>
+      <div class="record-box" id="record-box">Начните со ступени 1, чтобы разблокировать следующие!</div>
+      <div class="toggle-row">
+        <div class="toggle-label">⏱ Таймер
+          <span class="toggle-sub">Включите для дополнительного XP за быстрые ответы</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="timer-toggle" onchange="onTimerToggle(this)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <button class="start-btn" id="main-start-btn" onclick="startCurrentStage()">▶ Начать ступень 1</button>
+    </div>
+    <div class="hub-panel" id="htab-table">
+      <p style="font-size:13px;color:#7aa8d4;margin-bottom:.75rem;line-height:1.6">Личные местоимения в английском зависят от <b style="color:#185FA5">лица</b>, <b style="color:#185FA5">рода</b> и <b style="color:#185FA5">числа</b>.</p>
+      <table class="ref-table">
+        <tr><th>Местоимение</th><th>Перевод</th><th>Когда используется</th><th>Примеры</th></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">I</b></td><td>я</td><td>говорящий (1-е лицо, ед.ч.)</td><td>I am a student.</td></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">you</b></td><td>ты / вы</td><td>собеседник (2-е лицо, ед. и мн.ч.)</td><td>You are my friend.</td></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">he</b></td><td>он</td><td>мужчина, мальчик (3-е лицо, ед.ч.)</td><td>a student, a boy, a man</td></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">she</b></td><td>она</td><td>женщина, девочка (3-е лицо, ед.ч.)</td><td>a girl, a woman, a teacher (female)</td></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">it</b></td><td>оно / это</td><td>предмет или животное (3-е лицо, ед.ч.)</td><td>a book, a table, a cat</td></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">we</b></td><td>мы</td><td>говорящий + другие (1-е лицо, мн.ч.)</td><td>We are in class.</td></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">they</b></td><td>они</td><td>любые существительные во мн.ч. (3-е лицо)</td><td>boys, girls, books, cats</td></tr>
+      </table>
+      <p style="font-size:12px;color:#7aa8d4;margin-top:.9rem;line-height:1.6">⚠️ <b>I</b> всегда пишется с заглавной буквы. <b>you</b> означает и «ты», и «вы». В английском нет рода для предметов — стол, книга, мяч — всё <b>it</b>.</p>
+      <div style="height:.5rem"></div>
+    </div>
+  </div>
+
+  <!-- ══ QUIZ SCREEN ══ -->
+  <div id="quiz-screen" style="display:none">
+    <div class="hud">
+      <span class="hud-chip" id="stage-chip">Ступень 1</span>
+      <span class="hud-chip">Вопрос <b id="counter-cur">1</b> из <b id="counter-tot">10</b></span>
+      <span class="hud-chip">✓ <b id="hud-ok">0</b></span>
+      <span class="hud-chip">✗ <b id="hud-err">0</b></span>
+      <span class="streak-badge" id="streak-badge">🔥 <span id="streak-val">0</span></span>
+      <span class="timer-chip" id="timer-chip" style="display:none">⏱ <b id="timer-val">15</b></span>
+    </div>
+    <div class="xp-row">
+      <span class="xp-label">⭐ XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      <span class="xp-val" id="xp-val">0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+    <div class="q-meta">
+      <span class="q-tag" id="qtag">Местоимение</span>
+      <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Подсказка (3)</button>
+    </div>
+    <div class="q-text" id="qtext"></div>
+    <div id="answer-area"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Следующий →</button>
+    <button class="ref-btn" id="ref-btn" onclick="toggleRef()">📋 Таблица местоимений</button>
+  </div>
+
+  <!-- ══ СПРАВОЧНАЯ ТАБЛИЦА (МОДАЛ) ══ -->
+  <div id="ref-modal" style="display:none;position:fixed;inset:0;background:rgba(24,95,165,0.18);z-index:1000;align-items:center;justify-content:center;padding:1rem">
+    <div style="background:#fff;border-radius:14px;border:1.5px solid #c8dff7;padding:1.5rem;max-width:540px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(55,138,221,0.18)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem">
+        <b style="color:#185FA5;font-size:15px">📋 Личные местоимения</b>
+        <button onclick="toggleRef()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#7aa8d4;padding:2px 6px">✕</button>
+      </div>
+      <table class="ref-table">
+        <tr><th>Местоимение</th><th>Перевод</th><th>Когда используется</th><th>Примеры</th></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">I</b></td><td>я</td><td>говорящий, 1-е л. ед.ч.</td><td>I am a student.</td></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">you</b></td><td>ты / вы</td><td>собеседник, 2-е л.</td><td>You are my friend.</td></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">he</b></td><td>он</td><td>мужчина, мальчик</td><td>a boy, a man</td></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">she</b></td><td>она</td><td>женщина, девочка</td><td>a girl, a woman</td></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">it</b></td><td>оно / это</td><td>предмет или животное</td><td>a book, a cat</td></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">we</b></td><td>мы</td><td>говорящий + другие</td><td>We are in class.</td></tr>
+        <tr><td><b style="color:#185FA5;font-size:15px">they</b></td><td>они</td><td>любые мн.ч.</td><td>boys, books, cats</td></tr>
+      </table>
+      <p style="font-size:12px;color:#7aa8d4;margin-top:.8rem;line-height:1.6">⚠️ <b>I</b> всегда с заглавной буквы. <b>you</b> — и «ты», и «вы». Предметы и животные → <b>it</b>.</p>
+    </div>
+  </div>
+  <div id="result-screen" style="display:none" class="result-card">
+    <div class="result-emoji" id="res-emoji"></div>
+    <div class="stars-row" id="stars-row"></div>
+    <div id="rank-badge-wrap"></div>
+    <div class="result-score" id="res-score"></div>
+    <div class="result-label" id="res-label">правильных ответов</div>
+    <div class="result-xp" id="res-xp"></div>
+    <div class="result-msg" id="res-msg"></div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:.5rem">
+      <button class="restart-btn" onclick="restartStage()">Пройти ещё раз</button>
+      <button class="retry-btn" id="retry-btn" onclick="retryMistakes()">🔁 Работа над ошибками</button>
+      <button class="next-stage-btn" id="next-stage-btn" onclick="goNextStage()" style="display:none">▶ Следующая ступень</button>
+    </div>
+    <button style="margin-top:.5rem;padding:8px 20px;border-radius:10px;border:1.5px solid #dbeafe;background:#f5f9ff;color:#7aa8d4;font-size:13px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif" onclick="goStart()">← На главную</button>
+    <div class="mistakes-list" id="mistakes-block"></div>
+  </div>
+</div>
+
+<script>
+// ══ БАНК ВОПРОСОВ ══
+
+// ── СТУПЕНЬ 1: перевод местоимений с английского на русский ──
+var Q_TRANS = [
+  {type:"choice",tag:"Ступень 1 · перевод",q:"Переведите на русский:\n<code>he</code> — это…",opts:["она","он","оно / это","они"],ans:1,exp:"he → он (мужчина, мальчик)"},
+  {type:"choice",tag:"Ступень 1 · перевод",q:"Переведите на русский:\n<code>she</code> — это…",opts:["он","она","оно / это","они"],ans:1,exp:"she → она (женщина, девочка)"},
+  {type:"choice",tag:"Ступень 1 · перевод",q:"Переведите на русский:\n<code>it</code> — это…",opts:["он","она","оно / это","они"],ans:2,exp:"it → оно / это (предмет или животное)"},
+  {type:"choice",tag:"Ступень 1 · перевод",q:"Переведите на русский:\n<code>they</code> — это…",opts:["мы","вы","оно / это","они"],ans:3,exp:"they → они (множественное число)"},
+  {type:"choice",tag:"Ступень 1 · перевод",q:"Переведите на русский:\n<code>we</code> — это…",opts:["я","мы","вы","они"],ans:1,exp:"we → мы (говорящий + другие)"},
+  {type:"choice",tag:"Ступень 1 · перевод",q:"Переведите на русский:\n<code>you</code> — это…",opts:["я","мы","ты / вы","они"],ans:2,exp:"you → ты / вы (собеседник)"},
+  {type:"choice",tag:"Ступень 1 · перевод",q:"Переведите на русский:\n<code>I</code> — это…",opts:["я","мы","ты","они"],ans:0,exp:"I → я (говорящий). Всегда пишется с заглавной буквы!"},
+  {type:"choice",tag:"Ступень 1 · перевод",q:"Выберите правильный перевод:\n<code>he</code>",opts:["я","ты / вы","он","она"],ans:2,exp:"he → он"},
+  {type:"choice",tag:"Ступень 1 · перевод",q:"Выберите правильный перевод:\n<code>she</code>",opts:["он","она","оно","они"],ans:1,exp:"she → она"},
+  {type:"choice",tag:"Ступень 1 · перевод",q:"Выберите правильный перевод:\n<code>they</code>",opts:["мы","вы","оно","они"],ans:3,exp:"they → они"}
+];
+
+var Q_RU = [
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nСтудент — это ___",opts:["he","she","it","they"],ans:0,exp:"Студент — мужчина, единственное число → he (он)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nКнига — это ___",opts:["he","she","it","they"],ans:2,exp:"Книга — предмет, единственное число → it (оно / это)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nКниги — это ___",opts:["he","it","she","they"],ans:3,exp:"Книги — множественное число → they (они)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nДевочка — это ___",opts:["he","she","it","they"],ans:1,exp:"Девочка — женский род, единственное число → she (она)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nДевочки — это ___",opts:["he","she","it","they"],ans:3,exp:"Девочки — множественное число → they (они)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nУчитель (мужчина) — это ___",opts:["he","she","it","they"],ans:0,exp:"Учитель-мужчина — мужской род → he (он)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nСтол — это ___",opts:["he","she","it","they"],ans:2,exp:"Стол — предмет, единственное число → it (оно / это)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nСтудентки — это ___",opts:["he","she","it","they"],ans:3,exp:"Студентки — множественное число → they (они)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nМама — это ___",opts:["he","she","it","they"],ans:1,exp:"Мама — женщина, единственное число → she (она)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nМячи — это ___",opts:["he","she","it","they"],ans:3,exp:"Мячи — предметы, множественное число → they (они)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nЯ — это ___",opts:["I","we","you","they"],ans:0,exp:"Я — говорящий, 1-е лицо, единственное число → I (я). Всегда пишется с заглавной буквы!"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nТы / Вы — это ___",opts:["I","we","you","they"],ans:2,exp:"Ты / Вы — собеседник, 2-е лицо → you (ты / вы)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nМы — это ___",opts:["I","we","you","they"],ans:1,exp:"Мы — говорящий + другие, 1-е лицо мн.ч. → we (мы)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nКот — это ___",opts:["he","she","it","they"],ans:2,exp:"Кот — животное, в английском предмет → it (оно / это)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nПапа — это ___",opts:["he","she","it","they"],ans:0,exp:"Папа — мужчина, единственное число → he (он)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nОкно — это ___",opts:["he","she","it","they"],ans:2,exp:"Окно — предмет, единственное число → it (оно / это)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nДети — это ___",opts:["he","she","it","they"],ans:3,exp:"Дети — множественное число → they (они)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nСестра — это ___",opts:["he","she","it","they"],ans:1,exp:"Сестра — женщина, единственное число → she (она)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nСтулья — это ___",opts:["he","she","it","they"],ans:3,exp:"Стулья — предметы, множественное число → they (они)"},
+  {type:"choice",tag:"Ступень 1 · рус.",q:"Выберите правильное местоимение:\nБрат — это ___",opts:["he","she","it","they"],ans:0,exp:"Брат — мужчина, единственное число → he (он)"}
+];
+
+var Q_EN = [
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nA student (male / мужчина) — ___",opts:["he","she","it","they"],ans:0,exp:"A student (male) — студент (мужчина) → he (он)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nA book — ___",opts:["he","she","it","they"],ans:2,exp:"A book — книга, предмет, ед.ч. → it (оно / это)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nBooks — ___",opts:["he","it","she","they"],ans:3,exp:"Books — книги, множественное число → they (они)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nA girl — ___",opts:["he","she","it","they"],ans:1,exp:"A girl — девочка, женский род, ед.ч. → she (она)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nGirls — ___",opts:["he","she","it","they"],ans:3,exp:"Girls — девочки, множественное число → they (они)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nA teacher (male / мужчина) — ___",opts:["he","she","it","they"],ans:0,exp:"A teacher (male) — учитель-мужчина → he (он)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nA table — ___",opts:["he","she","it","they"],ans:2,exp:"A table — стол, предмет, ед.ч. → it (оно / это)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nStudents (female / женщины) — ___",opts:["he","she","it","they"],ans:3,exp:"Students (female) — студентки, множественное число → they (они)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nA boy — ___",opts:["he","she","it","they"],ans:0,exp:"A boy — мальчик, мужской род, ед.ч. → he (он)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nA woman — ___",opts:["he","she","it","they"],ans:1,exp:"A woman — женщина, женский род, ед.ч. → she (она)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nA cat — ___",opts:["he","she","it","they"],ans:2,exp:"A cat — кот / кошка, животное в английском → it (оно / это)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nA teacher (female / женщина) — ___",opts:["he","she","it","they"],ans:1,exp:"A teacher (female) — учительница, женский род, ед.ч. → she (она)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nBalls — ___",opts:["he","she","it","they"],ans:3,exp:"Balls — мячи, предметы, множественное число → they (они)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nA dog — ___",opts:["he","she","it","they"],ans:2,exp:"A dog — собака. Животное, ед.ч. → it (оно / это)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nA man — ___",opts:["he","she","it","they"],ans:0,exp:"A man — мужчина, ед.ч. → he (он)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nWindows — ___",opts:["he","she","it","they"],ans:3,exp:"Windows — окна. Предметы, мн.ч. → they (они)"},
+  {type:"choice",tag:"Ступень 2 · англ.",q:"Выберите правильное местоимение:\nA sister — ___",opts:["he","she","it","they"],ans:1,exp:"A sister — сестра. Женский род, ед.ч. → she (она)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nMary and I — ___",opts:["we","they","you","she"],ans:0,exp:"Mary and I — Мэри и я. Говорящий + другой → we (мы)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nAlex and Mary — ___",opts:["we","they","he","she"],ans:1,exp:"Alex and Mary — Алекс и Мэри. Двое людей, 3-е лицо → they (они)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nMy friend and I — ___",opts:["they","I","we","you"],ans:2,exp:"My friend and I — мой друг и я. Говорящий + друг → we (мы)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nTom and you — ___",opts:["we","they","you","he"],ans:2,exp:"Tom and you — Том и ты. Собеседник + кто-то ещё → you (вы)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nThe cat and the dog — ___",opts:["he","it","they","she"],ans:2,exp:"The cat and the dog — кот и собака. Два животных, мн.ч. → they (они)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nAnna and her sister — ___",opts:["he","she","they","we"],ans:2,exp:"Anna and her sister — Анна и её сестра. Две девочки, 3-е лицо → they (они)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nMy mother — ___",opts:["he","she","it","they"],ans:1,exp:"My mother — моя мама. Женщина, ед.ч. → she (она)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nThe book and the pen — ___",opts:["it","they","he","she"],ans:1,exp:"The book and the pen — книга и ручка. Два предмета, мн.ч. → they (они)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nRussia — ___",opts:["he","she","it","they"],ans:2,exp:"Russia — Россия. Страна — предмет, ед.ч. → it (оно / это)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nSnow — ___",opts:["he","she","it","they"],ans:2,exp:"Snow — снег. Предмет, ед.ч. → it (оно / это)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nFootball — ___",opts:["he","she","it","they"],ans:2,exp:"Football — футбол. Предмет, ед.ч. → it (оно / это)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nA day — ___",opts:["he","she","it","they"],ans:2,exp:"A day — день. Предмет, ед.ч. → it (оно / это)"},
+  {type:"choice",tag:"Ступень 2 · замена",q:"Замените на местоимение:\nA city — ___",opts:["he","she","it","they"],ans:2,exp:"A city — город. Предмет, ед.ч. → it (оно / это)"}
+];
+
+// Ступень 3: 7 рус. + 5 англ.(без перевода) + 8 замен из ст.2 + 5 доп. замен = 25
+var Q_S3_EXTRA = [
+  {type:"choice",tag:"Ступень 3 · замена",q:"Замените на местоимение:\nMary and Alex — ___",opts:["we","they","he","she"],ans:1,exp:"Mary and Alex — Мэри и Алекс. Двое людей, 3-е лицо → they (они)"},
+  {type:"choice",tag:"Ступень 3 · замена",q:"Замените на местоимение:\nLisa and Ben — ___",opts:["we","they","she","he"],ans:1,exp:"Lisa and Ben — Лиза и Бен. Двое людей, 3-е лицо → they (они)"},
+  {type:"choice",tag:"Ступень 3 · замена",q:"Замените на местоимение:\nYou and your friend — ___",opts:["we","they","you","I"],ans:2,exp:"You and your friend — ты и твой друг. Собеседник + кто-то → you (вы)"},
+  {type:"choice",tag:"Ступень 3 · замена",q:"Замените на местоимение:\nNick and I — ___",opts:["they","I","you","we"],ans:3,exp:"Nick and I — Ник и я. Говорящий + другой → we (мы)"},
+  {type:"choice",tag:"Ступень 3 · замена",q:"Замените на местоимение:\nThe boys and the girls — ___",opts:["he","she","it","they"],ans:3,exp:"The boys and the girls — мальчики и девочки. Множественное число → they (они)"},
+  {type:"choice",tag:"Ступень 3 · замена",q:"Замените на местоимение:\nSurgut — ___",opts:["he","she","it","they"],ans:2,exp:"Surgut — Сургут. Город — предмет, ед.ч. → it (оно / это)"},
+  {type:"choice",tag:"Ступень 3 · замена",q:"Замените на местоимение:\nSurgut and Moscow — ___",opts:["he","she","it","they"],ans:3,exp:"Surgut and Moscow — Сургут и Москва. Два города, мн.ч. → they (они)"},
+  {type:"choice",tag:"Ступень 3 · замена",q:"Замените на местоимение:\nRain — ___",opts:["he","she","it","they"],ans:2,exp:"Rain — дождь. Предмет, ед.ч. → it (оно / это)"},
+  {type:"choice",tag:"Ступень 3 · замена",q:"Замените на местоимение:\nBasketball — ___",opts:["he","she","it","they"],ans:2,exp:"Basketball — баскетбол. Предмет, ед.ч. → it (оно / это)"},
+  {type:"choice",tag:"Ступень 3 · замена",q:"Замените на местоимение:\nEnglish — ___",opts:["he","she","it","they"],ans:2,exp:"English — английский язык. Предмет, ед.ч. → it (оно / это)"}
+];
+
+function buildStage4(){
+  var r=shuffle(Q_RU.slice()).slice(0,7).map(function(q){return Object.assign({},q,{tag:"Ступень 4 · рус."});});
+  var qSub=Q_EN.filter(function(q){return q.tag==="Ступень 2 · замена";});
+  var qOther=Q_EN.filter(function(q){return q.tag!=="Ступень 2 · замена" && q.opts.indexOf("he")!==-1;});
+  var sub=shuffle(qSub.slice()).map(function(q){return Object.assign({},q,{tag:"Ступень 4 · замена"});});
+  var eng=shuffle(qOther.slice()).slice(0,5).map(function(q){return Object.assign({},q,{tag:"Ступень 4 · англ."});});
+  return shuffle(r.concat(eng).concat(sub).concat(Q_S3_EXTRA));
+}
+
+var STAGE_CONFIG = [
+  {label:"Ступень 1",questions:Q_TRANS,total:10,chipLabel:"🔤 Ступень 1"},
+  {label:"Ступень 2",questions:Q_RU,total:20,chipLabel:"🇷🇺 Ступень 2"},
+  {label:"Ступень 3",questions:Q_EN,total:20,chipLabel:"🇬🇧 Ступень 3"},
+  {label:"Ступень 4",questions:null,total:30,chipLabel:"🌍 Ступень 4"}
+];
+
+// ══ STATE ══
+var currentStage=0;
+var selectedStage=0;
+var stageUnlocked=[true,false,false,false];
+var stageDone=[false,false,false,false];
+var stageScores=[0,0,0,0];
+
+var questions=[], cur=0, score=0, mistakes=[], results=[], retryMode=false;
+var total=10;
+var xp=0, streak=0, hints=3;
+var timerInterval=null, timerSec=0, qStartTime=0;
+var MAX_XP=150;
+var timerEnabled=false;
+
+// ══ INIT ══
+var _savedProgress=null;
+function loadProgress(){
+  try{
+    var raw=null;
+    try{raw=localStorage.getItem('pm4_progress');}catch(e){}
+    if(!raw){try{raw=sessionStorage.getItem('pm4_progress');}catch(e){}}
+    if(!raw && _savedProgress) raw=_savedProgress;
+    var d=raw?JSON.parse(raw):null;
+    if(d){
+      stageUnlocked=d.unlocked||stageUnlocked;
+      stageDone=d.done||stageDone;
+      stageScores=d.scores||stageScores;
+    }
+  }catch(e){}
+}
+function saveProgress(){
+  var v=JSON.stringify({unlocked:stageUnlocked,done:stageDone,scores:stageScores});
+  _savedProgress=v;
+  try{localStorage.setItem('pm4_progress',v);}catch(e){}
+  try{sessionStorage.setItem('pm4_progress',v);}catch(e){}
+}
+
+function goStart(){
+  loadProgress();
+  stopTimer();
+  document.getElementById('stage-panel').style.display='';
+  document.getElementById('start-screen').style.display='';
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='none';
+  renderStageGrid();
+  renderRecord();
+}
+
+function renderStageGrid(){
+  var totals=[10,20,20,30];
+  for(var i=0;i<4;i++){
+    var card=document.getElementById('sc'+i);
+    var badge=document.getElementById('sb'+i);
+    card.className='stage-card';
+    if(!stageUnlocked[i]){
+      card.classList.add('locked');
+      badge.className='stage-badge lock-badge';
+      badge.textContent='🔒 нужно 70% в ступени '+i;
+    } else if(stageDone[i]){
+      card.classList.add('done');
+      badge.className='stage-badge done-badge';
+      var pct=Math.round(stageScores[i]/totals[i]*100);
+      badge.textContent='✓ '+stageScores[i]+'/'+totals[i]+' ('+pct+'%)';
+    } else {
+      badge.className='stage-badge open-badge';
+      badge.textContent=totals[i]+' вопросов';
+    }
+    if(i===selectedStage && stageUnlocked[i]) card.classList.add('active-stage');
+  }
+  var btn=document.getElementById('main-start-btn');
+  if(stageUnlocked[selectedStage]){
+    btn.disabled=false;
+    btn.textContent=stageDone[selectedStage]?'🔁 Пройти ступень '+(selectedStage+1)+' снова':'▶ Начать ступень '+(selectedStage+1);
+  } else {
+    btn.disabled=true;
+    btn.textContent='🔒 Нужно 70% в ступени '+selectedStage+' для открытия';
+  }
+}
+
+function renderRecord(){
+  var box=document.getElementById('record-box');
+  var totals=[10,20,20,30];
+  var parts=[];
+  for(var i=0;i<4;i++){
+    if(stageDone[i]){
+      var pct=Math.round(stageScores[i]/totals[i]*100);
+      parts.push('Ступень '+(i+1)+': <b>'+stageScores[i]+'/'+totals[i]+'</b> ('+pct+'%)');
+    }
+  }
+  box.innerHTML=parts.length?'Лучшие результаты: '+parts.join(' · '):'Начните со ступени 1, чтобы разблокировать следующие!';
+}
+
+function switchHubTab(name){
+  document.querySelectorAll('.hub-tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.hub-panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('htab-'+name).classList.add('active');
+  document.querySelectorAll('.hub-tab').forEach(function(t){
+    if(t.getAttribute('onclick')==="switchHubTab('"+name+"')") t.classList.add('active');
+  });
+}
+
+function pickStage(i){
+  if(!stageUnlocked[i]){ return; }
+  selectedStage=i;
+  renderStageGrid();
+}
+
+function startCurrentStage(){
+  if(!stageUnlocked[selectedStage]) return;
+  startStage(selectedStage,false);
+}
+
+function startStage(idx,isRetry){
+  currentStage=idx;
+  retryMode=isRetry;
+  var cfg=STAGE_CONFIG[idx];
+  MAX_XP=cfg.total*15;
+  if(idx===3){ questions=buildStage4(); }
+  else{ questions=shuffle(cfg.questions.slice()).slice(0,cfg.total); }
+  total=questions.length;
+  cur=0; score=0; mistakes=[]; results=[];
+  xp=0; streak=0; hints=3;
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='';
+  document.getElementById('counter-tot').textContent=total;
+  document.getElementById('stage-chip').textContent=cfg.chipLabel;
+  var chip=document.getElementById('timer-chip');
+  if(chip) chip.style.display=timerEnabled?'':'none';
+  renderStageGrid();
+  updateXpUI(); updateStreakUI();
+  showQuestion();
+}
+
+function restartStage(){ startStage(currentStage,false); }
+
+// ══ TIMER ══
+function onTimerToggle(el){
+  timerEnabled=el.checked;
+  var chip=document.getElementById('timer-chip');
+  if(chip) chip.style.display=timerEnabled?'':'none';
+}
+function startTimer(sec){
+  stopTimer(); timerSec=sec; updateTimerUI();
+  timerInterval=setInterval(function(){
+    timerSec--; updateTimerUI();
+    if(timerSec<=0){clearInterval(timerInterval);timerInterval=null;timeOut();}
+  },1000);
+}
+function stopTimer(){ if(timerInterval){clearInterval(timerInterval);timerInterval=null;} resetTimerUI(); }
+function resetTimerUI(){
+  var c=document.getElementById('timer-chip');
+  if(c){c.className='timer-chip';var b=c.querySelector('b');if(b)b.textContent='—';}
+}
+function updateTimerUI(){
+  var c=document.getElementById('timer-chip'),v=document.getElementById('timer-val');
+  if(!c||!v) return;
+  v.textContent=timerSec;
+  c.className='timer-chip'+(timerSec<=5?' danger':timerSec<=9?' warn':'');
+}
+function timeOut(){
+  var fb=document.getElementById('feedback'); if(!fb) return;
+  var q=questions[cur];
+  fb.textContent='⏰ Время вышло!'; fb.className='feedback err';
+  streak=0; updateStreakUI();
+  document.querySelectorAll('.opt-btn').forEach(function(b){
+    b.disabled=true;
+    if(b.dataset.idx==q.ans) b.classList.add('correct');
+  });
+  results.push({ok:false,q:q});
+  mistakes.push({q:q.q.split('\n').slice(-1)[0],ans:q.opts[q.ans]});
+  showNextBtn();
+}
+
+// ══ XP / STREAK ══
+function addXP(amount,type){
+  xp+=amount; updateXpUI();
+  if(amount<=0) return;
+  var fb=document.getElementById('feedback'); if(!fb) return;
+  var rect=fb.getBoundingClientRect();
+  var pop=document.createElement('div');
+  pop.className='xp-popup '+type;
+  pop.textContent='+'+amount+' XP';
+  pop.style.left=(rect.left+rect.width/2-30)+'px';
+  pop.style.top=(rect.top+window.scrollY-8)+'px';
+  document.body.appendChild(pop);
+  setTimeout(function(){pop.remove();},1100);
+}
+function updateXpUI(){
+  var f=document.getElementById('xp-fill'),v=document.getElementById('xp-val');
+  if(!f||!v) return;
+  f.style.width=Math.min(100,xp/MAX_XP*100)+'%';
+  v.textContent=xp;
+}
+function updateStreakUI(){
+  var b=document.getElementById('streak-badge'),v=document.getElementById('streak-val');
+  if(!b||!v) return;
+  v.textContent=streak;
+  b.className='streak-badge'+(streak>=5?' fire':streak>=3?' hot':'');
+}
+
+// ══ HINT ══
+function useHint(){
+  if(hints<=0) return;
+  var q=questions[cur]; hints--;
+  var btns=Array.from(document.querySelectorAll('.opt-btn:not(:disabled)'));
+  var wrongs=btns.filter(function(b){return parseInt(b.dataset.idx)!==q.ans;});
+  if(wrongs.length){var pick=wrongs[Math.floor(Math.random()*wrongs.length)];pick.disabled=true;pick.style.opacity='.2';}
+  document.getElementById('hint-btn').textContent='💡 Подсказка ('+hints+')';
+  if(hints<=0) document.getElementById('hint-btn').disabled=true;
+}
+
+// ══ QUESTION ══
+function showQuestion(){
+  if(cur>=total){showStageResult();return;}
+  document.getElementById('progress').style.width=(cur/total*100)+'%';
+  document.getElementById('counter-cur').textContent=cur+1;
+  document.getElementById('hud-ok').textContent=score;
+  document.getElementById('hud-err').textContent=results.filter(function(r){return !r.ok;}).length;
+  document.getElementById('hint-btn').textContent='💡 Подсказка ('+hints+')';
+  document.getElementById('hint-btn').disabled=(hints<=0);
+  var q=questions[cur];
+  document.getElementById('qtag').textContent=q.tag;
+  var lines=q.q.split('\n'), html='';
+  lines.forEach(function(line,i){
+    if(i===0&&lines.length>1) html+='<span style="font-size:13px;color:#7aa8d4;font-weight:400">'+line+'</span><br>';
+    else html+=line.replace(/___/g,'<code>___</code>');
+  });
+  document.getElementById('qtext').innerHTML=html;
+  var area=document.getElementById('answer-area');
+  area.innerHTML='';
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+  var div=document.createElement('div'); div.className='options';
+  q.opts.forEach(function(opt,i){
+    var btn=document.createElement('button');
+    btn.className='opt-btn'; btn.dataset.idx=i;
+    btn.textContent=(i+1)+')  '+opt;
+    btn.onclick=(function(idx){return function(){selectChoice(idx);};})(i);
+    div.appendChild(btn);
+  });
+  area.appendChild(div);
+  if(timerEnabled) startTimer(15); else resetTimerUI();
+  qStartTime=Date.now();
+}
+
+function selectChoice(idx){
+  stopTimer();
+  var q=questions[cur];
+  var btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById('feedback');
+  var elapsed=(Date.now()-qStartTime)/1000;
+  var ok=(idx===q.ans);
+  if(ok){
+    btns[idx].classList.add('correct'); streak++;
+    var fast=timerEnabled&&elapsed<5;
+    var streakBonus=streak>=3?3:0;
+    var gained=10+(fast?5:0)+streakBonus;
+    fb.textContent='✓ Правильно! '+q.exp+(fast?' ⚡':'')+(streakBonus?' 🔥':'');
+    fb.className='feedback ok';
+    score++; addXP(gained,(fast||streakBonus)?'bonus':'ok'); launchConfetti();
+  } else {
+    btns[idx].classList.add('wrong'); btns[q.ans].classList.add('correct');
+    fb.textContent='✗ Неверно. '+q.exp;
+    fb.className='feedback err'; streak=0;
+    mistakes.push({q:q.q.split('\n').slice(-1)[0],ans:q.opts[q.ans]});
+  }
+  updateStreakUI(); results.push({ok:ok,q:q}); showNextBtn();
+}
+
+function showNextBtn(){
+  var btn=document.getElementById('nextBtn');
+  btn.style.display='inline-block';
+  btn.textContent=cur<total-1?'Следующий →':'Посмотреть результат →';
+}
+function nextQuestion(){ cur++; if(cur<total) showQuestion(); else showStageResult(); }
+
+// ══ STAGE RESULT ══
+function showStageResult(){
+  stopTimer();
+  document.getElementById('progress').style.width='100%';
+  stageDone[currentStage]=true;
+  // сохраняем лучший результат
+  if(score > stageScores[currentStage]) stageScores[currentStage]=score;
+  // разблокировать следующую ступень при ≥70%
+  var pct=score/total;
+  if(pct>=0.7){
+    if(currentStage===0) stageUnlocked[1]=true;
+    if(currentStage===1) stageUnlocked[2]=true;
+    if(currentStage===2) stageUnlocked[3]=true;
+  }
+  saveProgress();
+  showFinalResult();
+}
+
+function showFinalResult(pct){
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='block';
+  var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
+  var rank=pct>=0.9?{name:'Мастер',bg:'#ede9fe',color:'#6d28d9'}:
+           pct>=0.7?{name:'Знаток',bg:'#e4eef8',color:'#1A4A7A'}:
+           pct>=0.5?{name:'Ученик',bg:'#e4f0ea',color:'#2D5A3D'}:
+                   {name:'Новичок',bg:'#f0eaf8',color:'#6B2FA0'};
+  var emoji=pct===1?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
+  var unlockMsg='';
+  if(pct>=0.7 && currentStage<3) unlockMsg=' 🔓 Ступень '+(currentStage+2)+' открыта!';
+  var needPct=Math.ceil((Math.ceil(total*0.7))/total*100);
+  var msg=pct===1?'Отлично! Все ответы верны. Местоимения усвоены!'+unlockMsg:
+          pct>=0.8?'Очень хорошо! Разберите ошибки ниже.'+unlockMsg:
+          pct>=0.7?'Хороший результат!'+unlockMsg:
+          pct>=0.5?'Неплохо, но нужно набрать 70% для следующей ступени. Попробуйте снова!':
+                  'Нужно ещё поработать. Нужно минимум '+needPct+'% ('+Math.ceil(total*0.7)+'/'+total+') для разблокировки!';
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-score').textContent=score+' / '+total;
+  document.getElementById('res-label').textContent='правильных ответов · '+STAGE_CONFIG[currentStage].label;
+  document.getElementById('res-xp').textContent='⭐ '+xp+' XP';
+  document.getElementById('res-msg').textContent=msg;
+  var starsHTML='';
+  for(var i=1;i<=3;i++) starsHTML+='<span class="star'+(stars>=i?' lit':'')+'" style="animation-delay:'+((i-1)*0.18)+'s">⭐</span>';
+  document.getElementById('stars-row').innerHTML=starsHTML;
+  document.getElementById('rank-badge-wrap').innerHTML='<span class="rank-badge" style="background:'+rank.bg+';color:'+rank.color+'">🏅 '+rank.name+'</span>';
+  renderStageGrid();
+  if(pct>=0.9) launchBigConfetti();
+  var nextBtn2=document.getElementById('next-stage-btn');
+  if(currentStage<3 && stageUnlocked[currentStage+1]){
+    nextBtn2.style.display='inline-block';
+    nextBtn2.textContent='▶ Ступень '+(currentStage+2)+' →';
+  } else {
+    nextBtn2.style.display='none';
+  }
+  var wrongCount=results.filter(function(r){return !r.ok;}).length;
+  var retryBtn=document.getElementById('retry-btn');
+  if(wrongCount>0&&!retryMode){retryBtn.style.display='inline-block';retryBtn.textContent='🔁 Работа над ошибками ('+wrongCount+')';}
+  else{retryBtn.style.display='none';}
+  var mBlock=document.getElementById('mistakes-block');
+  if(mistakes.length>0){
+    var html='<h3>Разбор ошибок:</h3>';
+    mistakes.forEach(function(m){html+='<div class="mistake-item"><div class="m-q">'+m.q+'</div><div class="m-a">✓ '+m.ans+'</div></div>';});
+    mBlock.innerHTML=html;
+  } else { mBlock.innerHTML=''; }
+}
+
+function retryMistakes(){
+  var wrong=results.filter(function(r){return !r.ok;});
+  if(!wrong.length) return;
+  retryMode=true;
+  questions=wrong.map(function(r){return r.q;});
+  total=questions.length;
+  cur=0; score=0; mistakes=[]; results=[];
+  xp=0; streak=0; hints=3;
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='';
+  document.getElementById('counter-tot').textContent=total;
+  var chip=document.getElementById('timer-chip');
+  if(chip) chip.style.display=timerEnabled?'':'none';
+  updateXpUI(); updateStreakUI();
+  showQuestion();
+}
+
+function goNextStage(){
+  var next=currentStage+1;
+  if(next<4 && stageUnlocked[next]){
+    selectedStage=next;
+    startStage(next,false);
+  }
+}
+
+function toggleRef(){
+  var m=document.getElementById('ref-modal');
+  m.style.display=(m.style.display==='none'||m.style.display==='')?'flex':'none';
+}
+
+document.addEventListener('click',function(e){
+  var m=document.getElementById('ref-modal');
+  if(m && m.style.display==='flex' && e.target===m) m.style.display='none';
+});
+
+function shuffle(arr){ return arr.slice().sort(function(){return Math.random()-.5;}); }
+
+// ══ CONFETTI ══
+var canvas=document.getElementById('confetti-canvas');
+var ctx=canvas.getContext('2d');
+var particles=[],animId=null;
+var COLORS=['#378ADD','#22c55e','#f59e0b','#ef4444','#a855f7','#ec4899','#14b8a6'];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize(); window.addEventListener('resize',resize);
+function createParticle(x,y,big){
+  var angle=Math.random()*Math.PI*2,speed=big?(Math.random()*10+5):(Math.random()*7+3);
+  return{x:x,y:y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-(big?8:4),color:COLORS[Math.floor(Math.random()*COLORS.length)],size:big?(Math.random()*10+5):(Math.random()*7+3),rotation:Math.random()*360,rotSpeed:(Math.random()-.5)*8,alpha:1,shape:Math.random()>.5?'rect':'circle'};
+}
+function spawnBurst(x,y,count,big){for(var i=0;i<count;i++)particles.push(createParticle(x,y,big));}
+function launchConfetti(){var rect=document.querySelector('.card').getBoundingClientRect();spawnBurst(rect.left+rect.width/2,rect.top+rect.height*.3,50,false);if(!animId)animate();}
+function launchBigConfetti(){var cx=window.innerWidth/2,cy=window.innerHeight/2;spawnBurst(cx,cy,130,true);setTimeout(function(){spawnBurst(cx-220,cy,70,true);},200);setTimeout(function(){spawnBurst(cx+220,cy,70,true);},400);if(!animId)animate();}
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.vx*=.99;p.rotation+=p.rotSpeed;p.alpha-=.016;ctx.save();ctx.globalAlpha=Math.max(0,p.alpha);ctx.translate(p.x,p.y);ctx.rotate(p.rotation*Math.PI/180);ctx.fillStyle=p.color;if(p.shape==='rect'){ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);}else{ctx.beginPath();ctx.arc(0,0,p.size/2,0,Math.PI*2);ctx.fill();}ctx.restore();});
+  particles=particles.filter(function(p){return p.alpha>0;});
+  if(particles.length>0){animId=requestAnimationFrame(animate);}else{animId=null;ctx.clearRect(0,0,canvas.width,canvas.height);}
+}
+
+// ══ INIT ══
+goStart();
+</script>
+</body>
+</html>
