@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Исчисляемые и неисчисляемые существительные</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: Arial, sans-serif; min-height: 100vh;
+  background-color: #fff;
+  background-image: linear-gradient(#b3d1f7 1px, transparent 1px), linear-gradient(90deg, #b3d1f7 1px, transparent 1px);
+  background-size: 28px 28px;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 2rem 1rem 3rem;
+}
+.card { background: rgba(255,255,255,0.97); border-radius: 16px; border: 1.5px solid #c8dff7; padding: 2rem 2rem 2.5rem; max-width: 700px; width: 100%; box-shadow: 0 4px 24px rgba(55,138,221,0.10); }
+h1 { text-align: center; font-size: 20px; font-weight: 700; color: #185FA5; margin-bottom: 0.2rem; }
+.subtitle { text-align: center; font-size: 13px; color: #5b8dc7; margin-bottom: 1.5rem; }
+
+/* Прогресс */
+.progress-bar { height: 7px; background: #dbeafe; border-radius: 99px; margin-bottom: 1rem; overflow: hidden; }
+.progress-fill { height: 100%; background: #378ADD; border-radius: 99px; transition: width 0.4s ease; }
+
+/* HUD */
+.hud { display:flex; flex-wrap:wrap; gap:7px; align-items:center; margin-bottom:.75rem; }
+.hud-chip { font-size:12px; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; font-weight:600; }
+.streak-badge { font-size:12px; font-weight:700; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; transition:all .3s; }
+.streak-badge.hot  { background:#fff3dc; color:#b45309; }
+.streak-badge.fire { background:linear-gradient(135deg,#fef3c7,#fde68a); color:#92400e; animation:sBurst .45s ease; }
+@keyframes sBurst { 0%{transform:scale(1)} 40%{transform:scale(1.2)} 100%{transform:scale(1)} }
+.timer-chip { font-size:12px; font-weight:700; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; transition:background .3s,color .3s; margin-left:auto; }
+.timer-chip.warn   { background:#fff3dc; color:#b45309; }
+.timer-chip.danger { background:#fee2e2; color:#b91c1c; }
+
+/* XP */
+.xp-row { display:flex; align-items:center; gap:8px; margin-bottom:.6rem; }
+.xp-label { font-size:11px; color:#7aa8d4; font-weight:600; white-space:nowrap; }
+.xp-track { flex:1; height:5px; background:#dbeafe; border-radius:4px; overflow:hidden; }
+.xp-fill  { height:100%; background:linear-gradient(90deg,#378ADD,#a855f7); border-radius:4px; transition:width .5s ease; }
+.xp-val   { font-size:12px; font-weight:700; color:#a855f7; min-width:38px; text-align:right; }
+.xp-popup { position:fixed; pointer-events:none; font-weight:700; font-size:.95rem; border-radius:10px; padding:3px 13px; z-index:9999; animation:floatUp 1s ease forwards; }
+.xp-popup.ok  { background:#d1fadf; color:#14532d; }
+.xp-popup.err { background:#fee2e2; color:#7f1d1d; }
+@keyframes floatUp { 0%{opacity:1;transform:translateY(0)} 80%{opacity:1} 100%{opacity:0;transform:translateY(-55px)} }
+
+/* Вопрос */
+.q-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:.8rem; }
+.q-tag { font-size:11px; background:#e0eeff; color:#185FA5; padding:2px 9px; border-radius:99px; font-weight:600; }
+.hint-btn { font-size:12px; font-weight:600; background:#f5f9ff; border:1.5px solid #c8dff7; border-radius:8px; padding:6px 13px; cursor:pointer; color:#7aa8d4; font-family:Arial,sans-serif; transition:background .12s; }
+.hint-btn:hover:not(:disabled) { background:#dbeafe; }
+.hint-btn:disabled { opacity:.35; cursor:default; }
+
+/* Слово с подсказкой-переводом */
+.word-block { display:inline-flex; align-items:center; gap:6px; margin-bottom:1rem; background:#f0f7ff; border:1.5px solid #c8dff7; border-radius:12px; padding:10px 16px; }
+.word-en { font-size:22px; font-weight:700; color:#185FA5; }
+.word-tag { font-size:11px; font-weight:600; padding:2px 8px; border-radius:99px; }
+.word-tag.c  { background:#d1fadf; color:#14532d; }
+.word-tag.uc { background:#fee2e2; color:#7f1d1d; }
+.translate-btn { font-size:12px; font-weight:600; background:#e0eeff; color:#185FA5; border:none; border-radius:7px; padding:5px 11px; cursor:pointer; font-family:Arial,sans-serif; transition:background .12s; white-space:nowrap; }
+.translate-btn:hover { background:#c8dff7; }
+
+/* Попап перевода */
+.tr-popup-wrap { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:600; align-items:center; justify-content:center; padding:1rem; }
+.tr-popup-wrap.open { display:flex; }
+.tr-popup { background:#fff; border-radius:16px; padding:1.5rem; max-width:320px; width:100%; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,.18); }
+.tr-word { font-size:22px; font-weight:700; color:#185FA5; margin-bottom:4px; }
+.tr-ru { font-size:16px; color:#1a2e4a; margin-bottom:6px; }
+.tr-type { font-size:12px; font-weight:600; padding:3px 12px; border-radius:99px; display:inline-block; margin-bottom:1rem; }
+.tr-type.c  { background:#d1fadf; color:#14532d; }
+.tr-type.uc { background:#fee2e2; color:#7f1d1d; }
+.tr-close { padding:8px 28px; border-radius:10px; border:1.5px solid #378ADD; background:#378ADD; color:#fff; font-size:14px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; }
+.tr-close:hover { background:#185FA5; }
+
+/* Задание */
+.q-text { font-size:17px; font-weight:600; color:#1a2e4a; margin-bottom:1.2rem; line-height:1.7; }
+.blank { display:inline-block; background:#e8f2ff; color:#185FA5; border-bottom:2px solid #378ADD; padding:0 10px; border-radius:4px; font-weight:700; min-width:70px; text-align:center; }
+.options { display:flex; flex-direction:column; gap:9px; }
+.opt-btn { padding:12px 18px; border:1.5px solid #c8dff7; border-radius:10px; background:#f5f9ff; color:#1a2e4a; font-size:15px; cursor:pointer; text-align:left; transition:background .13s, border-color .13s, transform .1s; font-family:Arial,sans-serif; }
+.opt-btn:hover:not(:disabled) { background:#dbeafe; border-color:#378ADD; transform:translateX(3px); }
+.opt-btn.correct { background:#d1fadf; border-color:#22c55e; color:#14532d; font-weight:600; }
+.opt-btn.wrong   { background:#fee2e2; border-color:#ef4444; color:#7f1d1d; }
+.opt-btn:disabled { cursor:default; transform:none; }
+.feedback { margin-top:.8rem; font-size:14px; min-height:20px; line-height:1.6; }
+.feedback.ok { color:#15803d; font-weight:500; }
+.feedback.err { color:#b91c1c; }
+.next-btn { margin-top:1.1rem; padding:10px 26px; border-radius:10px; border:1.5px solid #378ADD; background:#378ADD; color:#fff; font-size:14px; font-weight:600; cursor:pointer; display:none; font-family:Arial,sans-serif; transition:background .15s; }
+.next-btn:hover { background:#185FA5; }
+
+/* Результат */
+.result-card { text-align:center; padding:1.5rem .5rem .5rem; }
+.result-emoji { font-size:52px; margin-bottom:.8rem; }
+.result-score { font-size:40px; font-weight:700; color:#185FA5; }
+.result-label { font-size:14px; color:#7aa8d4; margin:.3rem 0 1.2rem; }
+.result-msg { font-size:15px; color:#1a2e4a; margin-bottom:1.5rem; line-height:1.7; max-width:460px; margin-left:auto; margin-right:auto; }
+.stars-row { display:flex; justify-content:center; gap:6px; font-size:2rem; margin:.4rem 0 .5rem; }
+.star { filter:grayscale(1) opacity(.3); display:inline-block; }
+.star.lit { filter:none; animation:starPop .4s ease; }
+@keyframes starPop { 0%{transform:scale(.5) rotate(-20deg)} 70%{transform:scale(1.3) rotate(5deg)} 100%{transform:scale(1) rotate(0deg)} }
+.rank-badge { display:inline-block; padding:3px 16px; border-radius:99px; font-size:12px; font-weight:700; letter-spacing:.05em; margin-bottom:.4rem; }
+.result-xp { font-size:14px; color:#a855f7; font-weight:700; margin-bottom:.3rem; }
+.restart-btn { padding:11px 32px; border-radius:10px; border:1.5px solid #378ADD; background:#378ADD; color:#fff; font-size:14px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; }
+.restart-btn:hover { background:#185FA5; }
+.retry-btn { margin-top:.6rem; padding:10px 24px; border-radius:10px; border:1.5px solid #f59e0b; background:#fff3dc; color:#92400e; font-size:14px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; display:none; }
+.retry-btn:hover { background:#fde68a; }
+.mistakes-list { text-align:left; border-top:1px solid #dbeafe; padding-top:1.2rem; margin-top:1.2rem; }
+.mistake-item { font-size:13px; color:#1a2e4a; padding:9px 13px; background:#f5f9ff; border-radius:8px; margin-bottom:7px; border-left:3px solid #22c55e; }
+.mistake-item .m-q { color:#7aa8d4; margin-bottom:3px; font-size:12px; }
+.mistake-item .m-a { color:#15803d; font-weight:600; }
+
+/* Старт */
+#start-screen { text-align:center; padding:.5rem 0 1.2rem; }
+.start-info { background:#f0f7ff; border:1.5px solid #c8dff7; border-radius:12px; padding:14px 16px; font-size:13px; color:#1a2e4a; line-height:1.8; margin-bottom:1.2rem; text-align:left; }
+.start-info b { color:#185FA5; }
+.record-box { background:#f5f9ff; border:1.5px solid #dbeafe; border-radius:10px; padding:10px 16px; font-size:13px; color:#7aa8d4; margin-bottom:1rem; }
+.record-box b { color:#185FA5; }
+.toggle-row { display:flex; align-items:center; gap:10px; background:#f5f9ff; border:1.5px solid #dbeafe; border-radius:10px; padding:10px 14px; margin-bottom:1rem; }
+.toggle-label { flex:1; text-align:left; font-size:13px; color:#1a2e4a; font-weight:600; }
+.toggle-sub { font-size:11px; color:#7aa8d4; font-weight:400; display:block; margin-top:1px; }
+.toggle-switch { position:relative; width:44px; height:24px; flex-shrink:0; }
+.toggle-switch input { opacity:0; width:0; height:0; }
+.toggle-slider { position:absolute; inset:0; background:#c8dff7; border-radius:99px; cursor:pointer; transition:background .25s; }
+.toggle-slider:before { content:""; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform .25s; box-shadow:0 1px 4px rgba(0,0,0,.15); }
+.toggle-switch input:checked + .toggle-slider { background:#378ADD; }
+.toggle-switch input:checked + .toggle-slider:before { transform:translateX(20px); }
+.start-btn { padding:12px 40px; border-radius:10px; border:1.5px solid #378ADD; background:#378ADD; color:#fff; font-size:15px; font-weight:700; cursor:pointer; font-family:Arial,sans-serif; }
+.start-btn:hover { background:#185FA5; }
+
+/* Справочник */
+.ref-btn { margin-top:.7rem; display:block; width:100%; padding:9px 0; border-radius:10px; border:1.5px solid #c8dff7; background:#f5f9ff; color:#7aa8d4; font-size:13px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; text-align:center; }
+.ref-btn:hover { background:#dbeafe; color:#185FA5; }
+.ref-modal-wrap { display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:500; align-items:center; justify-content:center; padding:1rem; }
+.ref-modal-wrap.open { display:flex; }
+.ref-modal { background:#fff; border-radius:16px; padding:1.5rem; max-width:640px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 8px 40px rgba(0,0,0,.18); }
+.ref-modal h2 { font-size:16px; color:#185FA5; margin-bottom:1rem; }
+.ref-close { float:right; background:none; border:none; font-size:20px; cursor:pointer; color:#7aa8d4; line-height:1; }
+.ref-table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:1rem; }
+.ref-table th { background:#e0eeff; color:#185FA5; padding:7px 10px; font-weight:700; text-align:left; }
+.ref-table td { padding:7px 10px; border-bottom:1px solid #dbeafe; color:#1a2e4a; vertical-align:top; line-height:1.5; }
+.ref-table tr:last-child td { border-bottom:none; }
+.ref-section { font-size:13px; font-weight:700; color:#185FA5; margin:1rem 0 .4rem; }
+.tag-c  { display:inline-block; background:#d1fadf; color:#14532d; border-radius:6px; padding:1px 7px; font-size:11px; font-weight:700; }
+.tag-uc { display:inline-block; background:#fee2e2; color:#b91c1c; border-radius:6px; padding:1px 7px; font-size:11px; font-weight:700; }
+
+#confetti-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999; }
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ПОПАП ПЕРЕВОДА -->
+<div class="tr-popup-wrap" id="tr-popup-wrap" onclick="closeTrPopup(event)">
+  <div class="tr-popup" id="tr-popup">
+    <div id="tr-emoji" style="font-size:96px;line-height:1.1;margin-bottom:.6rem;"></div>
+    <div class="tr-word" id="tr-word"></div>
+    <div class="tr-ru"  id="tr-ru"></div>
+    <div class="tr-type" id="tr-type"></div>
+    <button class="tr-close" onclick="document.getElementById('tr-popup-wrap').classList.remove('open')">Закрыть</button>
+  </div>
+</div>
+
+<!-- СПРАВОЧНИК -->
+<div class="ref-modal-wrap" id="ref-modal" onclick="closeRefModal(event)">
+  <div class="ref-modal">
+    <button class="ref-close" onclick="toggleRef()">&#x2715;</button>
+    <h2>📋 Исчисляемые и неисчисляемые существительные</h2>
+
+    <p class="ref-section">🟢 Исчисляемые (Countable)</p>
+    <p style="font-size:13px;color:#1a2e4a;line-height:1.7;margin-bottom:.7rem">
+      Можно посчитать: <b>a book / two books</b>. Имеют ед. и мн. число.<br>
+      С ними используют: <b>a / an, the, numbers, many, few, a few</b>
+    </p>
+    <table class="ref-table">
+      <tr><th>Ед. число</th><th>Мн. число</th><th>Перевод</th></tr>
+      <tr><td>a book</td><td>books</td><td>книга / книги</td></tr>
+      <tr><td>an apple</td><td>apples</td><td>яблоко / яблоки</td></tr>
+      <tr><td>a chair</td><td>chairs</td><td>стул / стулья</td></tr>
+      <tr><td>a cat</td><td>cats</td><td>кошка / кошки</td></tr>
+    </table>
+
+    <p class="ref-section">🔴 Неисчисляемые (Uncountable)</p>
+    <p style="font-size:13px;color:#1a2e4a;line-height:1.7;margin-bottom:.7rem">
+      Нельзя посчитать напрямую: <b>water, milk, bread</b>. Только ед. число.<br>
+      С ними используют: <b>some, any, much, a little, a lot of</b><br>
+      ❌ Нельзя: <b>a water, two milks, many breads</b>
+    </p>
+    <table class="ref-table">
+      <tr><th>Слово</th><th>Перевод</th><th>Как считать</th></tr>
+      <tr><td>water</td><td>вода</td><td>a glass of water</td></tr>
+      <tr><td>milk</td><td>молоко</td><td>a bottle of milk</td></tr>
+      <tr><td>bread</td><td>хлеб</td><td>a loaf of bread</td></tr>
+      <tr><td>sugar</td><td>сахар</td><td>a spoon of sugar</td></tr>
+      <tr><td>money</td><td>деньги</td><td>a sum of money</td></tr>
+      <tr><td>information</td><td>информация</td><td>a piece of information</td></tr>
+    </table>
+
+    <p class="ref-section">⚖️ a / an — some / any</p>
+    <table class="ref-table">
+      <tr><th></th><th>Исчисляемые (ед.ч.)</th><th>Неисчисляемые</th><th>Исчисляемые (мн.ч.)</th></tr>
+      <tr><td>✅ Утверждение</td><td>a / an book</td><td>some milk</td><td>some books</td></tr>
+      <tr><td>❓ Вопрос</td><td>a / an book?</td><td>any milk?</td><td>any books?</td></tr>
+      <tr><td>❌ Отрицание</td><td>no / not a book</td><td>no / not any milk</td><td>no / not any books</td></tr>
+    </table>
+
+    <p class="ref-section">📏 Количество</p>
+    <table class="ref-table">
+      <tr><th>Слово</th><th>С исчисляемыми</th><th>С неисчисляемыми</th></tr>
+      <tr><td><b>many / few</b></td><td>✅ many books</td><td>❌</td></tr>
+      <tr><td><b>much / little</b></td><td>❌</td><td>✅ much water</td></tr>
+      <tr><td><b>a lot of / lots of</b></td><td>✅</td><td>✅</td></tr>
+      <tr><td><b>some / any</b></td><td>✅ (мн.ч.)</td><td>✅</td></tr>
+    </table>
+
+    <p class="ref-section">💡 Типичные неисчисляемые</p>
+    <p style="font-size:13px;color:#1a2e4a;line-height:1.8">
+      <b>Еда:</b> bread, butter, cheese, meat, rice, flour, salt, sugar, coffee, tea, juice, milk, water, oil<br>
+      <b>Вещества:</b> air, wood, glass, gold, paper, plastic, sand, snow, ice<br>
+      <b>Абстрактные:</b> advice, information, knowledge, love, money, music, news, time, weather, work, homework, traffic, furniture, luggage, equipment
+    </p>
+  </div>
+</div>
+
+<div class="card">
+  <h1>📚 Countable / Uncountable</h1>
+  <p class="subtitle">Исчисляемые и неисчисляемые · 30 вопросов · база 50</p>
+
+  <!-- СТАРТ -->
+  <div id="start-screen">
+    <div class="start-info">
+      Выберите правильный вариант для каждого задания.<br>
+      Нажмите <b>«🌐 Перевод»</b> рядом со словом, чтобы увидеть перевод и картинку.<br>
+      Типы заданий: определить тип слова, выбрать артикль/квантификатор, исправить ошибку.
+    </div>
+    <div class="record-box" id="record-box">🏆 Рекорд: —</div>
+    <div class="toggle-row">
+      <label class="toggle-label">⏱ Таймер <span class="toggle-sub">25 секунд на вопрос</span></label>
+      <label class="toggle-switch">
+        <input type="checkbox" id="timer-toggle" onchange="timerEnabled=this.checked">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <button class="start-btn" onclick="startTest()">▶ Начать тест</button>
+  </div>
+
+  <!-- ВОПРОС -->
+  <div id="quiz-screen" style="display:none">
+    <div class="xp-row">
+      <span class="xp-label">⭐ XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      <span class="xp-val" id="xp-val">0</span>
+    </div>
+    <div class="hud">
+      <span class="hud-chip">📚 C/UC</span>
+      <span class="hud-chip">❓ <span id="counter-cur">1</span>/<span id="counter-tot">30</span></span>
+      <span class="hud-chip">✅ <span id="score-live">0</span></span>
+      <span class="streak-badge" id="streak-badge">🔥 0 подряд</span>
+      <span class="timer-chip" id="timer-chip" style="display:none">⏱ 25</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="q-meta">
+      <span class="q-tag" id="q-tag">Тип</span>
+      <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Подсказка (<span id="hint-count">3</span>)</button>
+    </div>
+    <div id="word-block-wrap"></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Следующий →</button>
+  </div>
+
+  <!-- РЕЗУЛЬТАТ -->
+  <div id="result-screen" style="display:none">
+    <div class="result-card">
+      <div class="result-emoji" id="res-emoji">🏆</div>
+      <div class="stars-row" id="stars-row"></div>
+      <div id="rank-badge-wrap"></div>
+      <div class="result-score" id="res-score">0/30</div>
+      <div class="result-label">правильных ответов</div>
+      <div class="result-xp" id="res-xp">⭐ 0 XP</div>
+      <div class="result-msg" id="res-msg"></div>
+      <button class="restart-btn" onclick="goStart()">← Начать заново</button>
+      <button class="retry-btn" id="retry-btn" onclick="retryMistakes()">🔁 Работа над ошибками</button>
+    </div>
+    <div class="mistakes-list" id="mistakes-block"></div>
+  </div>
+
+  <button class="ref-btn" onclick="toggleRef()">📋 Справочник: Countable / Uncountable</button>
+</div>
+
+<script>
+/* ============================================================
+   БАЗА ВОПРОСОВ — 50 заданий
+   word: {en, ru, type:'c'|'uc', img: Unsplash URL}
+   tag: метка типа задания
+   q: текст вопроса
+   opts: варианты
+   ans: индекс правильного (перемешиваются при показе)
+   exp: объяснение
+============================================================ */
+var IMG = {
+  water:'💧', milk:'🥛', bread:'🍞', apple:'🍎',
+  book:'📚', chair:'🪑', cat:'🐱', dog:'🐶',
+  coffee:'☕', sugar:'🍬', rice:'🍚', cheese:'🧀',
+  money:'💰', music:'🎵', car:'🚗', flower:'🌸',
+  butter:'🧈', egg:'🥚', table:'🪑', snow:'❄️',
+  tree:'🌳', gold:'🏅', news:'📰', luggage:'🧳',
+  homework:'📝', oil:'🫙', window:'🪟', salt:'🧂',
+  pencil:'✏️', tea:'🍵', lamp:'💡', sand:'🏖️',
+  bird:'🐦', paper:'📄', juice:'🧃',
+};
+
+var Q_ALL = [
+  /* === ТИП: Определить тип слова === */
+  {tag:'Тип слова',word:{en:'water',ru:'вода',type:'uc',img:IMG.water},
+   q:'«Water» — это...',
+   opts:['Неисчисляемое (uncountable)','Исчисляемое (countable)','Оба типа'],ans:0,
+   exp:'WATER — неисчисляемое. Нельзя сказать «a water» или «two waters». Используем: some water, a glass of water.'},
+  {tag:'Тип слова',word:{en:'book',ru:'книга',type:'c',img:IMG.book},
+   q:'«Book» — это...',
+   opts:['Исчисляемое (countable)','Неисчисляемое (uncountable)','Оба типа'],ans:0,
+   exp:'BOOK — исчисляемое. Можно сказать: a book, two books, many books.'},
+  {tag:'Тип слова',word:{en:'milk',ru:'молоко',type:'uc',img:IMG.milk},
+   q:'«Milk» — это...',
+   opts:['Неисчисляемое (uncountable)','Исчисляемое (countable)','Нет правила'],ans:0,
+   exp:'MILK — неисчисляемое. Нельзя: a milk, two milks. Правильно: some milk, a bottle of milk.'},
+  {tag:'Тип слова',word:{en:'apple',ru:'яблоко',type:'c',img:IMG.apple},
+   q:'«Apple» — это...',
+   opts:['Исчисляемое (countable)','Неисчисляемое (uncountable)','Оба типа'],ans:0,
+   exp:'APPLE — исчисляемое. Правильно: an apple, three apples, many apples.'},
+  {tag:'Тип слова',word:{en:'bread',ru:'хлеб',type:'uc',img:IMG.bread},
+   q:'«Bread» — это...',
+   opts:['Неисчисляемое (uncountable)','Исчисляемое (countable)','Нет разницы'],ans:0,
+   exp:'BREAD — неисчисляемое. Нельзя: a bread. Правильно: some bread, a loaf of bread.'},
+  {tag:'Тип слова',word:{en:'chair',ru:'стул',type:'c',img:IMG.chair},
+   q:'«Chair» — это...',
+   opts:['Исчисляемое (countable)','Неисчисляемое (uncountable)','Оба типа'],ans:0,
+   exp:'CHAIR — исчисляемое. Правильно: a chair, five chairs.'},
+  {tag:'Тип слова',word:{en:'money',ru:'деньги',type:'uc',img:IMG.money},
+   q:'«Money» — это...',
+   opts:['Неисчисляемое (uncountable)','Исчисляемое (countable)','Оба типа'],ans:0,
+   exp:'MONEY — неисчисляемое. Нельзя: a money. Правильно: some money, a lot of money.'},
+  {tag:'Тип слова',word:{en:'cat',ru:'кошка',type:'c',img:IMG.cat},
+   q:'«Cat» — это...',
+   opts:['Исчисляемое (countable)','Неисчисляемое (uncountable)','Нет правила'],ans:0,
+   exp:'CAT — исчисляемое. Правильно: a cat, two cats, many cats.'},
+  {tag:'Тип слова',word:{en:'music',ru:'музыка',type:'uc',img:IMG.music},
+   q:'«Music» — это...',
+   opts:['Неисчисляемое (uncountable)','Исчисляемое (countable)','Оба типа'],ans:0,
+   exp:'MUSIC — неисчисляемое. Нельзя: a music. Правильно: some music, listen to music.'},
+  {tag:'Тип слова',word:{en:'egg',ru:'яйцо',type:'c',img:IMG.egg},
+   q:'«Egg» — это...',
+   opts:['Исчисляемое (countable)','Неисчисляемое (uncountable)','Нет разницы'],ans:0,
+   exp:'EGG — исчисляемое. Правильно: an egg, six eggs.'},
+  {tag:'Тип слова',word:{en:'rice',ru:'рис',type:'uc',img:IMG.rice},
+   q:'«Rice» — это...',
+   opts:['Неисчисляемое (uncountable)','Исчисляемое (countable)','Оба типа'],ans:0,
+   exp:'RICE — неисчисляемое. Нельзя: a rice, two rices. Правильно: some rice, a bowl of rice.'},
+  {tag:'Тип слова',word:{en:'snow',ru:'снег',type:'uc',img:IMG.snow},
+   q:'«Snow» — это...',
+   opts:['Неисчисляемое (uncountable)','Исчисляемое (countable)','Нет правила'],ans:0,
+   exp:'SNOW — неисчисляемое. Правильно: some snow, a lot of snow.'},
+  {tag:'Тип слова',word:{en:'dog',ru:'собака',type:'c',img:IMG.dog},
+   q:'«Dog» — это...',
+   opts:['Исчисляемое (countable)','Неисчисляемое (uncountable)','Оба типа'],ans:0,
+   exp:'DOG — исчисляемое. Правильно: a dog, three dogs.'},
+  {tag:'Тип слова',word:{en:'sugar',ru:'сахар',type:'uc',img:IMG.sugar},
+   q:'«Sugar» — это...',
+   opts:['Неисчисляемое (uncountable)','Исчисляемое (countable)','Нет разницы'],ans:0,
+   exp:'SUGAR — неисчисляемое. Правильно: some sugar, a spoon of sugar.'},
+  {tag:'Тип слова',word:{en:'pencil',ru:'карандаш',type:'c',img:IMG.pencil},
+   q:'«Pencil» — это...',
+   opts:['Исчисляемое (countable)','Неисчисляемое (uncountable)','Оба типа'],ans:0,
+   exp:'PENCIL — исчисляемое. Правильно: a pencil, two pencils.'},
+
+  /* === ТИП: Выбрать артикль/детерминер === */
+  {tag:'Артикль',word:{en:'coffee',ru:'кофе',type:'uc',img:IMG.coffee},
+   q:'I\'d like ___ coffee, please.',
+   opts:['some','a','two'],ans:0,
+   exp:'SOME + неисч. существительное. Нельзя "a coffee" (неисчисляемое) без уточнения — "a cup of coffee". В разговоре "some coffee" верно.'},
+  {tag:'Артикль',word:{en:'apple',ru:'яблоко',type:'c',img:IMG.apple},
+   q:'She is eating ___ apple.',
+   opts:['an','some','many'],ans:0,
+   exp:'AN + isчисл. сущ., начинающееся с гласной (a→an). Apple начинается с «a» (гласная) → AN apple.'},
+  {tag:'Артикль',word:{en:'bread',ru:'хлеб',type:'uc',img:IMG.bread},
+   q:'We need to buy ___ bread.',
+   opts:['some','a','many'],ans:0,
+   exp:'SOME + неисч. Bread — неисчисляемое, поэтому нельзя "a bread". Правильно: some bread.'},
+  {tag:'Артикль',word:{en:'book',ru:'книга',type:'c',img:IMG.book},
+   q:'I have ___ interesting book.',
+   opts:['an','some','many'],ans:0,
+   exp:'AN + исч. ед.ч., начинается с гласной (i-nteresting → звук [ɪ]). AN interesting book — артикль определяется звуком следующего слова.'},
+  {tag:'Артикль',word:{en:'milk',ru:'молоко',type:'uc',img:IMG.milk},
+   q:'Is there ___ milk in the fridge?',
+   opts:['any','a','many'],ans:0,
+   exp:'ANY + неисч. в вопросе. В вопросах и отрицаниях SOME→ANY. Milk — неисч., поэтому not "a milk".'},
+  {tag:'Артикль',word:{en:'car',ru:'машина',type:'c',img:IMG.car},
+   q:'My dad has ___ car.',
+   opts:['a','some','many'],ans:0,
+   exp:'A + исч. ед.ч., начинается с согласной (c). A car — правильно.'},
+  {tag:'Артикль',word:{en:'tea',ru:'чай',type:'uc',img:IMG.tea},
+   q:'Would you like ___ tea?',
+   opts:['some','a','two'],ans:0,
+   exp:'SOME + неисч. в предложении (угощение). Tea — неисч. Правильно: some tea.'},
+  {tag:'Артикль',word:{en:'flower',ru:'цветок',type:'c',img:IMG.flower},
+   q:'He gave her ___ flower.',
+   opts:['a','some','much'],ans:0,
+   exp:'A + исч. ед.ч. Flower начинается с согласного звука. A flower — правильно.'},
+  {tag:'Артикль',word:{en:'juice',ru:'сок',type:'uc',img:IMG.juice},
+   q:'There isn\'t ___ juice left.',
+   opts:['any','a','many'],ans:0,
+   exp:'ANY + неисч. в отрицании. Juice — неисч. В отрицаниях SOME→ANY. Not any juice.'},
+  {tag:'Артикль',word:{en:'egg',ru:'яйцо',type:'c',img:IMG.egg},
+   q:'I need ___ egg for the cake.',
+   opts:['an','some','much'],ans:0,
+   exp:'AN + исч. ед.ч., начинается с гласной (e). AN egg — правильно.'},
+
+  /* === ТИП: Квантификаторы === */
+  {tag:'Количество',word:{en:'water',ru:'вода',type:'uc',img:IMG.water},
+   q:'How ___ water do you drink a day?',
+   opts:['much','many','few'],ans:0,
+   exp:'MUCH — с неисчисляемыми. Water — неисч., поэтому MUCH (не MANY). How much water?'},
+  {tag:'Количество',word:{en:'book',ru:'книга',type:'c',img:IMG.book},
+   q:'How ___ books are on the shelf?',
+   opts:['many','much','little'],ans:0,
+   exp:'MANY — с исчисляемыми во мн. числе. Books — исч. мн.ч., поэтому MANY. How many books?'},
+  {tag:'Количество',word:{en:'money',ru:'деньги',type:'uc',img:IMG.money},
+   q:'She doesn\'t have ___ money.',
+   opts:['much','many','few'],ans:0,
+   exp:'MUCH + неисч. в отрицании. Money — неисч. (!) Правильно: not much money.'},
+  {tag:'Количество',word:{en:'cat',ru:'кошка',type:'c',img:IMG.cat},
+   q:'There are ___ cats in the garden.',
+   opts:['many','much','a little'],ans:0,
+   exp:'MANY + исч. мн.ч. Cats — исч. Правильно: many cats.'},
+  {tag:'Количество',word:{en:'cheese',ru:'сыр',type:'uc',img:IMG.cheese},
+   q:'I eat very ___ cheese.',
+   opts:['little','few','many'],ans:0,
+   exp:'LITTLE + неисч. Cheese — неисч. LITTLE (мало) для неисч. Few — только для исч.'},
+  {tag:'Количество',word:{en:'dog',ru:'собака',type:'c',img:IMG.dog},
+   q:'Only a ___ dogs live on this street.',
+   opts:['few','little','much'],ans:0,
+   exp:'A FEW + исч. мн.ч. Dogs — исч. A few = несколько. A little — только для неисч.'},
+  {tag:'Количество',word:{en:'salt',ru:'соль',type:'uc',img:IMG.salt},
+   q:'Add a ___ salt to the soup.',
+   opts:['little','few','many'],ans:0,
+   exp:'A LITTLE + неисч. Salt — неисч. A little = немного. A few — только для исч.'},
+  {tag:'Количество',word:{en:'tree',ru:'дерево',type:'c',img:IMG.tree},
+   q:'There are a ___ trees near the school.',
+   opts:['few','little','much'],ans:0,
+   exp:'A FEW + исч. мн.ч. Trees — исч. A few = несколько (позитивно). Few (без a) = почти нет.'},
+  {tag:'Количество',word:{en:'oil',ru:'масло (растит.)',type:'uc',img:IMG.oil},
+   q:'Use a ___ oil for cooking.',
+   opts:['little','few','many'],ans:0,
+   exp:'A LITTLE + неисч. Oil — неисч. жидкость. A little oil = немного масла.'},
+  {tag:'Количество',word:{en:'butter',ru:'масло (слив.)',type:'uc',img:IMG.butter},
+   q:'We have very ___ butter left.',
+   opts:['little','few','many'],ans:0,
+   exp:'LITTLE + неисч. Butter — неисч. Little butter = мало масла осталось.'},
+
+  /* === ТИП: Найти ошибку === */
+  {tag:'Ошибка',word:{en:'rice',ru:'рис',type:'uc',img:IMG.rice},
+   q:'Найди ошибку: "I ate a rice for lunch."',
+   opts:['Нельзя "a rice" — рис неисчисляемый','Ошибки нет','Нельзя "for lunch"'],ans:0,
+   exp:'RICE — неисчисляемое. Нельзя "a rice". Правильно: I ate some rice / I ate rice for lunch.'},
+  {tag:'Ошибка',word:{en:'news',ru:'новости',type:'uc',img:IMG.news},
+   q:'Найди ошибку: "The news are good today."',
+   opts:['"news" — неисч., нужно "is"','Ошибки нет','Нельзя "today"'],ans:0,
+   exp:'NEWS — неисчисляемое (!) несмотря на окончание -s. Правильно: The news IS good today.'},
+  {tag:'Ошибка',word:{en:'luggage',ru:'багаж',type:'uc',img:IMG.luggage},
+   q:'Найди ошибку: "I have two luggages."',
+   opts:['"luggage" неисч., нельзя "two luggages"','Ошибки нет','Нельзя "have"'],ans:0,
+   exp:'LUGGAGE — неисчисляемое. Нельзя "two luggages". Правильно: I have a lot of luggage / two pieces of luggage.'},
+  {tag:'Ошибка',word:{en:'homework',ru:'домашнее задание',type:'uc',img:IMG.homework},
+   q:'Найди ошибку: "I have many homeworks today."',
+   opts:['"homework" неисч., нельзя "many homeworks"','Ошибки нет','Нельзя "today"'],ans:0,
+   exp:'HOMEWORK — неисчисляемое. Нельзя "many homeworks". Правильно: I have a lot of homework / much homework.'},
+  {tag:'Ошибка',word:{en:'gold',ru:'золото',type:'uc',img:IMG.gold},
+   q:'Найди ошибку: "She wears a gold."',
+   opts:['"gold" неисч., нельзя "a gold"','Ошибки нет','Нельзя "wears"'],ans:0,
+   exp:'GOLD — неисчисляемое вещество. Нельзя "a gold". Правильно: She wears gold / She wears a gold ring.'},
+  {tag:'Ошибка',word:{en:'sand',ru:'песок',type:'uc',img:IMG.sand},
+   q:'Найди ошибку: "There are many sands on the beach."',
+   opts:['"sand" неисч., нельзя "many sands"','Ошибки нет','Нельзя "on the beach"'],ans:0,
+   exp:'SAND — неисчисляемое вещество. Нельзя "many sands". Правильно: There is a lot of sand on the beach.'},
+  {tag:'Ошибка',word:{en:'paper',ru:'бумага',type:'uc',img:IMG.paper},
+   q:'Выбери правильное: "I need ___ paper."',
+   opts:['some','a','two'],ans:0,
+   exp:'PAPER (материал) — неисчисляемое. Правильно: some paper. Но "a paper" = газета (исч. в другом значении).'},
+  {tag:'Ошибка',word:{en:'lamp',ru:'лампа',type:'c',img:IMG.lamp},
+   q:'Выбери правильное: "There is ___ lamp on the table."',
+   opts:['a','some','much'],ans:0,
+   exp:'LAMP — исчисляемое, ед.ч. Правильно: a lamp. Some и much — не для исч. ед.ч.'},
+  {tag:'Ошибка',word:{en:'bird',ru:'птица',type:'c',img:IMG.bird},
+   q:'Выбери правильное: "I can see ___ birds in the tree."',
+   opts:['some','much','a little'],ans:0,
+   exp:'SOME + исч. мн.ч. в утверждении. Birds — исч. мн.ч. Правильно: some birds. Much и a little — для неисч.'},
+  {tag:'Ошибка',word:{en:'window',ru:'окно',type:'c',img:IMG.window},
+   q:'Найди ошибку: "There are some window in the room."',
+   opts:['"window" должно быть "windows"','Ошибки нет','Нельзя "some"'],ans:0,
+   exp:'WINDOW — исчисляемое. После SOME с мн.ч. нужна форма множественного числа: some windowS.'},
+  {tag:'Ошибка',word:{en:'tea',ru:'чай',type:'uc',img:IMG.tea},
+   q:'Найди ошибку: "She drinks many teas every day."',
+   opts:['"tea" неисч., нужно "much tea"','Ошибки нет','Нельзя "every day"'],ans:0,
+   exp:'TEA — неисчисляемое. Нельзя "many teas". Правильно: She drinks a lot of tea / much tea every day.'}
+];
+
+/* ============================================================
+   ЛОГИКА
+============================================================ */
+var TOTAL=30, XP_PER_LEVEL=200;
+var questions=[],cur=0,score=0,xp=0,streak=0,hints=3,mistakes=[],results=[];
+var timerEnabled=false,timerInterval=null,timerSec=25,retryMode=false;
+var bestScore=0;
+
+function loadBest(){try{bestScore=parseInt(localStorage.getItem('cuc_best')||'0');}catch(e){}}
+function saveBest(){try{if(score>bestScore){bestScore=score;localStorage.setItem('cuc_best',score);}}catch(e){}}
+
+function goStart(){
+  loadBest(); retryMode=false;
+  document.getElementById('start-screen').style.display='';
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('record-box').innerHTML='🏆 Рекорд: <b>'+(bestScore||'—')+' / '+TOTAL+'</b>';
+}
+
+function startTest(){
+  questions=shuffle(Q_ALL).slice(0,TOTAL);
+  cur=0;score=0;mistakes=[];results=[];xp=0;streak=0;hints=3;
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='';
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('counter-tot').textContent=TOTAL;
+  document.getElementById('hint-count').textContent=hints;
+  document.getElementById('hint-btn').disabled=false;
+  document.getElementById('timer-chip').style.display=timerEnabled?'':'none';
+  updateXpUI(); updateStreakUI(); showQuestion();
+}
+
+function showQuestion(){
+  var q=questions[cur];
+  document.getElementById('counter-cur').textContent=cur+1;
+  document.getElementById('score-live').textContent=score;
+  document.getElementById('progress-fill').style.width=((cur/TOTAL)*100)+'%';
+  document.getElementById('q-tag').textContent=q.tag;
+  document.getElementById('q-text').innerHTML=q.q.replace('___','<span class="blank">___</span>');
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('next-btn').style.display='none';
+
+  // Блок слова с кнопкой перевода
+  var wb=document.getElementById('word-block-wrap');
+  if(q.word){
+    var typeLabel=q.word.type==='c'?'исчисляемое':'неисчисляемое';
+    var tagCls=q.word.type==='c'?'c':'uc';
+    wb.innerHTML='<div class="word-block">'
+      +'<span class="word-en">'+q.word.en+'</span>'
+      +'<button class="translate-btn" onclick="showTranslate('+cur+')">🌐 Перевод</button>'
+      +'</div>';
+  } else { wb.innerHTML=''; }
+
+  // Перемешиваем варианты
+  var correctText=q.opts[q.ans];
+  var shuffled=shuffle(q.opts);
+  q._sOpts=shuffled; q._sAns=shuffled.indexOf(correctText);
+
+  var optsDiv=document.getElementById('options');
+  optsDiv.innerHTML='';
+  shuffled.forEach(function(opt,i){
+    var btn=document.createElement('button');
+    btn.className='opt-btn'; btn.textContent=opt;
+    btn.onclick=function(){checkAnswer(i);};
+    optsDiv.appendChild(btn);
+  });
+  if(timerEnabled) startTimer();
+}
+
+function showTranslate(qIdx){
+  var q=questions[qIdx]; if(!q||!q.word) return;
+  var w=q.word;
+  var typeLabel=w.type==='c'?'Исчисляемое (Countable)':'Неисчисляемое (Uncountable)';
+  var tagCls=w.type==='c'?'c':'uc';
+  document.getElementById('tr-emoji').textContent=w.img;
+  document.getElementById('tr-word').textContent=w.en;
+  document.getElementById('tr-ru').textContent=w.ru;
+  var typeEl=document.getElementById('tr-type');
+  typeEl.textContent=typeLabel; typeEl.className='tr-type '+tagCls;
+  document.getElementById('tr-popup-wrap').classList.add('open');
+}
+function closeTrPopup(e){if(e.target===document.getElementById('tr-popup-wrap')) document.getElementById('tr-popup-wrap').classList.remove('open');}
+
+function checkAnswer(chosen){
+  clearTimer();
+  var q=questions[cur];
+  var ansIdx=q._sAns; var correctText=q._sOpts[ansIdx];
+  var correct=(chosen===ansIdx);
+  var btns=document.getElementById('options').querySelectorAll('.opt-btn');
+  btns.forEach(function(b,i){
+    b.disabled=true;
+    if(i===ansIdx) b.classList.add('correct');
+    else if(i===chosen&&!correct) b.classList.add('wrong');
+  });
+  var fb=document.getElementById('feedback');
+  if(correct){
+    score++; var gain=streak>=2?15:10; xp+=gain; streak++;
+    spawnXpPopup('+'+gain+' XP ✓','ok');
+    fb.className='feedback ok';
+    fb.innerHTML='✅ Верно! '+q.exp;
+    launchConfetti();
+  } else {
+    streak=0; xp=Math.max(0,xp-3);
+    spawnXpPopup('-3 XP','err');
+    mistakes.push({q:q.q+(q.word?' ['+q.word.en+']':''),ans:correctText});
+    fb.className='feedback err';
+    fb.innerHTML='❌ Ошибка. Правильно: <b>'+correctText+'</b>. '+q.exp;
+  }
+  results.push({ok:correct,q:q});
+  updateXpUI(); updateStreakUI();
+  document.getElementById('score-live').textContent=score;
+  document.getElementById('next-btn').style.display='inline-block';
+}
+
+function nextQuestion(){
+  cur++;
+  if(cur>=TOTAL){finishTest();return;}
+  showQuestion();
+}
+
+function startTimer(){
+  timerSec=25;
+  var chip=document.getElementById('timer-chip');
+  chip.textContent='⏱ '+timerSec; chip.className='timer-chip';
+  timerInterval=setInterval(function(){
+    timerSec--; chip.textContent='⏱ '+timerSec;
+    if(timerSec<=5) chip.className='timer-chip danger';
+    else if(timerSec<=10) chip.className='timer-chip warn';
+    if(timerSec<=0){clearTimer(); timeOut();}
+  },1000);
+}
+function clearTimer(){clearInterval(timerInterval);timerInterval=null;}
+function timeOut(){
+  var q=questions[cur]; var ansIdx=q._sAns; var correctText=q._sOpts[ansIdx];
+  document.getElementById('options').querySelectorAll('.opt-btn').forEach(function(b,i){b.disabled=true;if(i===ansIdx)b.classList.add('correct');});
+  streak=0; updateStreakUI();
+  mistakes.push({q:q.q+(q.word?' ['+q.word.en+']':''),ans:correctText});
+  results.push({ok:false,q:q});
+  var fb=document.getElementById('feedback');
+  fb.className='feedback err';
+  fb.innerHTML='⏰ Время вышло! Правильно: <b>'+correctText+'</b>. '+q.exp;
+  document.getElementById('next-btn').style.display='inline-block';
+}
+
+function updateXpUI(){
+  document.getElementById('xp-val').textContent=xp;
+  document.getElementById('xp-fill').style.width=((xp%XP_PER_LEVEL)/XP_PER_LEVEL*100)+'%';
+}
+function updateStreakUI(){
+  var badge=document.getElementById('streak-badge');
+  badge.textContent='🔥 '+streak+' подряд';
+  badge.className='streak-badge'+(streak>=5?' fire':streak>=3?' hot':'');
+}
+function spawnXpPopup(text,cls){
+  var el=document.createElement('div'); el.className='xp-popup '+cls; el.textContent=text;
+  var btn=document.getElementById('next-btn'); var rect=btn.getBoundingClientRect();
+  el.style.left=(rect.left+rect.width/2-30)+'px'; el.style.top=(rect.top-30+window.scrollY)+'px';
+  document.body.appendChild(el); setTimeout(function(){el.remove();},1100);
+}
+function useHint(){
+  if(hints<=0)return; hints--;
+  document.getElementById('hint-count').textContent=hints;
+  var q=questions[cur];
+  var fb=document.getElementById('feedback');
+  fb.innerHTML='💡 Подсказка: правильный ответ — <b>«'+q._sOpts[q._sAns]+'»</b>.';
+  fb.className='feedback ok';
+  if(hints===0) document.getElementById('hint-btn').disabled=true;
+}
+
+function finishTest(){
+  saveBest();
+  var pct=score/TOTAL;
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='block';
+  var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
+  var rank=pct>=0.9?{name:'Мастер',bg:'#ede9fe',color:'#6d28d9'}:
+           pct>=0.7?{name:'Знаток',bg:'#e4eef8',color:'#1A4A7A'}:
+           pct>=0.5?{name:'Ученик',bg:'#e4f0ea',color:'#2D5A3D'}:
+                   {name:'Новичок',bg:'#f0eaf8',color:'#6B2FA0'};
+  var emoji=pct===1?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
+  var msg=pct===1?'Отлично! Все ответы верны!':
+          pct>=0.8?'Очень хорошо! Разберите ошибки ниже.':
+          pct>=0.7?'Хороший результат! Изучите ошибки.':
+          'Нужна практика. Повторите справочник и попробуйте снова!';
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-score').textContent=score+' / '+TOTAL;
+  document.getElementById('res-xp').textContent='⭐ '+xp+' XP';
+  document.getElementById('res-msg').textContent=msg;
+  var sh=''; for(var i=1;i<=3;i++) sh+='<span class="star'+(stars>=i?' lit':'')+'" style="animation-delay:'+((i-1)*.18)+'s">⭐</span>';
+  document.getElementById('stars-row').innerHTML=sh;
+  document.getElementById('rank-badge-wrap').innerHTML='<span class="rank-badge" style="background:'+rank.bg+';color:'+rank.color+'">🏅 '+rank.name+'</span>';
+  if(pct>=0.9) launchBigConfetti();
+  var wrongCount=results.filter(function(r){return !r.ok;}).length;
+  var retryBtn=document.getElementById('retry-btn');
+  if(wrongCount>0&&!retryMode){retryBtn.style.display='inline-block';retryBtn.textContent='🔁 Работа над ошибками ('+wrongCount+')';}
+  else retryBtn.style.display='none';
+  var mBlock=document.getElementById('mistakes-block');
+  if(mistakes.length>0){
+    var html='<h3 style="font-size:14px;font-weight:600;color:#7aa8d4;margin-bottom:.75rem">Разбор ошибок:</h3>';
+    mistakes.forEach(function(m){html+='<div class="mistake-item"><div class="m-q">'+m.q+'</div><div class="m-a">✓ '+m.ans+'</div></div>';});
+    mBlock.innerHTML=html;
+  } else mBlock.innerHTML='';
+}
+
+function retryMistakes(){
+  var wrong=results.filter(function(r){return !r.ok;}); if(!wrong.length)return;
+  retryMode=true;
+  questions=wrong.map(function(r){return r.q;});
+  cur=0;score=0;mistakes=[];results=[];xp=0;streak=0;hints=3;
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='';
+  document.getElementById('counter-tot').textContent=questions.length;
+  document.getElementById('hint-count').textContent=hints;
+  document.getElementById('hint-btn').disabled=false;
+  document.getElementById('timer-chip').style.display=timerEnabled?'':'none';
+  updateXpUI(); updateStreakUI(); showQuestion();
+}
+
+function toggleRef(){document.getElementById('ref-modal').classList.toggle('open');}
+function closeRefModal(e){if(e.target===document.getElementById('ref-modal')) document.getElementById('ref-modal').classList.remove('open');}
+function shuffle(arr){return arr.slice().sort(function(){return Math.random()-.5;});}
+
+/* Конфетти */
+var canvas=document.getElementById('confetti-canvas');
+var ctx=canvas.getContext('2d');
+var particles=[],animId=null;
+var COLORS=['#378ADD','#22c55e','#f59e0b','#ef4444','#a855f7','#ec4899','#14b8a6'];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize(); window.addEventListener('resize',resize);
+function cp(x,y,big){var a=Math.random()*Math.PI*2,s=big?(Math.random()*10+5):(Math.random()*7+3);return{x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-(big?8:4),color:COLORS[Math.floor(Math.random()*COLORS.length)],size:big?(Math.random()*10+5):(Math.random()*7+3),rotation:Math.random()*360,rotSpeed:(Math.random()-.5)*8,alpha:1,shape:Math.random()>.5?'rect':'circle'};}
+function spawnBurst(x,y,n,big){for(var i=0;i<n;i++) particles.push(cp(x,y,big));}
+function launchConfetti(){var r=document.querySelector('.card').getBoundingClientRect();spawnBurst(r.left+r.width/2,r.top+r.height*.3,28,false);if(!animId)animate();}
+function launchBigConfetti(){var cx=window.innerWidth/2,cy=window.innerHeight/2;spawnBurst(cx,cy,120,true);setTimeout(function(){spawnBurst(cx-200,cy,60,true);},200);setTimeout(function(){spawnBurst(cx+200,cy,60,true);},400);if(!animId)animate();}
+function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.vx*=.99;p.rotation+=p.rotSpeed;p.alpha-=.016;ctx.save();ctx.globalAlpha=Math.max(0,p.alpha);ctx.translate(p.x,p.y);ctx.rotate(p.rotation*Math.PI/180);ctx.fillStyle=p.color;if(p.shape==='rect'){ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);}else{ctx.beginPath();ctx.arc(0,0,p.size/2,0,Math.PI*2);ctx.fill();}ctx.restore();});particles=particles.filter(function(p){return p.alpha>0;});if(particles.length>0){animId=requestAnimationFrame(animate);}else{animId=null;ctx.clearRect(0,0,canvas.width,canvas.height);}}
+
+goStart();
+</script>
+</body>
+</html>

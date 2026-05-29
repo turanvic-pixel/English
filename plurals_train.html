@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Множественное число существительных</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Baloo+2:wght@700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',Arial,sans-serif;min-height:100vh;background:#f0f4ff;background-image:radial-gradient(circle at 20% 20%,#e0e7ff 0%,transparent 50%),radial-gradient(circle at 80% 80%,#fce7f3 0%,transparent 50%);display:flex;align-items:flex-start;justify-content:center;padding:1.5rem 1rem 3rem}
+.card{background:#fff;border-radius:20px;border:2px solid #e0e7ff;padding:1.8rem 1.8rem 2.2rem;max-width:700px;width:100%;box-shadow:0 8px 40px rgba(59,130,246,.12)}
+h1{text-align:center;font-family:'Baloo 2',cursive;font-size:22px;font-weight:800;color:#1e40af;margin-bottom:.2rem}
+.subtitle{text-align:center;font-size:13px;color:#6b7280;margin-bottom:1.4rem}
+.stage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.2rem}
+.sc{border:2px solid #e0e7ff;border-radius:14px;padding:13px 8px 11px;background:#f8faff;cursor:pointer;text-align:center;transition:all .15s}
+.sc:hover:not(.locked){background:#eff6ff;border-color:#3b82f6;transform:translateY(-2px)}
+.sc.locked{opacity:.4;cursor:default}
+.sc.done{border-color:#22c55e;background:#f0fdf4}
+.sc.active-s{border-color:#3b82f6;background:#e0eeff}
+.si{font-size:1.7rem;display:block;margin-bottom:4px}
+.st{font-size:12px;font-weight:800;color:#1e40af;margin-bottom:2px}
+.sd{font-size:10px;color:#9ca3af;line-height:1.4}
+.sbg{display:inline-block;font-size:9px;font-weight:800;padding:2px 8px;border-radius:99px;margin-top:4px}
+.done-b{background:#dcfce7;color:#15803d}.lock-b{background:#e0e7ff;color:#9ca3af}.open-b{background:#dbeafe;color:#1d4ed8}
+.unlock-rule{font-size:12px;color:#4b5563;background:#f8faff;border:1.5px solid #e0e7ff;border-radius:10px;padding:8px 13px;margin-bottom:1rem;line-height:1.6}
+.rec{background:#fafafa;border:1.5px solid #e0e7ff;border-radius:10px;padding:9px 15px;font-size:13px;color:#9ca3af;margin-bottom:1rem}
+.rec b{color:#3b82f6}
+.trow{display:flex;align-items:center;gap:10px;background:#f8faff;border:1.5px solid #e0e7ff;border-radius:10px;padding:10px 14px;margin-bottom:1rem}
+.tlbl{flex:1;font-size:13px;color:#1a1f2e;font-weight:700}
+.tsub{font-size:11px;color:#9ca3af;font-weight:400;display:block;margin-top:1px}
+.tswitch{position:relative;width:44px;height:24px;flex-shrink:0}
+.tswitch input{opacity:0;width:0;height:0}
+.tslider{position:absolute;inset:0;background:#e0e7ff;border-radius:99px;cursor:pointer;transition:background .25s}
+.tslider:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.tswitch input:checked+.tslider{background:#3b82f6}
+.tswitch input:checked+.tslider:before{transform:translateX(20px)}
+.start-btn{width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;font-family:'Baloo 2',cursive;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:.5rem;transition:all .15s}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(59,130,246,.35)}
+.xp-row{display:flex;align-items:center;gap:8px;margin-bottom:.6rem}
+.xp-lbl{font-size:11px;color:#9ca3af;font-weight:700;white-space:nowrap}
+.xp-track{flex:1;height:6px;background:#e0e7ff;border-radius:4px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#a855f7);border-radius:4px;transition:width .5s ease}
+.xp-val{font-size:12px;font-weight:800;color:#a855f7;min-width:38px;text-align:right}
+.hud{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:.75rem}
+.hchip{font-size:12px;background:#eff6ff;color:#1d4ed8;border-radius:99px;padding:4px 12px;font-weight:700}
+.stk{font-size:12px;font-weight:800;background:#eff6ff;color:#1d4ed8;border-radius:99px;padding:4px 12px;transition:all .3s}
+.stk.hot{background:#fef3c7;color:#92400e}.stk.fire{background:linear-gradient(135deg,#fef9c3,#fde68a);color:#92400e;animation:sB .45s ease}
+@keyframes sB{0%{transform:scale(1)}40%{transform:scale(1.2)}100%{transform:scale(1)}}
+.tchip{font-size:12px;font-weight:800;background:#eff6ff;color:#1d4ed8;border-radius:99px;padding:4px 12px;transition:background .3s,color .3s;margin-left:auto}
+.tchip.warn{background:#fef3c7;color:#92400e}.tchip.danger{background:#fee2e2;color:#b91c1c}
+.pbar{height:8px;background:#e0e7ff;border-radius:99px;margin-bottom:1rem;overflow:hidden}
+.pfill{height:100%;background:linear-gradient(90deg,#3b82f6,#6366f1);border-radius:99px;transition:width .4s ease}
+.qmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+.qtag{font-size:11px;background:#eff6ff;color:#1d4ed8;padding:2px 10px;border-radius:99px;font-weight:800}
+.hbtn{font-size:12px;font-weight:700;background:#f8faff;border:1.5px solid #e0e7ff;border-radius:8px;padding:5px 12px;cursor:pointer;color:#9ca3af;font-family:'Nunito',Arial,sans-serif;transition:background .12s}
+.hbtn:hover:not(:disabled){background:#eff6ff;color:#3b82f6}
+.hbtn:disabled{opacity:.3;cursor:default}
+.qill{width:100%;max-height:130px;margin-bottom:.75rem;border-radius:14px;overflow:hidden;background:#f8faff;border:1.5px solid #e0e7ff;display:flex;align-items:center;justify-content:center}
+.qill svg{width:100%;height:130px}
+.qwbox{background:linear-gradient(135deg,#eff6ff,#f5f3ff);border:2px solid #c7d2fe;border-radius:16px;padding:1rem 1.5rem;text-align:center;margin-bottom:1.2rem}
+.qword{font-family:'Baloo 2',cursive;font-size:28px;font-weight:800;color:#1e40af;margin-bottom:.3rem}
+.qtrans{font-size:13px;color:#6b7280}
+.qtask{font-size:14px;font-weight:700;color:#4b5563;margin-top:.5rem}
+.opts{display:flex;flex-direction:column;gap:9px}
+.obtn{padding:12px 18px;border:2px solid #e0e7ff;border-radius:12px;background:#f8faff;color:#1a1f2e;font-size:16px;font-weight:700;cursor:pointer;text-align:left;transition:all .13s;font-family:'Nunito',Arial,sans-serif}
+.obtn:hover:not(:disabled){background:#eff6ff;border-color:#3b82f6;transform:translateX(4px)}
+.obtn.correct{background:#dcfce7;border-color:#22c55e;color:#14532d}
+.obtn.wrong{background:#fee2e2;border-color:#ef4444;color:#7f1d1d}
+.obtn:disabled{cursor:default;transform:none}
+.fb{margin-top:.8rem;font-size:14px;min-height:20px;line-height:1.6;padding:0 4px}
+.fb.ok{color:#15803d;font-weight:600}.fb.err{color:#b91c1c}
+.nbtn{margin-top:1.1rem;padding:11px 28px;border-radius:12px;border:none;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;display:none;transition:all .15s}
+.nbtn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(99,102,241,.4)}
+.xpop{position:fixed;pointer-events:none;font-weight:800;font-size:.95rem;border-radius:10px;padding:3px 13px;z-index:9999;animation:fUp 1s ease forwards}
+.xpop.ok{background:#dcfce7;color:#14532d}.xpop.err{background:#fee2e2;color:#7f1d1d}
+@keyframes fUp{0%{opacity:1;transform:translateY(0)}80%{opacity:1}100%{opacity:0;transform:translateY(-60px)}}
+.rcard{text-align:center;padding:1.2rem 0 .5rem}
+.remoji{font-size:52px;margin-bottom:.6rem}
+.srow{display:flex;justify-content:center;gap:6px;font-size:2rem;margin:.4rem 0}
+.star{filter:grayscale(1) opacity(.3);display:inline-block}
+.star.lit{filter:none;animation:sP .4s ease}
+@keyframes sP{0%{transform:scale(.5) rotate(-20deg)}70%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
+.rbadge{display:inline-block;padding:4px 18px;border-radius:99px;font-size:12px;font-weight:800;margin-bottom:.5rem}
+.rscore{font-size:42px;font-weight:900;color:#1e40af;font-family:'Baloo 2',cursive}
+.rlbl{font-size:14px;color:#9ca3af;margin:.3rem 0 1.2rem}
+.rxp{font-size:14px;color:#a855f7;font-weight:800;margin-bottom:.4rem}
+.rmsg{font-size:15px;color:#1a1f2e;margin-bottom:1.5rem;line-height:1.7;max-width:480px;margin-left:auto;margin-right:auto}
+.rbtn{padding:12px 32px;border-radius:12px;border:none;background:#eff6ff;color:#1d4ed8;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer}
+.rbtn:hover{background:#dbeafe}
+.nsbtn{margin-top:.6rem;padding:12px 28px;border-radius:12px;border:none;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer}
+.retrybtn{margin-top:.6rem;padding:11px 24px;border-radius:12px;border:2px solid #fde68a;background:#fef9c3;color:#92400e;font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;cursor:pointer;display:none}
+.retrybtn:hover{background:#fde68a}
+.mlist{text-align:left;border-top:1px solid #e0e7ff;padding-top:1.2rem;margin-top:1.2rem}
+.mi{font-size:13px;color:#1a1f2e;padding:9px 13px;background:#f8faff;border-radius:10px;margin-bottom:7px;border-left:3px solid #22c55e}
+.mi .mq{color:#9ca3af;margin-bottom:3px;font-size:12px}
+.mi .ma{color:#15803d;font-weight:700}
+.refbtn{margin-top:.8rem;display:block;width:100%;padding:9px 0;border-radius:10px;border:1.5px solid #e0e7ff;background:#f8faff;color:#9ca3af;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',Arial,sans-serif;text-align:center}
+.refbtn:hover{background:#eff6ff;color:#3b82f6}
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center;padding:1rem}
+.modal-wrap.open{display:flex}
+.modal{background:#fff;border-radius:18px;padding:1.5rem;max-width:640px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+.modal h2{font-family:'Baloo 2',cursive;font-size:17px;color:#1e40af;margin-bottom:1rem}
+.mclose{float:right;background:none;border:none;font-size:22px;cursor:pointer;color:#9ca3af;line-height:1}
+.rtbl{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:1rem}
+.rtbl th{background:#eff6ff;color:#1e40af;padding:7px 11px;font-weight:800;text-align:left}
+.rtbl td{padding:7px 11px;border-bottom:1px solid #e0e7ff;color:#1a1f2e;vertical-align:top}
+.rtbl tr:last-child td{border-bottom:none}
+.rsect{font-family:'Baloo 2',cursive;font-size:14px;font-weight:800;color:#1e40af;margin:1rem 0 .5rem}
+canvas#cc{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+</style>
+</head>
+<body>
+<canvas id="cc"></canvas>
+<div class="modal-wrap" id="refm">
+  <div class="modal">
+    <button class="mclose" onclick="toggleRef()">&#x2715;</button>
+    <h2>&#x1F4CB; Справочник: Множественное число существительных</h2>
+    <p class="rsect">&#x1F4CC; Основные правила</p>
+    <table class="rtbl">
+      <tr><th>Окончание слова</th><th>Мн. число</th><th>Чтение</th><th>Примеры</th></tr>
+      <tr><td>Звонкий согласный</td><td>-s</td><td>[z]</td><td>wall &rarr; walls</td></tr>
+      <tr><td>Глухой согласный</td><td>-s</td><td>[s]</td><td>book &rarr; books</td></tr>
+      <tr><td>s, ss, ch, sh, x</td><td>-es</td><td>[&igrave;z]</td><td>bus &rarr; buses, class &rarr; classes</td></tr>
+      <tr><td>c, g, s, z + e</td><td>-es</td><td>[&igrave;z]</td><td>place &rarr; places, horse &rarr; horses</td></tr>
+      <tr><td>Гласный</td><td>-s</td><td>[z]</td><td>menu &rarr; menus</td></tr>
+      <tr><td>-o</td><td>-es</td><td>[z]</td><td>tomato &rarr; tomatoes (photo &rarr; photos)</td></tr>
+      <tr><td>y после гласного</td><td>-s</td><td>[z]</td><td>day &rarr; days</td></tr>
+      <tr><td>y после согласного</td><td>-ies</td><td>[&igrave;z]</td><td>copy &rarr; copies</td></tr>
+      <tr><td>f, fe (f&rarr;v)</td><td>-ves</td><td>[z]</td><td>wolf &rarr; wolves (roof &rarr; roofs)</td></tr>
+    </table>
+    <p class="rsect">&#x26A0;&#xFE0F; Исключения</p>
+    <table class="rtbl">
+      <tr><th>Ед. число</th><th>Мн. число</th><th>Ед. число</th><th>Мн. число</th></tr>
+      <tr><td>man</td><td>men</td><td>tooth</td><td>teeth</td></tr>
+      <tr><td>woman</td><td>women</td><td>child</td><td>children</td></tr>
+      <tr><td>person</td><td>people</td><td>ox</td><td>oxen</td></tr>
+      <tr><td>penny</td><td>pence</td><td>sheep</td><td>sheep</td></tr>
+      <tr><td>foot</td><td>feet</td><td>deer</td><td>deer</td></tr>
+      <tr><td>mouse</td><td>mice</td><td>goose</td><td>geese</td></tr>
+    </table>
+  </div>
+</div>
+<div class="card">
+  <h1>&#x1F4DA; Множественное число существительных</h1>
+  <p class="subtitle">3 ступени &middot; Картинки &middot; Геймификация &middot; Разбор ошибок</p>
+  <div id="ss">
+    <div class="unlock-rule">&#x1F513; Для открытия следующей ступени нужно набрать <b>70%+</b> правильных ответов.</div>
+    <div class="stage-grid" id="sg"></div>
+    <div class="rec" id="rb">Рекорды загружаются...</div>
+    <div class="trow"><label class="tlbl">&#x23F1; Таймер<span class="tsub">20 секунд на вопрос</span></label><label class="tswitch"><input type="checkbox" id="tt" onchange="timerEnabled=this.checked"><span class="tslider"></span></label></div>
+    <button class="start-btn" onclick="startSelected()">&#x25B6; Начать</button>
+  </div>
+  <div id="qs" style="display:none">
+    <div class="xp-row"><span class="xp-lbl">&#x2B50; XP</span><div class="xp-track"><div class="xp-fill" id="xf" style="width:0%"></div></div><span class="xp-val" id="xv">0</span></div>
+    <div class="hud">
+      <span class="hchip" id="sc2">Ступень 1</span>
+      <span class="hchip">&#x2753; <span id="cc2">1</span>/<span id="ct">20</span></span>
+      <span class="hchip">&#x2705; <span id="sl">0</span></span>
+      <span class="stk" id="stk">&#x1F525; 0 подряд</span>
+      <span class="tchip" id="tc" style="display:none">&#x23F1; 20</span>
+    </div>
+    <div class="pbar"><div class="pfill" id="pf" style="width:0%"></div></div>
+    <div class="qmeta"><span class="qtag" id="qt">Правило</span><button class="hbtn" id="hb" onclick="useHint()">&#x1F4A1; Подсказка (<span id="hc">3</span>)</button></div>
+    <div class="qill" id="qi"></div>
+    <div class="qwbox"><div class="qword" id="qw"></div><div class="qtrans" id="qtr"></div><div class="qtask">Выберите правильное множественное число:</div></div>
+    <div class="opts" id="op"></div>
+    <div class="fb" id="fb"></div>
+    <button class="nbtn" id="nb" onclick="nextQ()">Следующий &rarr;</button>
+  </div>
+  <div id="rs" style="display:none">
+    <div class="rcard">
+      <div class="remoji" id="re">&#x1F3C6;</div>
+      <div class="srow" id="sr"></div>
+      <div id="rbw"></div>
+      <div class="rscore" id="rsc">0/20</div>
+      <div class="rlbl" id="rl">правильных ответов</div>
+      <div class="rxp" id="rxp">&#x2B50; 0 XP</div>
+      <div class="rmsg" id="rm"></div>
+      <button class="rbtn" onclick="goStart()">&larr; На главную</button>
+      <button class="nsbtn" id="nsb" onclick="goNextStage()" style="display:none">&#x25B6; Далее &rarr;</button>
+      <button class="retrybtn" id="retb" onclick="retryMistakes()">&#x1F501; Работа над ошибками</button>
+    </div>
+    <div class="mlist" id="mb"></div>
+  </div>
+  <button class="refbtn" onclick="toggleRef()">&#x1F4CB; Справочник по правилам</button>
+</div>
+<script>
+var IMGS={
+wall:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#fef3c7"/><g fill="#f59e0b" stroke="#d97706" stroke-width="1"><rect x="10" y="10" width="55" height="20"/><rect x="69" y="10" width="55" height="20"/><rect x="128" y="10" width="55" height="20"/><rect x="187" y="10" width="63" height="20"/><rect x="10" y="34" width="38" height="20"/><rect x="52" y="34" width="55" height="20"/><rect x="111" y="34" width="55" height="20"/><rect x="170" y="34" width="80" height="20"/><rect x="10" y="58" width="55" height="20"/><rect x="69" y="58" width="55" height="20"/><rect x="128" y="58" width="55" height="20"/><rect x="187" y="58" width="63" height="20"/><rect x="10" y="82" width="38" height="20"/><rect x="52" y="82" width="55" height="20"/><rect x="111" y="82" width="55" height="20"/><rect x="170" y="82" width="80" height="20"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#92400e" font-family="Arial">стена / стены</text></svg>',
+book:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#eff6ff"/><rect x="40" y="12" width="70" height="88" rx="4" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/><rect x="45" y="17" width="60" height="78" rx="3" fill="#60a5fa"/><line x1="45" y1="32" x2="99" y2="32" stroke="#93c5fd" stroke-width="1.5"/><line x1="45" y1="46" x2="99" y2="46" stroke="#93c5fd" stroke-width="1.5"/><line x1="45" y1="60" x2="99" y2="60" stroke="#93c5fd" stroke-width="1.5"/><rect x="42" y="12" width="6" height="88" rx="2" fill="#1d4ed8"/><rect x="148" y="12" width="70" height="88" rx="4" fill="#22c55e" stroke="#15803d" stroke-width="2"/><rect x="153" y="17" width="60" height="78" rx="3" fill="#4ade80"/><line x1="153" y1="32" x2="207" y2="32" stroke="#86efac" stroke-width="1.5"/><line x1="153" y1="46" x2="207" y2="46" stroke="#86efac" stroke-width="1.5"/><line x1="153" y1="60" x2="207" y2="60" stroke="#86efac" stroke-width="1.5"/><rect x="150" y="12" width="6" height="88" rx="2" fill="#15803d"/><text x="130" y="114" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">книга / книги</text></svg>',
+bus:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#f0fdf4"/><g transform="translate(20,10)"><rect x="0" y="10" width="95" height="60" rx="8" fill="#f59e0b" stroke="#d97706" stroke-width="2"/><rect x="5" y="5" width="85" height="20" rx="6" fill="#fcd34d"/><rect x="8" y="20" width="24" height="18" rx="3" fill="#bae6fd"/><rect x="36" y="20" width="24" height="18" rx="3" fill="#bae6fd"/><rect x="64" y="20" width="24" height="18" rx="3" fill="#bae6fd"/><circle cx="20" cy="76" r="10" fill="#1f2937"/><circle cx="20" cy="76" r="5" fill="#9ca3af"/><circle cx="75" cy="76" r="10" fill="#1f2937"/><circle cx="75" cy="76" r="5" fill="#9ca3af"/></g><g transform="translate(140,10)"><rect x="0" y="10" width="95" height="60" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/><rect x="5" y="5" width="85" height="20" rx="6" fill="#60a5fa"/><rect x="8" y="20" width="24" height="18" rx="3" fill="#bae6fd"/><rect x="36" y="20" width="24" height="18" rx="3" fill="#bae6fd"/><rect x="64" y="20" width="24" height="18" rx="3" fill="#bae6fd"/><circle cx="20" cy="76" r="10" fill="#1f2937"/><circle cx="20" cy="76" r="5" fill="#9ca3af"/><circle cx="75" cy="76" r="10" fill="#1f2937"/><circle cx="75" cy="76" r="5" fill="#9ca3af"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">автобус / автобусы</text></svg>',
+box:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#fff7ed"/><g transform="translate(25,5)"><rect x="5" y="30" width="70" height="60" rx="3" fill="#f59e0b" stroke="#d97706" stroke-width="2"/><polygon points="5,30 40,10 75,30" fill="#fcd34d" stroke="#d97706" stroke-width="1.5"/></g><g transform="translate(150,5)"><rect x="5" y="30" width="70" height="60" rx="3" fill="#ef4444" stroke="#dc2626" stroke-width="2"/><polygon points="5,30 40,10 75,30" fill="#fca5a5" stroke="#dc2626" stroke-width="1.5"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#92400e" font-family="Arial">коробка / коробки</text></svg>',
+wolf:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#f1f5f9"/><g transform="translate(15,8)"><ellipse cx="50" cy="70" rx="35" ry="22" fill="#6b7280"/><circle cx="50" cy="44" r="22" fill="#6b7280"/><polygon points="32,26 26,6 44,24" fill="#4b5563"/><polygon points="68,26 74,6 56,24" fill="#4b5563"/><circle cx="41" cy="42" r="3.5" fill="#1f2937"/><circle cx="59" cy="42" r="3.5" fill="#1f2937"/><rect x="24" y="88" width="10" height="24" rx="3" fill="#6b7280"/><rect x="66" y="88" width="10" height="24" rx="3" fill="#6b7280"/></g><g transform="translate(140,8)"><ellipse cx="50" cy="70" rx="35" ry="22" fill="#4b5563"/><circle cx="50" cy="44" r="22" fill="#4b5563"/><polygon points="32,26 26,6 44,24" fill="#374151"/><polygon points="68,26 74,6 56,24" fill="#374151"/><circle cx="41" cy="42" r="3.5" fill="#1f2937"/><circle cx="59" cy="42" r="3.5" fill="#1f2937"/><rect x="24" y="88" width="10" height="24" rx="3" fill="#4b5563"/><rect x="66" y="88" width="10" height="24" rx="3" fill="#4b5563"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#374151" font-family="Arial">волк / волки</text></svg>',
+tomato:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#fff7ed"/><g transform="translate(28,5)"><ellipse cx="48" cy="60" rx="36" ry="38" fill="#ef4444"/><ellipse cx="48" cy="55" rx="30" ry="32" fill="#f87171"/><path d="M48 23 Q55 5 48 2 Q41 5 48 23" fill="#22c55e"/></g><g transform="translate(155,5)"><ellipse cx="48" cy="60" rx="36" ry="38" fill="#ef4444"/><ellipse cx="48" cy="55" rx="30" ry="32" fill="#f87171"/><path d="M48 23 Q55 5 48 2 Q41 5 48 23" fill="#22c55e"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#dc2626" font-family="Arial">помидор / помидоры</text></svg>',
+copy:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#f8faff"/><g transform="translate(20,8)"><rect x="5" y="15" width="68" height="86" rx="4" fill="#fff" stroke="#d1d5db" stroke-width="2"/><rect x="0" y="8" width="68" height="86" rx="4" fill="#fff" stroke="#3b82f6" stroke-width="2"/><line x1="9" y1="22" x2="59" y2="22" stroke="#bfdbfe" stroke-width="2"/><line x1="9" y1="34" x2="59" y2="34" stroke="#bfdbfe" stroke-width="2"/><line x1="9" y1="46" x2="59" y2="46" stroke="#bfdbfe" stroke-width="2"/></g><g transform="translate(138,8)"><rect x="5" y="15" width="68" height="86" rx="4" fill="#fff" stroke="#d1d5db" stroke-width="2"/><rect x="0" y="8" width="68" height="86" rx="4" fill="#fff" stroke="#22c55e" stroke-width="2"/><line x1="9" y1="22" x2="59" y2="22" stroke="#bbf7d0" stroke-width="2"/><line x1="9" y1="34" x2="59" y2="34" stroke="#bbf7d0" stroke-width="2"/><line x1="9" y1="46" x2="59" y2="46" stroke="#bbf7d0" stroke-width="2"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">копия / копии</text></svg>',
+day:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#fef9c3"/><g transform="translate(15,5)"><rect x="0" y="8" width="102" height="88" rx="8" fill="#fff" stroke="#fcd34d" stroke-width="2"/><rect x="0" y="8" width="102" height="24" rx="8" fill="#f59e0b"/><text x="51" y="25" text-anchor="middle" font-size="10" fill="white" font-weight="bold" font-family="Arial">MONDAY</text><text x="51" y="68" text-anchor="middle" font-size="32" fill="#f59e0b" font-weight="bold" font-family="Arial">1</text></g><g transform="translate(143,5)"><rect x="0" y="8" width="102" height="88" rx="8" fill="#fff" stroke="#fcd34d" stroke-width="2"/><rect x="0" y="8" width="102" height="24" rx="8" fill="#f59e0b"/><text x="51" y="25" text-anchor="middle" font-size="10" fill="white" font-weight="bold" font-family="Arial">TUESDAY</text><text x="51" y="68" text-anchor="middle" font-size="32" fill="#f59e0b" font-weight="bold" font-family="Arial">2</text></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#92400e" font-family="Arial">день / дни</text></svg>',
+man:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#eff6ff"/><g transform="translate(28,5)"><circle cx="45" cy="26" r="18" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/><rect x="29" y="46" width="32" height="48" rx="6" fill="#3b82f6"/><rect x="19" y="48" width="13" height="34" rx="5" fill="#3b82f6"/><rect x="61" y="48" width="13" height="34" rx="5" fill="#3b82f6"/><rect x="29" y="90" width="13" height="22" rx="5" fill="#1f2937"/><rect x="49" y="90" width="13" height="22" rx="5" fill="#1f2937"/></g><g transform="translate(155,5)"><circle cx="45" cy="26" r="18" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/><rect x="29" y="46" width="32" height="48" rx="6" fill="#ef4444"/><rect x="19" y="48" width="13" height="34" rx="5" fill="#ef4444"/><rect x="61" y="48" width="13" height="34" rx="5" fill="#ef4444"/><rect x="29" y="90" width="13" height="22" rx="5" fill="#1f2937"/><rect x="49" y="90" width="13" height="22" rx="5" fill="#1f2937"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">мужчина (исключение!)</text></svg>',
+woman:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#fdf4ff"/><g transform="translate(28,5)"><circle cx="45" cy="26" r="18" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/><path d="M28 50 Q45 90 62 50" fill="#ec4899" stroke="#db2777" stroke-width="2"/><rect x="34" y="48" width="22" height="24" fill="#ec4899"/><rect x="20" y="50" width="13" height="33" rx="5" fill="#ec4899"/><rect x="62" y="50" width="13" height="33" rx="5" fill="#ec4899"/></g><g transform="translate(155,5)"><circle cx="45" cy="26" r="18" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/><path d="M28 50 Q45 90 62 50" fill="#a855f7" stroke="#7c3aed" stroke-width="2"/><rect x="34" y="48" width="22" height="24" fill="#a855f7"/><rect x="20" y="50" width="13" height="33" rx="5" fill="#a855f7"/><rect x="62" y="50" width="13" height="33" rx="5" fill="#a855f7"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">женщина (исключение!)</text></svg>',
+child:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#fef9c3"/><g transform="translate(28,5)"><circle cx="45" cy="27" r="17" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/><rect x="31" y="46" width="28" height="42" rx="5" fill="#22c55e"/><rect x="21" y="48" width="12" height="30" rx="5" fill="#22c55e"/><rect x="59" y="48" width="12" height="30" rx="5" fill="#22c55e"/></g><g transform="translate(148,5)"><circle cx="30" cy="30" r="14" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/><rect x="19" y="46" width="22" height="36" rx="5" fill="#3b82f6"/><rect x="10" y="48" width="11" height="26" rx="5" fill="#3b82f6"/><rect x="41" y="48" width="11" height="26" rx="5" fill="#3b82f6"/><circle cx="67" cy="32" r="14" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/><rect x="56" y="48" width="22" height="36" rx="5" fill="#ec4899"/><rect x="47" y="48" width="11" height="26" rx="5" fill="#ec4899"/><rect x="78" y="48" width="11" height="26" rx="5" fill="#ec4899"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#92400e" font-family="Arial">ребёнок (исключение!)</text></svg>',
+foot:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#fff7ed"/><g transform="translate(18,12)"><path d="M20 80 Q20 38 40 33 Q65 28 75 53 Q85 73 80 80 Z" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/><ellipse cx="30" cy="35" rx="8" ry="5" fill="#fcd34d" transform="rotate(-30,30,35)"/><ellipse cx="45" cy="30" rx="8" ry="5" fill="#fcd34d" transform="rotate(-10,45,30)"/><ellipse cx="60" cy="30" rx="8" ry="5" fill="#fcd34d" transform="rotate(10,60,30)"/></g><g transform="translate(145,12)"><path d="M20 80 Q20 38 40 33 Q65 28 75 53 Q85 73 80 80 Z" fill="#fb923c" stroke="#ea580c" stroke-width="2"/><ellipse cx="30" cy="35" rx="8" ry="5" fill="#fed7aa" transform="rotate(-30,30,35)"/><ellipse cx="45" cy="30" rx="8" ry="5" fill="#fed7aa" transform="rotate(-10,45,30)"/><ellipse cx="60" cy="30" rx="8" ry="5" fill="#fed7aa" transform="rotate(10,60,30)"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#92400e" font-family="Arial">ступня (исключение!)</text></svg>',
+tooth:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#f0fdf4"/><g transform="translate(32,5)"><path d="M48 8 Q65 8 68 33 Q72 58 65 88 Q58 112 50 98 Q42 112 35 88 Q28 58 32 33 Q35 8 48 8 Z" fill="white" stroke="#d1d5db" stroke-width="2"/></g><g transform="translate(155,5)"><path d="M48 8 Q65 8 68 33 Q72 58 65 88 Q58 112 50 98 Q42 112 35 88 Q28 58 32 33 Q35 8 48 8 Z" fill="white" stroke="#3b82f6" stroke-width="2"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">зуб (исключение!)</text></svg>',
+mouse:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#f1f5f9"/><g transform="translate(15,10)"><ellipse cx="50" cy="68" rx="30" ry="22" fill="#9ca3af"/><circle cx="50" cy="42" r="20" fill="#9ca3af"/><ellipse cx="35" cy="28" rx="7" ry="10" fill="#fca5a5" transform="rotate(-15,35,28)"/><ellipse cx="65" cy="28" rx="7" ry="10" fill="#fca5a5" transform="rotate(15,65,28)"/><circle cx="43" cy="42" r="3" fill="#1f2937"/><circle cx="57" cy="42" r="3" fill="#1f2937"/><path d="M80 75 Q100 65 108 85" fill="none" stroke="#9ca3af" stroke-width="3"/></g><g transform="translate(143,10)"><ellipse cx="50" cy="68" rx="30" ry="22" fill="#6b7280"/><circle cx="50" cy="42" r="20" fill="#6b7280"/><ellipse cx="35" cy="28" rx="7" ry="10" fill="#fca5a5" transform="rotate(-15,35,28)"/><ellipse cx="65" cy="28" rx="7" ry="10" fill="#fca5a5" transform="rotate(15,65,28)"/><circle cx="43" cy="42" r="3" fill="#1f2937"/><circle cx="57" cy="42" r="3" fill="#1f2937"/><path d="M80 75 Q100 65 108 85" fill="none" stroke="#4b5563" stroke-width="3"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#374151" font-family="Arial">мышь (исключение!)</text></svg>',
+goose:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#eff6ff"/><g transform="translate(15,8)"><ellipse cx="50" cy="65" rx="32" ry="22" fill="white" stroke="#d1d5db" stroke-width="2"/><circle cx="50" cy="40" r="18" fill="white" stroke="#d1d5db" stroke-width="2"/><path d="M60 30 Q78 23 82 30 Q85 36 75 38" fill="#f59e0b"/><circle cx="56" cy="36" r="3" fill="#1f2937"/><rect x="42" y="84" width="10" height="18" rx="3" fill="#f59e0b"/><rect x="58" y="84" width="10" height="18" rx="3" fill="#f59e0b"/></g><g transform="translate(145,8)"><ellipse cx="50" cy="65" rx="32" ry="22" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="2"/><circle cx="50" cy="40" r="18" fill="#e0e7ff" stroke="#c7d2fe" stroke-width="2"/><path d="M60 30 Q78 23 82 30 Q85 36 75 38" fill="#f59e0b"/><circle cx="56" cy="36" r="3" fill="#1f2937"/><rect x="42" y="84" width="10" height="18" rx="3" fill="#f59e0b"/><rect x="58" y="84" width="10" height="18" rx="3" fill="#f59e0b"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">гусь (исключение!)</text></svg>',
+sheep:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#f0fdf4"/><g transform="translate(15,8)"><ellipse cx="50" cy="65" rx="38" ry="28" fill="#e5e7eb"/><ellipse cx="28" cy="50" rx="22" ry="20" fill="#f3f4f6"/><ellipse cx="72" cy="48" rx="22" ry="20" fill="#f3f4f6"/><ellipse cx="50" cy="43" rx="28" ry="22" fill="#f9fafb"/><circle cx="50" cy="28" r="16" fill="#f3f4f6" stroke="#e5e7eb" stroke-width="1.5"/><circle cx="43" cy="28" r="3" fill="#1f2937"/><circle cx="55" cy="28" r="3" fill="#1f2937"/><rect x="30" y="88" width="10" height="22" rx="3" fill="#6b7280"/><rect x="60" y="88" width="10" height="22" rx="3" fill="#6b7280"/></g><g transform="translate(145,8)"><ellipse cx="50" cy="65" rx="38" ry="28" fill="#bbf7d0"/><ellipse cx="28" cy="50" rx="22" ry="20" fill="#dcfce7"/><ellipse cx="72" cy="48" rx="22" ry="20" fill="#dcfce7"/><ellipse cx="50" cy="43" rx="28" ry="22" fill="#f0fdf4"/><circle cx="50" cy="28" r="16" fill="#dcfce7" stroke="#bbf7d0" stroke-width="1.5"/><circle cx="43" cy="28" r="3" fill="#1f2937"/><circle cx="55" cy="28" r="3" fill="#1f2937"/><rect x="30" y="88" width="10" height="22" rx="3" fill="#22c55e"/><rect x="60" y="88" width="10" height="22" rx="3" fill="#22c55e"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">овца (не меняется!)</text></svg>',
+ox:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#fff7ed"/><g transform="translate(15,5)"><ellipse cx="55" cy="68" rx="40" ry="25" fill="#b45309"/><circle cx="55" cy="38" r="24" fill="#b45309"/><path d="M35 26 Q25 8 15 16" stroke="#92400e" stroke-width="4" fill="none"/><path d="M75 26 Q85 8 95 16" stroke="#92400e" stroke-width="4" fill="none"/><circle cx="46" cy="36" r="4" fill="#1f2937"/><circle cx="64" cy="36" r="4" fill="#1f2937"/><ellipse cx="55" cy="50" rx="14" ry="8" fill="#fde68a"/><rect x="35" y="88" width="12" height="24" rx="3" fill="#b45309"/><rect x="68" y="88" width="12" height="24" rx="3" fill="#b45309"/></g><g transform="translate(145,5)"><ellipse cx="55" cy="68" rx="40" ry="25" fill="#78350f"/><circle cx="55" cy="38" r="24" fill="#78350f"/><path d="M35 26 Q25 8 15 16" stroke="#451a03" stroke-width="4" fill="none"/><path d="M75 26 Q85 8 95 16" stroke="#451a03" stroke-width="4" fill="none"/><circle cx="46" cy="36" r="4" fill="#1f2937"/><circle cx="64" cy="36" r="4" fill="#1f2937"/><ellipse cx="55" cy="50" rx="14" ry="8" fill="#fde68a"/><rect x="35" y="88" width="12" height="24" rx="3" fill="#78350f"/><rect x="68" y="88" width="12" height="24" rx="3" fill="#78350f"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#92400e" font-family="Arial">вол (исключение!)</text></svg>',
+person:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#f5f3ff"/><g transform="translate(25,5)"><circle cx="30" cy="25" r="17" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/><rect x="17" y="44" width="26" height="44" rx="6" fill="#6366f1"/><rect x="8" y="46" width="12" height="32" rx="5" fill="#6366f1"/><rect x="43" y="46" width="12" height="32" rx="5" fill="#6366f1"/></g><g transform="translate(95,5)"><circle cx="30" cy="25" r="17" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/><path d="M15 48 Q30 85 45 48" fill="#ec4899" stroke="#db2777" stroke-width="2"/><rect x="21" y="46" width="18" height="22" fill="#ec4899"/><rect x="8" y="46" width="12" height="32" rx="5" fill="#ec4899"/><rect x="39" y="46" width="12" height="32" rx="5" fill="#ec4899"/></g><g transform="translate(170,5)"><circle cx="30" cy="25" r="15" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/><rect x="18" y="42" width="24" height="40" rx="6" fill="#22c55e"/><rect x="9" y="44" width="11" height="28" rx="5" fill="#22c55e"/><rect x="42" y="44" width="11" height="28" rx="5" fill="#22c55e"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#6d28d9" font-family="Arial">человек (исключение!)</text></svg>',
+deer:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#fef3c7"/><g transform="translate(10,5)"><ellipse cx="55" cy="68" rx="38" ry="22" fill="#d97706"/><circle cx="55" cy="40" r="22" fill="#d97706"/><path d="M42 22 Q35 5 22 3 Q30 16 34 23" stroke="#92400e" stroke-width="3" fill="none"/><path d="M68 22 Q75 5 88 3 Q80 16 76 23" stroke="#92400e" stroke-width="3" fill="none"/><circle cx="47" cy="38" r="4" fill="#1f2937"/><circle cx="63" cy="38" r="4" fill="#1f2937"/><rect x="38" y="86" width="10" height="24" rx="3" fill="#d97706"/><rect x="62" y="86" width="10" height="24" rx="3" fill="#d97706"/></g><g transform="translate(143,5)"><ellipse cx="55" cy="68" rx="38" ry="22" fill="#b45309"/><circle cx="55" cy="40" r="22" fill="#b45309"/><path d="M42 22 Q35 5 22 3 Q30 16 34 23" stroke="#78350f" stroke-width="3" fill="none"/><path d="M68 22 Q75 5 88 3 Q80 16 76 23" stroke="#78350f" stroke-width="3" fill="none"/><circle cx="47" cy="38" r="4" fill="#1f2937"/><circle cx="63" cy="38" r="4" fill="#1f2937"/><rect x="38" y="86" width="10" height="24" rx="3" fill="#b45309"/><rect x="62" y="86" width="10" height="24" rx="3" fill="#b45309"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#92400e" font-family="Arial">олень (не меняется!)</text></svg>',
+flower:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#fdf4ff"/><g transform="translate(28,5)"><rect x="46" y="58" width="6" height="52" rx="3" fill="#22c55e"/><circle cx="49" cy="38" r="18" fill="#f9a8d4"/><circle cx="49" cy="20" r="10" fill="#ec4899"/><circle cx="31" cy="38" r="10" fill="#ec4899"/><circle cx="67" cy="38" r="10" fill="#ec4899"/><circle cx="49" cy="38" r="12" fill="#fde68a"/></g><g transform="translate(153,5)"><rect x="46" y="58" width="6" height="52" rx="3" fill="#22c55e"/><circle cx="49" cy="38" r="18" fill="#c4b5fd"/><circle cx="49" cy="20" r="10" fill="#8b5cf6"/><circle cx="31" cy="38" r="10" fill="#8b5cf6"/><circle cx="67" cy="38" r="10" fill="#8b5cf6"/><circle cx="49" cy="38" r="12" fill="#fde68a"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">цветок / цветы</text></svg>',
+house:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#eff6ff"/><g transform="translate(20,8)"><polygon points="50,5 100,38 0,38" fill="#ef4444"/><rect x="10" y="38" width="80" height="66" fill="#fca5a5" stroke="#ef4444" stroke-width="2"/><rect x="35" y="68" width="20" height="30" rx="2" fill="#b45309"/></g><g transform="translate(148,8)"><polygon points="50,5 100,38 0,38" fill="#3b82f6"/><rect x="10" y="38" width="80" height="66" fill="#93c5fd" stroke="#3b82f6" stroke-width="2"/><rect x="35" y="68" width="20" height="30" rx="2" fill="#1d4ed8"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">дом / дома</text></svg>',
+dog:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#f0fdf4"/><g transform="translate(18,8)"><ellipse cx="48" cy="70" rx="30" ry="20" fill="#d97706"/><circle cx="48" cy="42" r="20" fill="#d97706"/><ellipse cx="32" cy="30" rx="8" ry="12" fill="#b45309" transform="rotate(-20,32,30)"/><ellipse cx="64" cy="30" rx="8" ry="12" fill="#b45309" transform="rotate(20,64,30)"/><circle cx="40" cy="42" r="3" fill="#1f2937"/><circle cx="56" cy="42" r="3" fill="#1f2937"/><rect x="27" y="86" width="10" height="22" rx="3" fill="#d97706"/><rect x="59" y="86" width="10" height="22" rx="3" fill="#d97706"/></g><g transform="translate(148,8)"><ellipse cx="48" cy="70" rx="30" ry="20" fill="#7c3aed"/><circle cx="48" cy="42" r="20" fill="#7c3aed"/><ellipse cx="32" cy="30" rx="8" ry="12" fill="#6d28d9" transform="rotate(-20,32,30)"/><ellipse cx="64" cy="30" rx="8" ry="12" fill="#6d28d9" transform="rotate(20,64,30)"/><circle cx="40" cy="42" r="3" fill="#1f2937"/><circle cx="56" cy="42" r="3" fill="#1f2937"/><rect x="27" y="86" width="10" height="22" rx="3" fill="#7c3aed"/><rect x="59" y="86" width="10" height="22" rx="3" fill="#7c3aed"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">собака / собаки</text></svg>',
+star:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#1e1b4b"/><g transform="translate(25,5)"><polygon points="50,5 61,35 95,35 68,57 79,88 50,68 21,88 32,57 5,35 39,35" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/></g><g transform="translate(148,5)"><polygon points="50,5 61,35 95,35 68,57 79,88 50,68 21,88 32,57 5,35 39,35" fill="#c4b5fd" stroke="#8b5cf6" stroke-width="1.5"/></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#e0e7ff" font-family="Arial">звезда / звёзды</text></svg>',
+penny:'<svg viewBox="0 0 260 120" xmlns="http://www.w3.org/2000/svg"><rect width="260" height="120" fill="#fff7ed"/><g transform="translate(40,10)"><circle cx="45" cy="55" r="42" fill="#d97706" stroke="#b45309" stroke-width="2"/><circle cx="45" cy="55" r="36" fill="#f59e0b"/><text x="45" y="62" text-anchor="middle" font-size="18" fill="#78350f" font-weight="bold" font-family="Arial">1p</text></g><g transform="translate(145,10)"><circle cx="45" cy="55" r="42" fill="#b45309" stroke="#92400e" stroke-width="2"/><circle cx="45" cy="55" r="36" fill="#d97706"/><text x="45" y="62" text-anchor="middle" font-size="18" fill="#78350f" font-weight="bold" font-family="Arial">2p</text></g><text x="130" y="114" text-anchor="middle" font-size="10" fill="#92400e" font-family="Arial">пенни (исключение!)</text></svg>'
+};
+
+var Q1=[
+  {tag:"–s [z]",word:"wall",tr:"стена",opts:["walls","wals","wallies"],ans:0,exp:"Звонкий [l] → -s [z]. wall → walls ✔"},
+  {tag:"–s [s]",word:"book",tr:"книга",opts:["books","bookes","bookies"],ans:0,exp:"Глухой [k] → -s [s]. book → books ✔"},
+  {tag:"–es [ɪz]",word:"bus",tr:"автобус",opts:["buses","buss","busies"],ans:0,exp:"Шипящий -s → -es [ɪz]. bus → buses ✔"},
+  {tag:"–es [ɪz]",word:"class",tr:"класс",opts:["classes","classs","classies"],ans:0,exp:"-ss → -es [ɪz]. class → classes ✔"},
+  {tag:"–es [ɪz]",word:"box",tr:"коробка",opts:["boxes","boxs","boxies"],ans:0,exp:"-x → -es [ɪz]. box → boxes ✔"},
+  {tag:"–ies [ɪz]",word:"copy",tr:"копия",opts:["copies","copys","copyes"],ans:0,exp:"y после согл. → y→i + -es. copy → copies ✔"},
+  {tag:"–ves [z]",word:"wolf",tr:"волк",opts:["wolves","wolfs","wolfes"],ans:0,exp:"f → v + -es. wolf → wolves ✔"},
+  {tag:"–es [z]",word:"tomato",tr:"помидор",opts:["tomatoes","tomatos","tomatoies"],ans:0,exp:"-o → -es [z]. tomato → tomatoes ✔"},
+  {tag:"–s [z]",word:"day",tr:"день",opts:["days","dayes","daies"],ans:0,exp:"y после гл. → -s [z]. day → days ✔"},
+  {tag:"–s [z]",word:"dog",tr:"собака",opts:["dogs","doges","dogies"],ans:0,exp:"Звонкий -g → -s [z]. dog → dogs ✔"},
+  {tag:"–s [z]",word:"flower",tr:"цветок",opts:["flowers","floweres","flowerys"],ans:0,exp:"Звонкий -r → -s [z]. flower → flowers ✔"},
+  {tag:"–s [z]",word:"star",tr:"звезда",opts:["stars","stares","staries"],ans:0,exp:"Звонкий -r → -s [z]. star → stars ✔"},
+  {tag:"–es [ɪz]",word:"house",tr:"дом",opts:["houses","hoses","housies"],ans:0,exp:"s+e → -ses [ɪz]. house → houses ✔"},
+  {tag:"–es [ɪz]",word:"place",tr:"место",opts:["places","placis","placess"],ans:0,exp:"c+e → -ces [ɪz]. place → places ✔"},
+  {tag:"–ves [z]",word:"knife",tr:"нож",opts:["knives","knifes","knifees"],ans:0,exp:"fe → v + -es. knife → knives ✔"},
+  {tag:"–ies [ɪz]",word:"city",tr:"город",opts:["cities","citys","cityes"],ans:0,exp:"y после согл. → -ies. city → cities ✔"},
+  {tag:"–es [ɪz]",word:"dish",tr:"блюдо",opts:["dishes","dishs","dishies"],ans:0,exp:"-sh → -es [ɪz]. dish → dishes ✔"},
+  {tag:"–es [ɪz]",word:"bush",tr:"куст",opts:["bushes","bushs","bushies"],ans:0,exp:"-sh → -es [ɪz]. bush → bushes ✔"},
+  {tag:"–es [ɪz]",word:"horse",tr:"лошадь",opts:["horses","horsis","horsess"],ans:0,exp:"s+e → -ses [ɪz]. horse → horses ✔"},
+  {tag:"–s [z]",word:"tree",tr:"дерево",opts:["trees","treees","treeies"],ans:0,exp:"Гласный -e → -s [z]. tree → trees ✔"},
+  {tag:"–es [ɪz]",word:"coach",tr:"тренер",opts:["coaches","coachs","coachies"],ans:0,exp:"-ch → -es [ɪz]. coach → coaches ✔"},
+  {tag:"–s [s]",word:"cup",tr:"кружка",opts:["cups","cupes","cupies"],ans:0,exp:"Глухой -p → -s [s]. cup → cups ✔"},
+  {tag:"–es [ɪz]",word:"church",tr:"церковь",opts:["churches","churchs","churchies"],ans:0,exp:"-ch → -es [ɪz]. church → churches ✔"},
+  {tag:"–ies [ɪz]",word:"baby",tr:"малыш",opts:["babies","babys","babyes"],ans:0,exp:"y после согл. → -ies. baby → babies ✔"},
+  {tag:"–s [z]",word:"menu",tr:"меню",opts:["menus","menuis","menues"],ans:0,exp:"Гласный -u → -s [z]. menu → menus ✔"},
+  {tag:"–s [z]",word:"pen",tr:"ручка",opts:["pens","penes","penies"],ans:0,exp:"Звонкий -n → -s [z]. pen → pens ✔"},
+  {tag:"–s [s]",word:"cat",tr:"кошка",opts:["cats","cates","caties"],ans:0,exp:"Глухой -t → -s [s]. cat → cats ✔"},
+  {tag:"–es [ɪz]",word:"prize",tr:"приз",opts:["prizes","prizis","prizess"],ans:0,exp:"z+e → -zes [ɪz]. prize → prizes ✔"},
+  {tag:"–s [z]",word:"apple",tr:"яблоко",opts:["apples","appless","appleis"],ans:0,exp:"Гласный -e → -s [z]. apple → apples ✔"},
+  {tag:"–s [s]",word:"table",tr:"стол",opts:["tables","tabless","tableies"],ans:0,exp:"Гласный -e → -s. table → tables ✔"}
+];
+var Q2=[
+  {tag:"Исключение",word:"man",tr:"мужчина",opts:["men","mans","manes"],ans:0,exp:"man → men. Изменение гласной (исключение!). ✔"},
+  {tag:"Исключение",word:"woman",tr:"женщина",opts:["women","womans","womens"],ans:0,exp:"woman → women. Изменение гласной (исключение!). ✔"},
+  {tag:"Исключение",word:"child",tr:"ребёнок",opts:["children","childs","childes"],ans:0,exp:"child → children. Особое окончание (исключение!). ✔"},
+  {tag:"Исключение",word:"foot",tr:"ступня",opts:["feet","foots","footies"],ans:0,exp:"foot → feet. oo→ee (исключение!). ✔"},
+  {tag:"Исключение",word:"tooth",tr:"зуб",opts:["teeth","tooths","toothes"],ans:0,exp:"tooth → teeth. oo→ee (исключение!). ✔"},
+  {tag:"Исключение",word:"mouse",tr:"мышь",opts:["mice","mouses","mousies"],ans:0,exp:"mouse → mice. Изменение гласной (исключение!). ✔"},
+  {tag:"Исключение",word:"goose",tr:"гусь",opts:["geese","gooses","goosies"],ans:0,exp:"goose → geese. oo→ee (исключение!). ✔"},
+  {tag:"Исключение",word:"sheep",tr:"овца",opts:["sheep","sheeps","sheepies"],ans:0,exp:"sheep → sheep. Форма не меняется! ✔"},
+  {tag:"Исключение",word:"deer",tr:"олень",opts:["deer","deers","deeris"],ans:0,exp:"deer → deer. Форма не меняется! ✔"},
+  {tag:"Исключение",word:"ox",tr:"вол",opts:["oxen","oxs","oxes"],ans:0,exp:"ox → oxen. Особое окончание -en! ✔"},
+  {tag:"Исключение",word:"person",tr:"человек",opts:["people","persons","persones"],ans:0,exp:"person → people. Особая форма! ✔"},
+  {tag:"Исключение",word:"penny",tr:"пенни",opts:["pence","pennies","pennys"],ans:0,exp:"penny → pence. Особая форма! ✔"},
+  {tag:"Исключение",word:"man",tr:"мужчина (повтор)",opts:["men","mans","manes"],ans:0,exp:"man → men. Классическое исключение! ✔"},
+  {tag:"Исключение",word:"child",tr:"ребёнок (повтор)",opts:["children","childs","childes"],ans:0,exp:"child → children. Нужно запомнить! ✔"},
+  {tag:"Исключение",word:"tooth",tr:"зуб (повтор)",opts:["teeth","tooths","tootheens"],ans:0,exp:"tooth → teeth. oo→ee ✔"}
+];
+var Q3=[
+  {tag:"–s [z]",word:"wall",tr:"стена",opts:["walls","wals","wallies"],ans:0,exp:"wall → walls. Звонкий → -s. ✔"},
+  {tag:"Исключение",word:"man",tr:"мужчина",opts:["men","mans","manes"],ans:0,exp:"Исключение! man → men ✔"},
+  {tag:"–es [ɪz]",word:"bus",tr:"автобус",opts:["buses","buss","busies"],ans:0,exp:"bus → buses. Шипящий → -es. ✔"},
+  {tag:"Исключение",word:"child",tr:"ребёнок",opts:["children","childs","childes"],ans:0,exp:"Исключение! child → children ✔"},
+  {tag:"–es [ɪz]",word:"box",tr:"коробка",opts:["boxes","boxs","boxies"],ans:0,exp:"box → boxes. -x → -es. ✔"},
+  {tag:"Исключение",word:"foot",tr:"ступня",opts:["feet","foots","footies"],ans:0,exp:"Исключение! foot → feet ✔"},
+  {tag:"–ies [ɪz]",word:"copy",tr:"копия",opts:["copies","copys","copyes"],ans:0,exp:"copy → copies. y после согл. → -ies. ✔"},
+  {tag:"Исключение",word:"tooth",tr:"зуб",opts:["teeth","tooths","toothes"],ans:0,exp:"Исключение! tooth → teeth ✔"},
+  {tag:"–ves [z]",word:"wolf",tr:"волк",opts:["wolves","wolfs","wolfes"],ans:0,exp:"wolf → wolves. f→v + -es. ✔"},
+  {tag:"Исключение",word:"mouse",tr:"мышь",opts:["mice","mouses","mousies"],ans:0,exp:"Исключение! mouse → mice ✔"},
+  {tag:"–es [z]",word:"tomato",tr:"помидор",opts:["tomatoes","tomatos","tomatoies"],ans:0,exp:"tomato → tomatoes. -o → -es. ✔"},
+  {tag:"Исключение",word:"sheep",tr:"овца",opts:["sheep","sheeps","sheepies"],ans:0,exp:"Исключение! sheep → sheep ✔"},
+  {tag:"–s [z]",word:"day",tr:"день",opts:["days","dayes","daies"],ans:0,exp:"day → days. y после гл. → -s. ✔"},
+  {tag:"Исключение",word:"goose",tr:"гусь",opts:["geese","gooses","goosies"],ans:0,exp:"Исключение! goose → geese ✔"},
+  {tag:"–s [z]",word:"dog",tr:"собака",opts:["dogs","doges","dogies"],ans:0,exp:"dog → dogs. Звонкий → -s. ✔"},
+  {tag:"Исключение",word:"deer",tr:"олень",opts:["deer","deers","deeris"],ans:0,exp:"Исключение! deer → deer ✔"},
+  {tag:"–es [ɪz]",word:"dish",tr:"блюдо",opts:["dishes","dishs","dishies"],ans:0,exp:"dish → dishes. -sh → -es. ✔"},
+  {tag:"Исключение",word:"person",tr:"человек",opts:["people","persons","persones"],ans:0,exp:"Исключение! person → people ✔"},
+  {tag:"–s [z]",word:"star",tr:"звезда",opts:["stars","stares","staries"],ans:0,exp:"star → stars. Звонкий → -s. ✔"},
+  {tag:"Исключение",word:"ox",tr:"вол",opts:["oxen","oxs","oxes"],ans:0,exp:"Исключение! ox → oxen ✔"},
+  {tag:"–es [ɪz]",word:"house",tr:"дом",opts:["houses","hoses","housies"],ans:0,exp:"house → houses. s+e → -ses. ✔"},
+  {tag:"–ies [ɪz]",word:"city",tr:"город",opts:["cities","citys","cityes"],ans:0,exp:"city → cities. y после согл. → -ies. ✔"},
+  {tag:"–s [z]",word:"flower",tr:"цветок",opts:["flowers","floweres","flowerys"],ans:0,exp:"flower → flowers. Звонкий → -s. ✔"},
+  {tag:"Исключение",word:"woman",tr:"женщина",opts:["women","womans","womens"],ans:0,exp:"Исключение! woman → women ✔"},
+  {tag:"–ves [z]",word:"knife",tr:"нож",opts:["knives","knifes","knifees"],ans:0,exp:"knife → knives. fe→v + -es. ✔"},
+  {tag:"–s [z]",word:"tree",tr:"дерево",opts:["trees","treees","treeies"],ans:0,exp:"tree → trees. Гласный → -s. ✔"},
+  {tag:"–s [s]",word:"cup",tr:"кружка",opts:["cups","cupes","cupies"],ans:0,exp:"cup → cups. Глухой → -s. ✔"},
+  {tag:"–es [ɪz]",word:"place",tr:"место",opts:["places","placis","placess"],ans:0,exp:"place → places. c+e → -ces. ✔"},
+  {tag:"Исключение",word:"penny",tr:"пенни",opts:["pence","pennies","pennys"],ans:0,exp:"Исключение! penny → pence ✔"},
+  {tag:"–es [ɪz]",word:"bush",tr:"куст",opts:["bushes","bushs","bushies"],ans:0,exp:"bush → bushes. -sh → -es. ✔"}
+];
+
+var SCF=[
+  {label:"Ступень 1",icon:"📖",desc:"20 вопросов · Обычные слова",n:20,bank:Q1},
+  {label:"Ступень 2",icon:"⚠️",desc:"10 вопросов · Исключения",n:10,bank:Q2},
+  {label:"Ступень 3",icon:"🏆",desc:"20 вопросов · Всё вместе",n:20,bank:Q3}
+];
+var N=3,ul=[true,false,false],done=[false,false,false],sc=[0,0,0];
+var curStage=0,sel=0,qs=[],tot=0,xp=0,streak=0,hints=3;
+var mist=[],res=[],rm=false,timerEnabled=false,ti=null,tl=0;
+window._cur=0;window._score=0;
+
+function save(){try{localStorage.setItem('plv3',JSON.stringify({ul:ul,done:done,sc:sc}));}catch(e){}}
+function load(){try{var d=JSON.parse(localStorage.getItem('plv3')||'{}');if(d.ul){ul=d.ul;done=d.done;sc=d.sc||[0,0,0];}}catch(e){}}
+function rg(){
+  var g=document.getElementById('sg');if(!g)return;var h='';
+  SCF.forEach(function(s,i){
+    var cls='sc'+(done[i]?' done':'')+(ul[i]?'':' locked')+(i===sel?' active-s':'');
+    var badge=done[i]?'<span class="sbg done-b">&#x2713; '+sc[i]+'/'+s.n+'</span>':ul[i]?'<span class="sbg open-b">&#x25B6; Открыта</span>':'<span class="sbg lock-b">&#x1F512;</span>';
+    h+='<div class="'+cls+'" onclick="selS('+i+')">'+'<span class="si">'+s.icon+'</span>'+'<div class="st">'+s.label+'</div>'+'<div class="sd">'+s.desc+'</div>'+badge+'</div>';
+  });
+  g.innerHTML=h;
+}
+function urb(){document.getElementById('rb').innerHTML='<b>Рекорды:</b> С1: <b>'+sc[0]+'/20</b>  С2: <b>'+sc[1]+'/10</b>  С3: <b>'+sc[2]+'/20</b>';}
+function goStart(){load();document.getElementById('ss').style.display='';document.getElementById('qs').style.display='none';document.getElementById('rs').style.display='none';rg();urb();}
+function selS(i){if(!ul[i])return;sel=i;rg();}
+function startSelected(){startStage(sel,false);}
+function startStage(idx,retry){
+  curStage=idx;rm=retry;var cfg=SCF[idx];
+  qs=shuffle(cfg.bank).slice(0,cfg.n);
+  tot=cfg.n;window._cur=0;window._score=0;xp=0;streak=0;hints=3;mist=[];res=[];
+  document.getElementById('ss').style.display='none';document.getElementById('rs').style.display='none';document.getElementById('qs').style.display='';
+  document.getElementById('sc2').textContent=cfg.label;document.getElementById('ct').textContent=tot;
+  document.getElementById('sl').textContent=0;document.getElementById('hc').textContent=hints;
+  document.getElementById('hb').disabled=false;document.getElementById('tc').style.display=timerEnabled?'':'none';
+  uxp();ust();showQ();
+}
+function showQ(){
+  if(window._cur>=tot){finishStage();return;}
+  var q=qs[window._cur];
+  document.getElementById('cc2').textContent=window._cur+1;
+  document.getElementById('pf').style.width=Math.round(window._cur/tot*100)+'%';
+  document.getElementById('qt').textContent=q.tag;document.getElementById('qw').textContent=q.word;
+  document.getElementById('qtr').textContent='['+q.tr+']';
+  document.getElementById('fb').textContent='';document.getElementById('fb').className='fb';
+  document.getElementById('nb').style.display='none';
+  var il=document.getElementById('qi');
+  if(IMGS[q.word]){il.innerHTML=IMGS[q.word];il.style.display='';}
+  else{il.innerHTML='<span style="font-size:48px">'+['📚','📝','🔤','✏️','🎯','🌟','📖'][window._cur%7]+'</span>';il.style.display='';}
+  var op=document.getElementById('op');op.innerHTML='';
+  q.opts.forEach(function(o,i){var b=document.createElement('button');b.className='obtn';b.textContent=o;b.onclick=function(){answer(i,b);};op.appendChild(b);});
+  if(timerEnabled)startTimer();
+}
+function answer(idx,btn){
+  if(timerEnabled)clearInterval(ti);
+  var q=qs[window._cur];var ok=(idx===q.ans);
+  var fb=document.getElementById('fb');
+  document.getElementById('op').querySelectorAll('.obtn').forEach(function(b,i){b.disabled=true;if(i===q.ans)b.className='obtn correct';});
+  if(ok){
+    btn.className='obtn correct';fb.textContent='✅ Верно! '+q.exp;fb.className='fb ok';
+    window._score++;streak++;var xpG=10+(streak>=5?5:streak>=3?3:0);xp+=xpG;
+    document.getElementById('sl').textContent=window._score;showPop('+'+xpG+' XP',true,btn);
+    if(streak>=7)launchConfetti();
+  }else{
+    btn.className='obtn wrong';fb.textContent='❌ '+q.exp;fb.className='fb err';
+    xp=Math.max(0,xp-3);streak=0;showPop('-3 XP',false,btn);
+    mist.push({q:q.word+' → ?',a:q.opts[q.ans]});
+  }
+  res.push({ok:ok,q:q});uxp();ust();document.getElementById('nb').style.display='block';
+}
+function nextQ(){window._cur++;showQ();}
+function startTimer(){
+  tl=20;var chip=document.getElementById('tc');chip.textContent='⏱ '+tl;chip.className='tchip';
+  ti=setInterval(function(){
+    tl--;chip.textContent='⏱ '+tl;
+    if(tl<=7)chip.className='tchip warn';if(tl<=3)chip.className='tchip danger';
+    if(tl<=0){
+      clearInterval(ti);
+      document.getElementById('op').querySelectorAll('.obtn').forEach(function(b,i){b.disabled=true;if(i===qs[window._cur].ans)b.className='obtn correct';});
+      document.getElementById('fb').textContent='⏰ Время! Правильно: '+qs[window._cur].opts[qs[window._cur].ans];
+      document.getElementById('fb').className='fb err';
+      mist.push({q:qs[window._cur].word+' → ?',a:qs[window._cur].opts[qs[window._cur].ans]});
+      res.push({ok:false,q:qs[window._cur]});streak=0;ust();document.getElementById('nb').style.display='block';
+    }
+  },1000);
+}
+function uxp(){document.getElementById('xf').style.width=Math.min(100,xp/2)+'%';document.getElementById('xv').textContent=xp;}
+function ust(){var b=document.getElementById('stk');b.textContent='🔥 '+streak+' подряд';b.className='stk'+(streak>=7?' fire':streak>=4?' hot':'');}
+function showPop(t,ok,ref){
+  var p=document.createElement('div');p.className='xpop '+(ok?'ok':'err');p.textContent=t;
+  var r=ref.getBoundingClientRect();p.style.left=(r.left+r.width/2-25)+'px';p.style.top=(r.top-10+window.scrollY)+'px';
+  document.body.appendChild(p);setTimeout(function(){p.remove();},1000);
+}
+function useHint(){
+  if(hints<=0)return;hints--;document.getElementById('hc').textContent=hints;
+  if(hints===0)document.getElementById('hb').disabled=true;
+  var q=qs[window._cur];
+  document.getElementById('fb').innerHTML='💡 Правильный ответ: <b>«'+q.opts[q.ans]+'»</b>';
+  document.getElementById('fb').className='fb ok';
+}
+function finishStage(){
+  var pct=window._score/tot;
+  sc[curStage]=Math.max(sc[curStage]||0,window._score);done[curStage]=true;
+  if(pct>=0.7){for(var k=0;k<=curStage+1&&k<N;k++)ul[k]=true;}
+  save();
+  document.getElementById('qs').style.display='none';document.getElementById('rs').style.display='block';
+  var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
+  var rank=pct>=0.9?{n:'Мастер',bg:'#ede9fe',c:'#6d28d9'}:pct>=0.7?{n:'Знаток',bg:'#dbeafe',c:'#1e40af'}:pct>=0.5?{n:'Ученик',bg:'#dcfce7',c:'#15803d'}:{n:'Новичок',bg:'#f5f3ff',c:'#7c3aed'};
+  var ul2='';if(pct>=0.7&&curStage<N-1)ul2=' 🔓 Ступень '+(curStage+2)+' открыта!';
+  var msg=pct===1?'Все верно!'+ul2:pct>=0.8?'Очень хорошо!'+ul2:pct>=0.7?'Хороший результат!'+ul2:'Нужно 70%+ для следующей ступени. Попробуйте ещё раз!';
+  document.getElementById('re').textContent=pct===1?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
+  document.getElementById('rsc').textContent=window._score+' / '+tot;
+  document.getElementById('rl').textContent='правильных · '+SCF[curStage].label;
+  document.getElementById('rxp').textContent='⭐ '+xp+' XP';document.getElementById('rm').textContent=msg;
+  var sh='';for(var i=1;i<=3;i++)sh+='<span class="star'+(stars>=i?' lit':'')+'">⭐</span>';
+  document.getElementById('sr').innerHTML=sh;
+  document.getElementById('rbw').innerHTML='<span class="rbadge" style="background:'+rank.bg+';color:'+rank.c+'">🏅 '+rank.n+'</span>';
+  rg();if(pct>=0.9)launchBigConfetti();
+  var nsb=document.getElementById('nsb');
+  if(curStage<N-1&&ul[curStage+1]){nsb.style.display='inline-block';nsb.textContent='▶ '+SCF[curStage+1].label+' →';}else{nsb.style.display='none';}
+  var wc=res.filter(function(r){return !r.ok;}).length;
+  var retb=document.getElementById('retb');
+  if(wc>0&&!rm){retb.style.display='inline-block';retb.textContent='🔁 Работа над ошибками ('+wc+')';}else{retb.style.display='none';}
+  if(mist.length>0){
+    var mh='<h3 style="font-size:14px;font-weight:800;color:#9ca3af;margin-bottom:.75rem">Разбор ошибок:</h3>';
+    mist.forEach(function(m){mh+='<div class="mi"><div class="mq">'+m.q+'</div><div class="ma">✓ '+m.a+'</div></div>';});
+    document.getElementById('mb').innerHTML=mh;
+  }else{document.getElementById('mb').innerHTML='';}
+}
+function retryMistakes(){
+  var wrong=res.filter(function(r){return !r.ok;});if(!wrong.length)return;
+  rm=true;qs=wrong.map(function(r){return r.q;});
+  tot=qs.length;window._cur=0;window._score=0;mist=[];res=[];xp=0;streak=0;hints=3;
+  document.getElementById('rs').style.display='none';document.getElementById('qs').style.display='';
+  document.getElementById('ct').textContent=tot;document.getElementById('hc').textContent=hints;
+  document.getElementById('hb').disabled=false;document.getElementById('tc').style.display=timerEnabled?'':'none';
+  uxp();ust();showQ();
+}
+function goNextStage(){var n=curStage+1;if(n<N&&ul[n]){sel=n;startStage(n,false);}}
+function toggleRef(){document.getElementById('refm').classList.toggle('open');}
+document.addEventListener('click',function(e){var m=document.getElementById('refm');if(m&&m.classList.contains('open')&&e.target===m)m.classList.remove('open');});
+function shuffle(a){return a.slice().sort(function(){return Math.random()-.5;});}
+
+var cv=document.getElementById('cc'),ctx2=cv.getContext('2d'),pts=[],aid=null;
+var CL=['#3b82f6','#22c55e','#f59e0b','#ef4444','#a855f7','#ec4899','#06b6d4'];
+function rsz(){cv.width=window.innerWidth;cv.height=window.innerHeight;}rsz();window.addEventListener('resize',rsz);
+function cp2(x,y,big){var a=Math.random()*Math.PI*2,sp=big?(Math.random()*10+5):(Math.random()*7+3);return{x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-(big?8:4),color:CL[Math.floor(Math.random()*CL.length)],size:big?(Math.random()*10+5):(Math.random()*7+3),rotation:Math.random()*360,rotSpeed:(Math.random()-.5)*8,alpha:1,shape:Math.random()>.5?'rect':'circle'};}
+function sb(x,y,n,big){for(var i=0;i<n;i++)pts.push(cp2(x,y,big));}
+function launchConfetti(){var r=document.querySelector('.card').getBoundingClientRect();sb(r.left+r.width/2,r.top+r.height*.3,50,false);if(!aid)animate2();}
+function launchBigConfetti(){var cx=window.innerWidth/2,cy=window.innerHeight/2;sb(cx,cy,130,true);setTimeout(function(){sb(cx-200,cy,70,true);},200);setTimeout(function(){sb(cx+200,cy,70,true);},400);if(!aid)animate2();}
+function animate2(){
+  ctx2.clearRect(0,0,cv.width,cv.height);
+  pts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.vx*=.99;p.rotation+=p.rotSpeed;p.alpha-=.016;ctx2.save();ctx2.globalAlpha=Math.max(0,p.alpha);ctx2.translate(p.x,p.y);ctx2.rotate(p.rotation*Math.PI/180);ctx2.fillStyle=p.color;if(p.shape==='rect'){ctx2.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);}else{ctx2.beginPath();ctx2.arc(0,0,p.size/2,0,Math.PI*2);ctx2.fill();}ctx2.restore();});
+  pts=pts.filter(function(p){return p.alpha>0;});
+  if(pts.length>0){aid=requestAnimationFrame(animate2);}else{aid=null;ctx2.clearRect(0,0,cv.width,cv.height);}
+}
+goStart();
+</script>
+</body>
+</html>
