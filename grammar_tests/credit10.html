@@ -106,11 +106,12 @@
   <p class="subtitle">Иностранный язык · 1 курс · 1 вариант · 10 случайных вопросов из 25</p>
 
   <div id="start-screen" style="text-align:center; padding:1rem 0 1.5rem;">
-    <div style="margin-bottom:1rem; text-align:left;">
-      <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
-      <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
-    </div>
-    <button style="padding:12px 40px;border-radius:10px;border:1.5px solid #378ADD;background:#378ADD;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;" onclick="tryStart()">▶ Начать тест</button>
+      <div style="margin-bottom:1rem;">
+        <div style="font-weight:600;color:#185FA5;margin-bottom:.5rem;font-size:14px;">👤 Представьтесь перед началом теста</div>
+        <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
+        <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+      </div>
+<button style="padding:12px 40px;border-radius:10px;border:1.5px solid #378ADD;background:#378ADD;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;" onclick="tryStart()">▶ Начать тест</button>
   </div>
 
   <div id="quiz-screen" style="display:none">
@@ -128,8 +129,6 @@
   <div id="result-screen" style="display:none" class="result-card">
     <div class="result-emoji" id="res-emoji"></div>
     <div class="result-score" id="res-score"></div>
-      <div id="send-status" class="send-status"></div>
-      <div id="timer-status"></div>
     <div class="result-label">правильных ответов из 10</div>
     <div class="result-msg" id="res-msg"></div>
     <button class="restart-btn" onclick="restart()">Пройти ещё раз</button>
