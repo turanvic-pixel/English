@@ -164,7 +164,12 @@
 
   <!-- СТАРТ -->
   <div id="start-screen">
-    <div class="start-info">
+          <div style="margin-bottom:1rem;">
+        <div style="font-weight:600;color:#185FA5;margin-bottom:.5rem;font-size:14px;">👤 Представьтесь перед началом теста</div>
+        <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
+        <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+      </div>
+<div class="start-info">
       Вставьте нужную форму: <b>There is / There are / Is there / Are there / there is / there are / There isn't / There aren't</b> и т.д.<br>
       Варианты ответов перемешиваются случайно.
     </div>
@@ -175,10 +180,6 @@
         <input type="checkbox" id="timer-toggle" onchange="onTimerToggle(this)">
         <span class="toggle-slider"></span>
       </label>
-    </div>
-        <div style="margin-bottom:1rem; text-align:left;">
-      <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
-      <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
     </div>
 <button class="start-btn" onclick="startTest()">▶ Начать тест</button>
   </div>
@@ -217,8 +218,6 @@
       <div class="result-score" id="res-score">0/10</div>
       <div class="result-label" id="res-label">правильных ответов</div>
       <div class="result-xp" id="res-xp">⭐ 0 XP</div>
-      <div id="send-status" class="send-status"></div>
-      <div id="timer-status"></div>
       <div class="result-msg" id="res-msg"></div>
       <button class="restart-btn" onclick="goStart()">&larr; Начать заново</button>
       <button class="retry-btn" id="retry-btn" onclick="retryMistakes()">🔁 Работа над ошибками</button>
