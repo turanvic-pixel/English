@@ -332,12 +332,7 @@ main { max-width: 680px; margin: 0 auto; padding: 0 1.5rem 4rem; }
         </button>
       </div>
 
-      <div style="margin:0 0 1rem 0; text-align:left;">
-  <div style="font-weight:600; color:#185FA5; margin-bottom:.5rem;">👤 Представьтесь перед началом теста</div>
-  <input class="name-input-4t" id="inp-name-4t" type="text" placeholder="Имя Фамилия" autocomplete="name" style="display:block;width:100%;padding:9px 14px;border-radius:8px;border:1.5px solid #c8dff7;font-size:14px;margin-bottom:8px;box-sizing:border-box;font-family:Arial,sans-serif;">
-  <input class="name-input-4t" id="inp-group-4t" type="text" placeholder="Номер группы" autocomplete="off" style="display:block;width:100%;padding:9px 14px;border-radius:8px;border:1.5px solid #c8dff7;font-size:14px;box-sizing:border-box;font-family:Arial,sans-serif;">
-</div>
-<div class="timer-toggle-row">
+      <div class="timer-toggle-row">
         <div class="timer-toggle-label">⏱ Таймер
           <span class="timer-toggle-sub">Выключите для прохождения без ограничения времени</span>
         </div>
@@ -2433,7 +2428,7 @@ function showScore(){
 
   document.getElementById('main').innerHTML=`
     <div class="card score-screen">
-      <div id="send-status" class="send-status"></div><div id="timer-status"></div>
+      <div id="send-status" class="send-status"></div>
       <div class="score-circle"><div class="score-big">${score}</div><div class="score-of">из ${TOTAL}</div></div>
       ${starsHTML}
       <div style="margin-bottom:0.4rem"><span class="rank-badge" style="background:${rank.bg};color:${rank.color}">🏅 ${rank.name}</span></div>
@@ -2551,13 +2546,9 @@ function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
     if(el){el.textContent='✅ Результат отправлен преподавателю'; el.className='send-status ok';}
     var tel=document.getElementById('timer-status');
     if(tel){tel.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен'; tel.className=timerOn?'timer-on':'timer-off';}
-    var tel=document.getElementById('timer-status');
-    if(tel){tel.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен'; tel.className=timerOn?'timer-on':'timer-off';}
   }).catch(function(){
     var el=document.getElementById('send-status');
     if(el){el.textContent='⚠️ Нет соединения — результат не отправлен'; el.className='send-status err';}
-    var tel=document.getElementById('timer-status');
-    if(tel){tel.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен'; tel.className=timerOn?'timer-on':'timer-off';}
     var tel=document.getElementById('timer-status');
     if(tel){tel.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен'; tel.className=timerOn?'timer-on':'timer-off';}
   });
