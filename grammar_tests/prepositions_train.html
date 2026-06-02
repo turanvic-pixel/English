@@ -174,7 +174,12 @@
   <p class="subtitle">3 ступени &middot; Контекстные задания &middot; Однозначные вопросы &middot; Геймификация</p>
 
   <div id="start-screen">
-    <div class="unlock-rule">&#x1F513; Для открытия следующей ступени нужно набрать <b>70%+</b> правильных ответов.</div>
+          <div style="margin-bottom:1rem;">
+        <div style="font-weight:600;color:#185FA5;margin-bottom:.5rem;font-size:14px;">👤 Представьтесь перед началом теста</div>
+        <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
+        <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+      </div>
+<div class="unlock-rule">&#x1F513; Для открытия следующей ступени нужно набрать <b>70%+</b> правильных ответов.</div>
     <div class="stage-grid" id="stage-grid"></div>
     <div class="record-box" id="record-box">Рекорды загружаются...</div>
     <div class="toggle-row">
@@ -183,10 +188,6 @@
         <input type="checkbox" id="timer-toggle" onchange="onTimerToggle(this)">
         <span class="toggle-slider"></span>
       </label>
-    </div>
-        <div style="margin-bottom:1rem; text-align:left;">
-      <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
-      <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
     </div>
 <button class="start-btn" id="start-btn" onclick="startSelected()">&#x25B6; Начать</button>
   </div>
@@ -225,8 +226,6 @@
       <div class="result-score" id="res-score">0/20</div>
       <div class="result-label" id="res-label">правильных ответов</div>
       <div class="result-xp" id="res-xp">&#x2B50; 0 XP</div>
-      <div id="send-status" class="send-status"></div>
-      <div id="timer-status"></div>
       <div class="result-msg" id="res-msg"></div>
       <button class="restart-btn" onclick="goStart()">&larr; На главную</button>
       <button class="next-stage-btn" id="next-stage-btn" onclick="goNextStage()" style="display:none">&#x25B6; Далее &rarr;</button>
