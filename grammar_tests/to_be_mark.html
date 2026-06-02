@@ -213,7 +213,12 @@
   </div>
 
   <div id="start-screen">
-    <div class="hub-tabs">
+          <div style="margin-bottom:1rem;">
+        <div style="font-weight:600;color:#185FA5;margin-bottom:.5rem;font-size:14px;">👤 Представьтесь перед началом теста</div>
+        <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
+        <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+      </div>
+<div class="hub-tabs">
       <button class="hub-tab active" onclick="switchHubTab('play')">📝 Тест</button>
       <button class="hub-tab" onclick="switchHubTab('table')">📋 Справочник</button>
     </div>
@@ -228,10 +233,6 @@
           <span class="toggle-slider"></span>
         </label>
       </div>
-          <div style="margin-bottom:1rem; text-align:left;">
-      <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
-      <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
-    </div>
 <button class="start-btn" id="main-start-btn" onclick="startCurrentStage()">▶ Начать тест</button>
     </div>
     <div class="hub-panel" id="htab-table">
@@ -271,8 +272,6 @@
       <div class="result-score" id="res-score">0/0</div>
       <div class="result-label" id="res-label">правильных ответов</div>
       <div class="result-xp" id="res-xp"></div>
-      <div id="send-status" class="send-status"></div>
-      <div id="timer-status"></div>
       <div class="result-msg" id="res-msg"></div>
       <button class="next-stage-btn" id="next-stage-btn" onclick="goNextStage()" style="display:none">▶ Следующая ступень →</button>
       <br>
