@@ -2429,6 +2429,7 @@ function showScore(){
   document.getElementById('main').innerHTML=`
     <div class="card score-screen">
       <div id="send-status" class="send-status"></div>
+      <div id="timer-status"></div>
       <div class="score-circle"><div class="score-big">${score}</div><div class="score-of">из ${TOTAL}</div></div>
       ${starsHTML}
       <div style="margin-bottom:0.4rem"><span class="rank-badge" style="background:${rank.bg};color:${rank.color}">🏅 ${rank.name}</span></div>
