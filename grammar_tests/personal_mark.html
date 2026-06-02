@@ -143,6 +143,10 @@
 .send-status.err { color: #7f1d1d; }
 .name-input { padding: 9px 14px; border-radius: 8px; border: 1.5px solid #c8dff7; font-size: 14px; width: 100%; box-sizing: border-box; margin-bottom: 8px; font-family: Arial, sans-serif; }
 .name-input.err { border-color: #ef4444; }
+
+#timer-status { min-height: 18px; }
+#timer-status.timer-on  { color: #b45309; }
+#timer-status.timer-off { color: #6b7280; }
 </style>
 </head>
 <body>
@@ -434,7 +438,7 @@ function showResult(){
   var _group = (document.getElementById('inp-group') ? document.getElementById('inp-group').value.trim() : '') || '—';
   var _result = score + '/' + total;
   var _xp = xp;
-  sendToGoogleForms(_name, _group, 'Personal Pronouns — Зачёт', _result, _xp);
+  sendToGoogleForms(_name, _group, 'Personal Pronouns — Зачёт', _result, _xp, (typeof timerEnabled !== 'undefined' ? timerEnabled : false));
 
   stopTimer();
   document.getElementById('progress').style.width='100%';
@@ -509,21 +513,25 @@ function animate(){
   if(particles.length>0){animId=requestAnimationFrame(animate);}else{animId=null;ctx.clearRect(0,0,canvas.width,canvas.height);}
 }
 
-function sendToGoogleForms(name, group, testName, result, xpEarned) {
+function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
   var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdfme_aKvoexXRSz7LTn5dxgY_7P2lBJsokU3puqehRxZVslw/formResponse';
   var body = new FormData();
   body.append('entry.1795360459', name);
   body.append('entry.1572037373', group);
   body.append('entry.1562414669', testName);
-  body.append('entry.994594767', result);
+  body.append('entry.994594767', result + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ'));
   body.append('entry.1290836239', xpEarned);
   fetch(formUrl, {method:'POST', body:body, mode:'no-cors'})
   .then(function(){
     var el=document.getElementById('send-status');
     if(el){el.textContent='✅ Результат отправлен преподавателю'; el.className='send-status ok';}
+    var tel=document.getElementById('timer-status');
+    if(tel){tel.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен'; tel.className=timerOn?'timer-on':'timer-off';}
   }).catch(function(){
     var el=document.getElementById('send-status');
     if(el){el.textContent='⚠️ Нет соединения — результат не отправлен'; el.className='send-status err';}
+    var tel=document.getElementById('timer-status');
+    if(tel){tel.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен'; tel.className=timerOn?'timer-on':'timer-off';}
   });
 }
 
