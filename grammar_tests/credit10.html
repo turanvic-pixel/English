@@ -105,7 +105,15 @@
   <h1>Подготовка к зачёту</h1>
   <p class="subtitle">Иностранный язык · 1 курс · 1 вариант · 10 случайных вопросов из 25</p>
 
-  <div id="quiz-screen">
+  <div id="start-screen" style="text-align:center; padding:1rem 0 1.5rem;">
+    <div style="margin-bottom:1rem; text-align:left;">
+      <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
+      <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+    </div>
+    <button style="padding:12px 40px;border-radius:10px;border:1.5px solid #378ADD;background:#378ADD;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;" onclick="tryStart()">▶ Начать тест</button>
+  </div>
+
+  <div id="quiz-screen" style="display:none">
     <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
     <div class="q-meta">
       <span class="q-counter" id="counter">Вопрос 1 из 10</span>
@@ -447,7 +455,11 @@ function showResult() {
   } else { mBlock.innerHTML = ''; }
 }
 
-function restart() { initQuiz(); }
+function restart() {
+  document.getElementById('start-screen').style.display='';
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='none';
+}
 
 // CONFETTI
 var canvas = document.getElementById('confetti-canvas');
@@ -508,7 +520,17 @@ function animate() {
   else { animId = null; ctx.clearRect(0, 0, canvas.width, canvas.height); }
 }
 
-initQuiz();
+
+function tryStart(){
+  var ne=document.getElementById('inp-name'), ge=document.getElementById('inp-group');
+  if(!ne.value.trim()){ne.classList.add('err');ne.focus();return;}
+  if(!ge.value.trim()){ge.classList.add('err');ge.focus();return;}
+  ne.classList.remove('err'); ge.classList.remove('err');
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='block';
+  initQuiz();
+}
+
 
 function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
   var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdfme_aKvoexXRSz7LTn5dxgY_7P2lBJsokU3puqehRxZVslw/formResponse';
