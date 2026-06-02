@@ -209,13 +209,16 @@ h1 { text-align: center; font-size: 20px; font-weight: 700; color: #185FA5; marg
   <!-- ФОРМА РЕГИСТРАЦИИ -->
   <div class="reg-form" id="reg-form">
     <h3>👤 Представьтесь перед началом теста</h3>
-    <input class="reg-input" id="inp-name" type="text" placeholder="Имя и Фамилия" autocomplete="off">
-    <input class="reg-input" id="inp-group" type="text" placeholder="Номер группы (например: 101)" autocomplete="off">
-  </div>
+</div>
 
   <!-- СТАРТОВЫЙ ЭКРАН -->
   <div id="start-screen">
-    <div class="unlock-rule">🔓 Для открытия следующей ступени нужно набрать <b>70%+</b> правильных ответов.</div>
+          <div style="margin-bottom:1rem;">
+        <div style="font-weight:600;color:#185FA5;margin-bottom:.5rem;font-size:14px;">👤 Представьтесь перед началом теста</div>
+        <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
+        <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+      </div>
+<div class="unlock-rule">🔓 Для открытия следующей ступени нужно набрать <b>70%+</b> правильных ответов.</div>
     <div class="stage-grid" id="stage-grid"></div>
     <div class="record-box" id="record-box">Рекорды загружаются...</div>
     <div class="toggle-row">
@@ -267,8 +270,6 @@ h1 { text-align: center; font-size: 20px; font-weight: 700; color: #185FA5; marg
       <div class="result-score" id="res-score">0/20</div>
       <div class="result-label" id="res-label">правильных ответов</div>
       <div class="result-xp" id="res-xp">⭐ 0 XP</div>
-      <div id="send-status" class="send-status"></div>
-      <div id="timer-status"></div>
       <div class="violations-info" id="violations-info" style="display:none"></div>
       <div class="result-msg" id="res-msg"></div>
       <div class="send-status" id="send-status"></div>
