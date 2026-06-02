@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Предлоги — Контрольный тест</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif; min-height: 100vh;
+    background-color: #fff;
+    background-image: linear-gradient(#b3d1f7 1px, transparent 1px), linear-gradient(90deg, #b3d1f7 1px, transparent 1px);
+    background-size: 28px 28px;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 2rem 1rem 3rem;
+  }
+  .card { background: rgba(255,255,255,0.95); border-radius: 16px; border: 1.5px solid #c8dff7; padding: 2rem 2rem 2.5rem; max-width: 700px; width: 100%; box-shadow: 0 4px 24px rgba(55,138,221,0.10); }
+  h1 { text-align: center; font-size: 20px; font-weight: 700; color: #185FA5; margin-bottom: 0.2rem; }
+  .subtitle { text-align: center; font-size: 13px; color: #5b8dc7; margin-bottom: 1.5rem; }
+  .progress-bar { height: 7px; background: #dbeafe; border-radius: 99px; margin-bottom: 1rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: #378ADD; border-radius: 99px; transition: width 0.4s ease; }
+  .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+  .q-tag { font-size: 11px; background: #e0eeff; color: #185FA5; padding: 2px 9px; border-radius: 99px; font-weight: 600; }
+  .q-text { font-size: 18px; font-weight: 600; color: #1a2e4a; margin-bottom: 1.3rem; line-height: 1.7; }
+  .blank { display: inline-block; background: #e8f2ff; color: #185FA5; border-bottom: 2px solid #378ADD; padding: 0 10px; border-radius: 4px; font-weight: 700; min-width: 60px; text-align: center; }
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .opt-btn { padding: 11px 16px; border: 1.5px solid #c8dff7; border-radius: 10px; background: #f5f9ff; color: #1a2e4a; font-size: 15px; cursor: pointer; text-align: left; transition: background 0.13s, border-color 0.13s, transform 0.1s; font-family: Arial, sans-serif; }
+  .opt-btn:hover:not(:disabled) { background: #dbeafe; border-color: #378ADD; transform: translateX(3px); }
+  .opt-btn.correct { background: #d1fadf; border-color: #22c55e; color: #14532d; font-weight: 600; }
+  .opt-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #7f1d1d; }
+  .opt-btn:disabled { cursor: default; transform: none; }
+  .feedback { margin-top: 0.8rem; font-size: 14px; min-height: 20px; line-height: 1.6; }
+  .feedback.ok { color: #15803d; font-weight: 500; }
+  .feedback.err { color: #b91c1c; }
+  .next-btn { margin-top: 1.1rem; padding: 10px 26px; border-radius: 10px; border: 1.5px solid #378ADD; background: #378ADD; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; display: none; font-family: Arial, sans-serif; transition: background 0.15s; }
+  .next-btn:hover { background: #185FA5; }
+  .result-card { text-align: center; padding: 1.5rem 0.5rem 0.5rem; }
+  .result-emoji { font-size: 52px; margin-bottom: 0.8rem; }
+  .result-score { font-size: 40px; font-weight: 700; color: #185FA5; }
+  .result-label { font-size: 14px; color: #7aa8d4; margin: 0.3rem 0 1.2rem; }
+  .result-msg { font-size: 15px; color: #1a2e4a; margin-bottom: 1.5rem; line-height: 1.7; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .restart-btn { padding: 11px 32px; border-radius: 10px; border: 1.5px solid #378ADD; background: #378ADD; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; font-family: Arial, sans-serif; }
+  .restart-btn:hover { background: #185FA5; }
+  .retry-btn { margin-top:.6rem; padding:10px 24px; border-radius:10px; border:1.5px solid #f59e0b; background:#fff3dc; color:#92400e; font-size:14px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; display:none; }
+  .retry-btn:hover { background:#fde68a; }
+  .mistakes-list { text-align: left; border-top: 1px solid #dbeafe; padding-top: 1.2rem; margin-top: 1.2rem; }
+  .mistake-item { font-size: 13px; color: #1a2e4a; padding: 9px 13px; background: #f5f9ff; border-radius: 8px; margin-bottom: 7px; border-left: 3px solid #22c55e; }
+  .mistake-item .m-q { color: #7aa8d4; margin-bottom: 3px; font-size: 12px; }
+  .mistake-item .m-a { color: #15803d; font-weight: 600; }
+  #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+  .hud { display:flex; flex-wrap:wrap; gap:7px; align-items:center; margin-bottom:.75rem; }
+  .hud-chip { font-size:12px; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; font-weight:600; }
+  .streak-badge { font-size:12px; font-weight:700; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; transition:all .3s; }
+  .streak-badge.hot  { background:#fff3dc; color:#b45309; }
+  .streak-badge.fire { background:linear-gradient(135deg,#fef3c7,#fde68a); color:#92400e; animation:sBurst .45s ease; }
+  @keyframes sBurst { 0%{transform:scale(1)} 40%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .timer-chip { font-size:12px; font-weight:700; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; transition:background .3s,color .3s; margin-left:auto; }
+  .timer-chip.warn   { background:#fff3dc; color:#b45309; }
+  .timer-chip.danger { background:#fee2e2; color:#b91c1c; }
+  .xp-row { display:flex; align-items:center; gap:8px; margin-bottom:.6rem; }
+  .xp-label { font-size:11px; color:#7aa8d4; font-weight:600; white-space:nowrap; }
+  .xp-track { flex:1; height:5px; background:#dbeafe; border-radius:4px; overflow:hidden; }
+  .xp-fill  { height:100%; background:linear-gradient(90deg,#378ADD,#a855f7); border-radius:4px; transition:width .5s ease; }
+  .xp-val   { font-size:12px; font-weight:700; color:#a855f7; min-width:38px; text-align:right; }
+  .hint-btn { font-size:12px; font-weight:600; background:#f5f9ff; border:1.5px solid #c8dff7; border-radius:8px; padding:6px 13px; cursor:pointer; color:#7aa8d4; font-family:Arial,sans-serif; transition:background .12s; }
+  .hint-btn:hover:not(:disabled) { background:#dbeafe; }
+  .hint-btn:disabled { opacity:.35; cursor:default; }
+  .xp-popup { position:fixed; pointer-events:none; font-weight:700; font-size:.95rem; border-radius:10px; padding:3px 13px; z-index:9999; animation:floatUp 1s ease forwards; }
+  .xp-popup.ok  { background:#d1fadf; color:#14532d; }
+  .xp-popup.err { background:#fee2e2; color:#7f1d1d; }
+  @keyframes floatUp { 0%{opacity:1;transform:translateY(0)} 80%{opacity:1} 100%{opacity:0;transform:translateY(-55px)} }
+  .stars-row { display:flex; justify-content:center; gap:6px; font-size:2rem; margin:.4rem 0 .5rem; }
+  .star { filter:grayscale(1) opacity(.3); display:inline-block; }
+  .star.lit { filter:none; animation:starPop .4s ease; }
+  @keyframes starPop { 0%{transform:scale(.5) rotate(-20deg)} 70%{transform:scale(1.3) rotate(5deg)} 100%{transform:scale(1) rotate(0deg)} }
+  .rank-badge { display:inline-block; padding:3px 16px; border-radius:99px; font-size:12px; font-weight:700; letter-spacing:.05em; margin-bottom:.4rem; }
+  .result-xp { font-size:14px; color:#a855f7; font-weight:700; margin-bottom:.3rem; }
+  #start-screen { text-align:center; padding:.5rem 0 1rem; }
+  .start-btn { padding:13px 40px; border-radius:10px; border:1.5px solid #378ADD; background:#378ADD; color:#fff; font-size:16px; font-weight:700; cursor:pointer; font-family:Arial,sans-serif; margin-bottom:.8rem; }
+  .start-btn:hover { background:#185FA5; }
+  .record-box { background:#f5f9ff; border:1.5px solid #dbeafe; border-radius:10px; padding:10px 16px; font-size:13px; color:#7aa8d4; margin-bottom:1rem; }
+  .record-box b { color:#185FA5; }
+  .toggle-row { display:flex; align-items:center; gap:10px; background:#f5f9ff; border:1.5px solid #dbeafe; border-radius:10px; padding:10px 14px; margin-bottom:1rem; }
+  .toggle-label { flex:1; text-align:left; font-size:13px; color:#1a2e4a; font-weight:600; }
+  .toggle-sub { font-size:11px; color:#7aa8d4; font-weight:400; display:block; margin-top:1px; }
+  .toggle-switch { position:relative; width:44px; height:24px; flex-shrink:0; }
+  .toggle-switch input { opacity:0; width:0; height:0; }
+  .toggle-slider { position:absolute; inset:0; background:#c8dff7; border-radius:99px; cursor:pointer; transition:background .25s; }
+  .toggle-slider:before { content:""; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform .25s; box-shadow:0 1px 4px rgba(0,0,0,.15); }
+  .toggle-switch input:checked + .toggle-slider { background:#378ADD; }
+  .toggle-switch input:checked + .toggle-slider:before { transform:translateX(20px); }
+  .info-box { font-size:12px; color:#5b8dc7; background:#f0f7ff; border:1.5px solid #c8dff7; border-radius:10px; padding:8px 13px; margin-bottom:1rem; line-height:1.6; text-align:left; }
+
+.send-status { margin-top: 10px; font-size: 13px; font-weight: 600; min-height: 20px; }
+.send-status.ok { color: #14532d; }
+.send-status.err { color: #7f1d1d; }
+.name-input { padding: 9px 14px; border-radius: 8px; border: 1.5px solid #c8dff7; font-size: 14px; width: 100%; box-sizing: border-box; margin-bottom: 8px; font-family: Arial, sans-serif; }
+.name-input.err { border-color: #ef4444; }
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+
+<div class="card">
+  <h1>🎯 Предлоги — Контрольный тест</h1>
+  <p class="subtitle">10 вопросов из базы 50 · Смешанный · Геймификация</p>
+
+  <div id="start-screen">
+    <div class="info-box">📋 Тест проверяет знание предлогов <b>места, направления и времени</b>. Каждый раз вопросы берутся случайно из базы 50 заданий.</div>
+    <div class="record-box" id="record-box">🏆 Рекорд: <b>—</b></div>
+    <div class="toggle-row">
+      <label class="toggle-label">⏱ Таймер <span class="toggle-sub">20 секунд на вопрос</span></label>
+      <label class="toggle-switch">
+        <input type="checkbox" id="timer-toggle" onchange="timerEnabled=this.checked">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+        <div style="margin-bottom:1rem; text-align:left;">
+      <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
+      <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+    </div>
+<button class="start-btn" onclick="startTest()">▶ Начать тест</button>
+  </div>
+
+  <div id="quiz-screen" style="display:none">
+    <div class="xp-row">
+      <span class="xp-label">⭐ XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      <span class="xp-val" id="xp-val">0</span>
+    </div>
+    <div class="hud">
+      <span class="hud-chip">🎯 Контрольный</span>
+      <span class="hud-chip">❓ <span id="counter-cur">1</span>/10</span>
+      <span class="hud-chip">✅ <span id="score-live">0</span></span>
+      <span class="streak-badge" id="streak-badge">🔥 0 подряд</span>
+      <span class="timer-chip" id="timer-chip" style="display:none">⏱ 20</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="q-meta">
+      <span class="q-tag" id="q-tag">Смешанный</span>
+      <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Подсказка (<span id="hint-count">3</span>)</button>
+    </div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Следующий →</button>
+  </div>
+
+  <div id="result-screen" style="display:none">
+    <div class="result-card">
+      <div class="result-emoji" id="res-emoji">🏆</div>
+      <div class="stars-row" id="stars-row"></div>
+      <div id="rank-badge-wrap"></div>
+      <div class="result-score" id="res-score">0/10</div>
+      <div class="result-label" id="res-label">правильных ответов</div>
+      <div class="result-xp" id="res-xp">⭐ 0 XP</div>
+      <div class="result-msg" id="res-msg"></div>
+      <button class="restart-btn" onclick="goStart()">🔄 Новый тест</button>
+      <button class="retry-btn" id="retry-btn" onclick="retryMistakes()">🔁 Работа над ошибками</button>
+    </div>
+    <div class="mistakes-list" id="mistakes-block"></div>
+  </div>
+</div>
+
+<script>
+var Q_S3_ALL = [
+  {tag:"Смешанный",sit:"🚪 Дверь открылась. Студент входит в комнату — снаружи внутрь.",q:"The student walked ___ the room.",opts:["into","in","through"],ans:0,exp:"INTO — движение внутрь. IN — статика. THROUGH — насквозь (вошёл с одной стороны, вышел с другой)."},
+  {tag:"Смешанный",sit:"📅 Называем месяц.",q:"We are going on holiday ___ July.",opts:["in","on","at"],ans:0,exp:"IN + месяц. In July = в июле."},
+  {tag:"Смешанный",sit:"🐠 Рыба плывёт с берега на берег — поперёк реки.",q:"The fish swam ___ the river to the other side.",opts:["across","through","over"],ans:0,exp:"ACROSS — поперёк (с берега на берег). THROUGH — сквозь (внутри объёма). OVER — над поверхностью."},
+  {tag:"Смешанный",sit:"⏰ Называем точное время начала экзамена — 10:30.",q:"The exam starts ___ 10:30.",opts:["at","in","on"],ans:0,exp:"AT + точное время. At 10:30 = в 10:30."},
+  {tag:"Смешанный",sit:"📱 Телефон лежит на горизонтальной поверхности стола — прямой контакт.",q:"She left her phone ___ the table.",opts:["on","in","over"],ans:0,exp:"ON — на поверхности. IN — внутри закрытого объёма. OVER — нависает над без касания."},
+  {tag:"Смешанный",sit:"📆 Встреча назначена на конкретный день — понедельник.",q:"We are meeting ___ Monday.",opts:["on","in","at"],ans:0,exp:"ON + день недели. On Monday = в понедельник."},
+  {tag:"Смешанный",sit:"🚂 Поезд движется внутри тоннеля — насквозь от входа до выхода.",q:"The train passed ___ the tunnel.",opts:["through","across","over"],ans:0,exp:"THROUGH — сквозь (внутри закрытого пространства). ACROSS — поперёк открытой поверхности. OVER — сверху."},
+  {tag:"Смешанный",sit:"⏳ Говорим «через шесть месяцев» — промежуток в будущем.",q:"We will finish the project ___ six months.",opts:["in","at","on"],ans:0,exp:"IN в значении «через». In six months = через шесть месяцев."},
+  {tag:"Смешанный",sit:"🐈 Кошка лежит и спит. Она на поверхности дивана — прямой контакт.",q:"The cat is sleeping ___ the sofa.",opts:["on","under","in"],ans:0,exp:"ON — на поверхности (контакт с горизонтальной плоскостью). UNDER — под диваном. IN — внутри."},
+  {tag:"Смешанный",sit:"⏰ Называем полночь — точная точка времени.",q:"He called me ___ midnight.",opts:["at","in","on"],ans:0,exp:"AT midnight = в полночь. Точная точка → AT. Аналогично: at noon, at 3 o'clock."},
+  {tag:"Смешанный",sit:"🔑 Ключи лежат внутри закрытой сумки — статика.",q:"My keys are ___ my bag.",opts:["in","on","into"],ans:0,exp:"IN — внутри закрытого пространства. ON — на поверхности. INTO — только при движении внутрь."},
+  {tag:"Смешанный",sit:"📅 Называем год рождения.",q:"She was born ___ 1998.",opts:["in","on","at"],ans:0,exp:"IN + год. In 1998 = в 1998 году."},
+  {tag:"Смешанный",sit:"🚕 Пассажир открывает дверь такси и садится — движение снаружи внутрь.",q:"She got ___ the taxi and said the address.",opts:["into","in","out of"],ans:0,exp:"INTO — движение внутрь закрытого пространства. IN — статика (she is in the taxi). OUT OF — движение наружу."},
+  {tag:"Смешанный",sit:"🌸 Называем сезон — весну.",q:"It rains a lot ___ spring.",opts:["in","at","on"],ans:0,exp:"IN + сезон. In spring = весной."},
+  {tag:"Смешанный",sit:"🐦 Птицы летят. Под ними — озеро. Птицы выше озера.",q:"The birds flew ___ the lake.",opts:["over","under","through"],ans:0,exp:"OVER — над (птицы выше озера). UNDER — под. THROUGH — сквозь внутри чего-то."},
+  {tag:"Смешанный",sit:"📅 Называем конкретную дату — 5 июля.",q:"His birthday is ___ 5th of July.",opts:["on","in","at"],ans:0,exp:"ON + дата. On the 5th of July = 5 июля. IN July — в июле (без числа)."},
+  {tag:"Смешанный",sit:"🚶 Дорога с двух сторон. Человек идёт на другой тротуар — поперёк.",q:"She walked ___ the road to buy milk.",opts:["across","through","into"],ans:0,exp:"ACROSS — поперёк (с одной стороны на другую). THROUGH — сквозь внутри. INTO — движение внутрь."},
+  {tag:"Смешанный",sit:"☀️ Называем утро — часть суток с артиклем the.",q:"He always drinks coffee ___ the morning.",opts:["in","at","on"],ans:0,exp:"IN the morning = по утрам. Части суток с the → IN. Исключение: at night."},
+  {tag:"Смешанный",sit:"🎒 Очки были в закрытой сумке. Человек открывает и достаёт их.",q:"She took her glasses ___ her bag.",opts:["out of","from","into"],ans:0,exp:"OUT OF — изнутри закрытого объёма наружу. FROM — начало маршрута, не выход из объёма."},
+  {tag:"Смешанный",sit:"📆 Магазин закрыт каждое воскресенье.",q:"The shop is closed ___ Sundays.",opts:["on","in","at"],ans:0,exp:"ON + день недели. On Sundays = по воскресеньям (регулярно)."},
+  {tag:"Смешанный",sit:"🖼️ Картина прикреплена к вертикальной поверхности стены.",q:"There is a beautiful picture ___ the wall.",opts:["on","in","over"],ans:0,exp:"ON — на поверхности (прикреплена к стене). IN — внутри. OVER — нависает над."},
+  {tag:"Смешанный",sit:"⏳ Говорим «через неделю» — промежуток в будущем.",q:"He will be back ___ a week.",opts:["in","at","on"],ans:0,exp:"IN в значении «через». In a week = через неделю."},
+  {tag:"Смешанный",sit:"🏠 Подарок спрятан ниже уровня кровати — не виден.",q:"She hid the present ___ the bed.",opts:["under","behind","next to"],ans:0,exp:"UNDER — под (ниже горизонтальной плоскости). BEHIND — позади вертикального объекта. NEXT TO — рядом сбоку."},
+  {tag:"Смешанный",sit:"🌆 Называем вечер — часть суток с артиклем.",q:"I enjoy reading ___ the evening.",opts:["in","at","on"],ans:0,exp:"IN the evening = вечером. Части суток с the → IN. AT night — исключение."},
+  {tag:"Смешанный",sit:"🏋️ Два здания стоят бок о бок — стена к стене.",q:"The gym is ___ the library.",opts:["next to","over","through"],ans:0,exp:"NEXT TO — рядом с (сбоку). OVER — над. THROUGH — сквозь."},
+  {tag:"Смешанный",sit:"📅 Называем конкретный день — понедельник утром.",q:"She called me ___ Monday morning.",opts:["on","in","at"],ans:0,exp:"ON + конкретный день. On Monday morning = в понедельник утром. День + часть суток → всегда ON."},
+  {tag:"Смешанный",sit:"🔑 Ключи кладут в ящик стола — действие помещения внутрь.",q:"He put the keys ___ the drawer.",opts:["into","in","on"],ans:0,exp:"INTO — движение внутрь (действие). IN — статика (ключи уже в ящике). ON — на поверхности."},
+  {tag:"Смешанный",sit:"🎄 Рождество — праздник как период (несколько дней).",q:"We had a great time ___ Christmas.",opts:["at","on","in"],ans:0,exp:"AT + праздник-период. At Christmas = на Рождество. ON Christmas Day — конкретный день."},
+  {tag:"Смешанный",sit:"🚌 Автобусная остановка напротив входа в школу.",q:"The bus stop is ___ the school.",opts:["in front of","behind","next to"],ans:0,exp:"IN FRONT OF — перед (напротив входа). NEXT TO — сбоку. BEHIND — позади здания."},
+  {tag:"Смешанный",sit:"✉️ Письмо внутри конверта. Человек достаёт его — движение изнутри наружу.",q:"She took the letter ___ the envelope.",opts:["out of","from","into"],ans:0,exp:"OUT OF — изнутри наружу. FROM — начало маршрута (I flew from London)."},
+  {tag:"Смешанный",sit:"⏰ Уроки каждый день начинаются в 8:00 — точное время на часах.",q:"Lessons start ___ 8 o'clock every day.",opts:["at","in","on"],ans:0,exp:"AT + точное время. At 8 o'clock = в 8 часов."},
+  {tag:"Смешанный",sit:"🌊 Ребёнок прыгает в бассейн — тело летит снаружи внутрь воды.",q:"The child jumped ___ the pool.",opts:["into","in","out of"],ans:0,exp:"INTO — движение внутрь. IN — статика (she is in the pool). OUT OF — наружу."},
+  {tag:"Смешанный",sit:"🏔️ Дорога ведёт сквозь горы — движение внутри горного массива насквозь.",q:"The road goes ___ the mountains.",opts:["through","across","over"],ans:0,exp:"THROUGH — сквозь (внутри, насквозь). OVER — перевалить через горы сверху. ACROSS — поперёк открытой поверхности."},
+  {tag:"Смешанный",sit:"📆 Называем конкретную дату экзамена.",q:"The exam is ___ the 15th of May.",opts:["on","in","at"],ans:0,exp:"ON + дата. On the 15th of May = 15 мая."},
+  {tag:"Смешанный",sit:"🐕 Собака прячется ниже уровня дивана.",q:"The dog is hiding ___ the sofa.",opts:["under","behind","next to"],ans:0,exp:"UNDER — под (ниже горизонтальной плоскости). BEHIND — позади вертикального объекта. NEXT TO — рядом."},
+  {tag:"Смешанный",sit:"⏳ Говорим «через два месяца» — промежуток.",q:"She will arrive ___ two months.",opts:["in","at","on"],ans:0,exp:"IN в значении «через». In two months = через два месяца."},
+  {tag:"Смешанный",sit:"🚗 Пассажир выходит из машины — движение изнутри наружу.",q:"He got ___ the car and rang the doorbell.",opts:["out of","into","through"],ans:0,exp:"OUT OF — из закрытого пространства наружу. INTO — противоположное (садится в машину)."},
+  {tag:"Смешанный",sit:"☀️ Называем лето — сезон года.",q:"We swim every day ___ summer.",opts:["in","at","on"],ans:0,exp:"IN + сезон. In summer = летом."},
+  {tag:"Смешанный",sit:"📅 Он бегает по субботам — конкретный день недели.",q:"He goes jogging ___ Saturdays.",opts:["on","in","at"],ans:0,exp:"ON + день недели. On Saturdays = по субботам (регулярно)."},
+  {tag:"Смешанный",sit:"🌊 Пловцы плывут с одного берега на другой — поперёк реки.",q:"They swam ___ the river to reach the boat.",opts:["across","through","over"],ans:0,exp:"ACROSS — поперёк (с берега на берег). THROUGH — сквозь внутри. OVER — над поверхностью."},
+  {tag:"Смешанный",sit:"💡 Люстра висит над обеденным столом — без касания.",q:"The chandelier is hanging ___ the dining table.",opts:["over","under","behind"],ans:0,exp:"OVER — над (без касания, нависает). UNDER — под столом. BEHIND — позади."},
+  {tag:"Смешанный",sit:"⏰ Магазин закрывается в 22:00 — точное время.",q:"The supermarket closes ___ 10 pm.",opts:["at","in","on"],ans:0,exp:"AT + точное время. At 10 pm = в 22:00."},
+  {tag:"Смешанный",sit:"🐈 Кошка была снаружи коробки и залезла внутрь — движение снаружи внутрь.",q:"The cat got ___ the box and sat there.",opts:["into","out of","over"],ans:0,exp:"INTO — движение внутрь. OUT OF — противоположное (движение наружу). OVER — через вершину."},
+  {tag:"Смешанный",sit:"🎆 Новый год — праздник как период времени.",q:"We always travel ___ New Year.",opts:["at","on","in"],ans:0,exp:"AT + праздник-период. At New Year = на Новый год. ON New Year's Day — только 1 января."},
+  {tag:"Смешанный",sit:"🚶 Толпа на площади. Человек идёт внутри толпы сквозь людей к выходу.",q:"She pushed ___ the crowd to reach the stage.",opts:["through","across","over"],ans:0,exp:"THROUGH — сквозь (движение внутри, среди людей). ACROSS — поперёк открытой поверхности. OVER — через вершину."},
+  {tag:"Смешанный",sit:"📚 Бабушка живёт внутри населённого пункта — маленькой деревни.",q:"My grandmother lives ___ a small village.",opts:["in","at","on"],ans:0,exp:"IN + населённый пункт. In a village / city / country. AT — конкретная точка (at the station, at the corner)."},
+  {tag:"Смешанный",sit:"⏰ Шум разбудил ночью. Называем точное время — полночь.",q:"She woke up ___ midnight because of a loud noise.",opts:["at","in","on"],ans:0,exp:"AT midnight = в полночь. Точная точка → AT. Аналогично: at noon, at 3 o'clock."},
+  {tag:"Смешанный",sit:"🚗 Машина едет по мосту. Мост нависает над рекой.",q:"We drove ___ the bridge to cross the river.",opts:["over","across","through"],ans:0,exp:"OVER — над/через (мост над рекой; drive over the bridge = проехать по мосту). ACROSS — тоже возможно, но OVER подчёркивает высоту над водой."},
+  {tag:"Смешанный",sit:"🌙 Ночью в пустыне — устойчивое выражение.",q:"It gets very cold ___ night in the desert.",opts:["at","in","on"],ans:0,exp:"AT night = ночью. Устойчивое выражение без артикля. In the night — тоже используется, но at night — стандарт."},
+  {tag:"Смешанный",sit:"🏠 Ботинки стоят на полу под кроватью — ниже уровня кровати.",q:"His shoes are ___ the bed.",opts:["under","behind","next to"],ans:0,exp:"UNDER — под (ниже горизонтальной плоскости кровати). BEHIND — позади вертикального объекта. NEXT TO — рядом сбоку."}
+];
+
+var questions=[], cur=0, score=0, total=10, xp=0, streak=0, hints=3, mistakes=[], results=[];
+var timerEnabled=false, timerInterval=null, timerSec=20, retryMode=false;
+var bestScore=0;
+var XP_PER_LEVEL=200;
+
+function loadRecord(){
+  try{ bestScore=parseInt(localStorage.getItem('ctrl_test_best')||'0'); }catch(e){}
+  renderRecord();
+}
+function saveRecord(){
+  try{ localStorage.setItem('ctrl_test_best', bestScore); }catch(e){}
+}
+function renderRecord(){
+  var b=document.getElementById('record-box');
+  if(!b)return;
+  b.innerHTML='🏆 Рекорд: <b>'+(bestScore||'—')+(bestScore?'/10':'')+'</b>';
+}
+
+function goStart(){
+  loadRecord();
+  document.getElementById('start-screen').style.display='';
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='none';
+}
+
+function startTest(){
+  var _nameEl = document.getElementById('inp-name');
+  var _groupEl = document.getElementById('inp-group');
+  if(_nameEl && !_nameEl.value.trim()){_nameEl.classList.add('err');_nameEl.focus();return;}
+  if(_groupEl && !_groupEl.value.trim()){_groupEl.classList.add('err');_groupEl.focus();return;}
+  if(_nameEl) _nameEl.classList.remove('err');
+  if(_groupEl) _groupEl.classList.remove('err');
+
+  retryMode=false;
+  questions=shuffle(Q_S3_ALL.slice()).slice(0,10);
+  cur=0; score=0; mistakes=[]; results=[];
+  xp=0; streak=0; hints=3;
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='';
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('hint-count').textContent=hints;
+  document.getElementById('hint-btn').disabled=false;
+  document.getElementById('timer-chip').style.display=timerEnabled?'':'none';
+  updateXpUI(); updateStreakUI(); showQuestion();
+}
+
+function showQuestion(){
+  var q=questions[cur];
+  document.getElementById('counter-cur').textContent=cur+1;
+  document.getElementById('score-live').textContent=score;
+  document.getElementById('progress-fill').style.width=((cur/10)*100)+'%';
+  document.getElementById('q-tag').textContent=q.tag;
+  document.getElementById('q-text').innerHTML=q.q.replace(/___/g,'<span class="blank">___</span>');
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('next-btn').style.display='none';
+  var opts=document.getElementById('options'); opts.innerHTML='';
+  var order=shuffle([0,1,2]);
+  order.forEach(function(oi){
+    var b=document.createElement('button');
+    b.className='opt-btn'; b.textContent=q.opts[oi];
+    b.onclick=function(){answer(oi,b,q);};
+    opts.appendChild(b);
+  });
+  if(timerEnabled) startTimer();
+}
+
+function answer(oi,btn,q){
+  stopTimer();
+  var btns=document.getElementById('options').querySelectorAll('.opt-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  var correct=(oi===q.ans);
+  showXpPopup(btn,correct);
+  if(correct){
+    btn.classList.add('correct'); score++;
+    document.getElementById('score-live').textContent=score;
+    streak++; xp+=streak>=5?20:streak>=3?15:10;
+    updateXpUI(); updateStreakUI();
+    document.getElementById('feedback').innerHTML='✅ Верно! '+q.exp;
+    document.getElementById('feedback').className='feedback ok';
+    if(streak>=3) launchConfetti();
+  } else {
+    btn.classList.add('wrong'); streak=0; xp=Math.max(0,xp-3);
+    updateXpUI(); updateStreakUI();
+    btns.forEach(function(b){if(b.textContent===q.opts[q.ans])b.classList.add('correct');});
+    mistakes.push({q:q.q, ans:q.opts[q.ans]});
+    document.getElementById('feedback').innerHTML='❌ Неверно. '+q.exp;
+    document.getElementById('feedback').className='feedback err';
+  }
+  results.push({ok:correct,q:q});
+  document.getElementById('next-btn').style.display='inline-block';
+}
+
+function nextQuestion(){
+  cur++;
+  if(cur>=10){ finishTest(); return; }
+  showQuestion();
+}
+
+function startTimer(){
+  timerSec=20;
+  var chip=document.getElementById('timer-chip');
+  chip.textContent='⏱ '+timerSec; chip.className='timer-chip';
+  timerInterval=setInterval(function(){
+    timerSec--; chip.textContent='⏱ '+timerSec;
+    if(timerSec<=5) chip.className='timer-chip danger';
+    else if(timerSec<=10) chip.className='timer-chip warn';
+    if(timerSec<=0){
+      stopTimer();
+      var btns=document.getElementById('options').querySelectorAll('.opt-btn');
+      var q=questions[cur];
+      btns.forEach(function(b){b.disabled=true;if(b.textContent===q.opts[q.ans])b.classList.add('correct');});
+      streak=0; updateStreakUI();
+      mistakes.push({q:q.q,ans:q.opts[q.ans]});
+      results.push({ok:false,q:q});
+      document.getElementById('feedback').innerHTML='⏱ Время вышло! Правильный ответ: <b>'+q.opts[q.ans]+'</b>. '+q.exp;
+      document.getElementById('feedback').className='feedback err';
+      document.getElementById('next-btn').style.display='inline-block';
+    }
+  },1000);
+}
+function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
+
+function updateXpUI(){
+  var lv=xp%XP_PER_LEVEL;
+  document.getElementById('xp-fill').style.width=(lv/XP_PER_LEVEL*100)+'%';
+  document.getElementById('xp-val').textContent=xp+' XP';
+}
+function updateStreakUI(){
+  var b=document.getElementById('streak-badge');
+  b.textContent='🔥 '+streak+' подряд';
+  b.className='streak-badge'+(streak>=5?' fire':streak>=3?' hot':'');
+}
+function showXpPopup(el,ok){
+  var p=document.createElement('div');
+  p.className='xp-popup '+(ok?'ok':'err');
+  p.textContent=ok?(streak>=5?'+20 XP 🔥':streak>=3?'+15 XP ⚡':'+10 XP'):'-3 XP';
+  var r=el.getBoundingClientRect();
+  p.style.left=(r.left+r.width/2-30)+'px';
+  p.style.top=(r.top-20+window.scrollY)+'px';
+  document.body.appendChild(p);
+  setTimeout(function(){p.remove();},1100);
+}
+function useHint(){
+  if(hints<=0)return; hints--;
+  document.getElementById('hint-count').textContent=hints;
+  var q=questions[cur];
+  document.getElementById('feedback').innerHTML='💡 Подсказка: правильный ответ — <b>«'+q.opts[q.ans]+'»</b>. Попробуйте ещё раз!';
+  document.getElementById('feedback').className='feedback ok';
+  if(hints===0) document.getElementById('hint-btn').disabled=true;
+}
+
+function finishTest(){
+  // Send to Google Forms
+  var _name = (document.getElementById('inp-name') ? document.getElementById('inp-name').value.trim() : '') || 'Аноним';
+  var _group = (document.getElementById('inp-group') ? document.getElementById('inp-group').value.trim() : '') || '—';
+  var _result = score + '/' + 10;
+  var _xp = 0;
+  sendToGoogleForms(_name, _group, 'Предлоги — Контроль', _result, _xp);
+
+  var pct=score/10;
+  if(score>bestScore){bestScore=score;saveRecord();}
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='block';
+  var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
+  var rank=pct>=0.9?{name:'Мастер',bg:'#ede9fe',color:'#6d28d9'}:
+           pct>=0.7?{name:'Знаток',bg:'#e4eef8',color:'#1A4A7A'}:
+           pct>=0.5?{name:'Ученик',bg:'#e4f0ea',color:'#2D5A3D'}:
+                   {name:'Новичок',bg:'#f0eaf8',color:'#6B2FA0'};
+  var emoji=pct===1?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
+  var msg=pct===1?'Отлично! Все ответы верны! Вы настоящий мастер предлогов!':
+          pct>=0.8?'Очень хорошо! Разберите ошибки ниже.':
+          pct>=0.7?'Хороший результат! Есть над чем поработать.':
+          pct>=0.5?'Неплохо, но нужно повторить правила. Попробуйте снова!':
+          'Нужно повторить предлоги. Загляните в справочник и попробуйте ещё раз!';
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-score').textContent=score+' / 10';
+  document.getElementById('res-label').textContent='правильных ответов · Контрольный тест';
+  document.getElementById('res-xp').textContent='⭐ '+xp+' XP';
+  document.getElementById('res-msg').textContent=msg;
+  var sh='';for(var i=1;i<=3;i++)sh+='<span class="star'+(stars>=i?' lit':'')+'" style="animation-delay:'+((i-1)*.18)+'s">⭐</span>';
+  document.getElementById('stars-row').innerHTML=sh;
+  document.getElementById('rank-badge-wrap').innerHTML='<span class="rank-badge" style="background:'+rank.bg+';color:'+rank.color+'">🏅 '+rank.name+'</span>';
+  if(pct>=0.9) launchBigConfetti();
+  var wrongCount=results.filter(function(r){return !r.ok;}).length;
+  var retryBtn=document.getElementById('retry-btn');
+  if(wrongCount>0&&!retryMode){retryBtn.style.display='inline-block';retryBtn.textContent='🔁 Работа над ошибками ('+wrongCount+')';}
+  else{retryBtn.style.display='none';}
+  var mBlock=document.getElementById('mistakes-block');
+  if(mistakes.length>0){
+    var html='<h3 style="font-size:14px;font-weight:600;color:#7aa8d4;margin-bottom:.75rem">Разбор ошибок:</h3>';
+    mistakes.forEach(function(m){html+='<div class="mistake-item"><div class="m-q">'+m.q+'</div><div class="m-a">✓ '+m.ans+'</div></div>';});
+    mBlock.innerHTML=html;
+  } else { mBlock.innerHTML=''; }
+}
+
+function retryMistakes(){
+  var wrong=results.filter(function(r){return !r.ok;}); if(!wrong.length)return;
+  retryMode=true; questions=wrong.map(function(r){return r.q;});
+  cur=0; score=0; mistakes=[]; results=[];
+  xp=0; streak=0; hints=3;
+  total=questions.length;
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='';
+  document.getElementById('hint-count').textContent=hints;
+  document.getElementById('hint-btn').disabled=false;
+  document.getElementById('timer-chip').style.display=timerEnabled?'':'none';
+  updateXpUI(); updateStreakUI(); showQuestion();
+}
+
+function shuffle(arr){return arr.slice().sort(function(){return Math.random()-.5;});}
+
+var canvas=document.getElementById('confetti-canvas');
+var ctx=canvas.getContext('2d');
+var particles=[],animId=null;
+var COLORS=['#378ADD','#22c55e','#f59e0b','#ef4444','#a855f7','#ec4899','#14b8a6'];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize(); window.addEventListener('resize',resize);
+function createParticle(x,y,big){
+  var angle=Math.random()*Math.PI*2,speed=big?(Math.random()*10+5):(Math.random()*7+3);
+  return{x:x,y:y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-(big?8:4),color:COLORS[Math.floor(Math.random()*COLORS.length)],size:big?(Math.random()*10+5):(Math.random()*7+3),rotation:Math.random()*360,rotSpeed:(Math.random()-.5)*8,alpha:1,shape:Math.random()>.5?'rect':'circle'};
+}
+function spawnBurst(x,y,count,big){for(var i=0;i<count;i++)particles.push(createParticle(x,y,big));}
+function launchConfetti(){var rect=document.querySelector('.card').getBoundingClientRect();spawnBurst(rect.left+rect.width/2,rect.top+rect.height*.3,50,false);if(!animId)animate();}
+function launchBigConfetti(){var cx=window.innerWidth/2,cy=window.innerHeight/2;spawnBurst(cx,cy,130,true);setTimeout(function(){spawnBurst(cx-220,cy,70,true);},200);setTimeout(function(){spawnBurst(cx+220,cy,70,true);},400);if(!animId)animate();}
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.vx*=.99;p.rotation+=p.rotSpeed;p.alpha-=.016;ctx.save();ctx.globalAlpha=Math.max(0,p.alpha);ctx.translate(p.x,p.y);ctx.rotate(p.rotation*Math.PI/180);ctx.fillStyle=p.color;if(p.shape==='rect'){ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);}else{ctx.beginPath();ctx.arc(0,0,p.size/2,0,Math.PI*2);ctx.fill();}ctx.restore();});
+  particles=particles.filter(function(p){return p.alpha>0;});
+  if(particles.length>0){animId=requestAnimationFrame(animate);}else{animId=null;ctx.clearRect(0,0,canvas.width,canvas.height);}
+}
+
+goStart();
+
+function sendToGoogleForms(name, group, testName, result, xpEarned) {
+  var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdfme_aKvoexXRSz7LTn5dxgY_7P2lBJsokU3puqehRxZVslw/formResponse';
+  var body = new FormData();
+  body.append('entry.1795360459', name);
+  body.append('entry.1572037373', group);
+  body.append('entry.1562414669', testName);
+  body.append('entry.994594767', result);
+  body.append('entry.1290836239', xpEarned);
+  fetch(formUrl, {method:'POST', body:body, mode:'no-cors'})
+  .then(function(){
+    var el=document.getElementById('send-status');
+    if(el){el.textContent='✅ Результат отправлен преподавателю'; el.className='send-status ok';}
+  }).catch(function(){
+    var el=document.getElementById('send-status');
+    if(el){el.textContent='⚠️ Нет соединения — результат не отправлен'; el.className='send-status err';}
+  });
+}
+
+</script>
+</body>
+</html>
