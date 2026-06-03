@@ -171,6 +171,16 @@
   .toggle-slider:before { content:""; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform .25s; box-shadow:0 1px 4px rgba(0,0,0,.15); }
   .toggle-switch input:checked + .toggle-slider { background:#378ADD; }
   .toggle-switch input:checked + .toggle-slider:before { transform:translateX(20px); }
+
+  .warn-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:9000; align-items:center; justify-content:center; padding:1rem; }
+  .warn-overlay.open { display:flex; }
+  .warn-box { background:#fff; border-radius:16px; padding:2rem 1.5rem; max-width:360px; width:100%; text-align:center; }
+  .warn-icon { font-size:3rem; margin-bottom:.8rem; }
+  .warn-title { font-size:18px; font-weight:700; color:#b91c1c; margin-bottom:.6rem; }
+  .warn-text { font-size:14px; color:#1a2e4a; line-height:1.6; margin-bottom:1.2rem; }
+  .warn-count { font-size:13px; font-weight:700; color:#b91c1c; background:#fee2e2; border-radius:8px; padding:6px 14px; display:inline-block; margin-bottom:1.2rem; }
+  .warn-btn { padding:10px 28px; border-radius:10px; border:none; background:#378ADD; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:Arial,sans-serif; }
+  .warn-btn.danger { background:#ef4444; }
 </style>
 </head>
 <body>
@@ -604,6 +614,7 @@ function switchHubTab(tab){
 }
 
 function startCurrentStage(){
+  violations = 0; testActive = true;
   var _ne=document.getElementById('inp-name'),_ge=document.getElementById('inp-group');
   if(_ne&&!_ne.value.trim()){_ne.classList.add('err');_ne.focus();return;}
   if(_ge&&!_ge.value.trim()){_ge.classList.add('err');_ge.focus();return;}
@@ -744,6 +755,7 @@ function useHint(){
 }
 
 function finishStage(){
+  testActive = false;
   var _name=(document.getElementById('inp-name')?document.getElementById('inp-name').value.trim():'')||'Аноним';
   var _group=(document.getElementById('inp-group')?document.getElementById('inp-group').value.trim():'')||'—';
   sendToGoogleForms(_name,_group,'Степени сравнения — Тренировка',score+'/'+total,xp,timerEnabled);
@@ -859,7 +871,7 @@ function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
   body.append('entry.1795360459', name);
   body.append('entry.1572037373', group);
   body.append('entry.1562414669', testName);
-  body.append('entry.994594767', result + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ'));
+  body.append('entry.994594767', result + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ') + (violations > 0 ? ' | ⚠️ Покидал: ' + violations + ' раз' : ' | ✅ Не покидал'));
   body.append('entry.1290836239', xpEarned);
   fetch(formUrl, {method:'POST', body:body, mode:'no-cors'})
   .then(function(){
@@ -875,6 +887,43 @@ function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
   });
 }
 
+
+var violations = 0, testActive = false, MAX_VIOLATIONS = 2;
+document.addEventListener('visibilitychange', function(){
+  if(!testActive) return;
+  if(document.hidden){ violations++; showWarning(); }
+});
+function showWarning(){
+  var o=document.getElementById('warn-overlay'),icon=document.getElementById('warn-icon'),
+      title=document.getElementById('warn-title'),text=document.getElementById('warn-text'),
+      count=document.getElementById('warn-count'),btn=document.getElementById('warn-btn');
+  if(violations>=MAX_VIOLATIONS){
+    icon.textContent='🚫'; title.textContent='Тест сброшен!';
+    text.textContent='Вы покидали страницу '+violations+' раза. Тест начат заново.';
+    count.textContent='Нарушений: '+violations; btn.textContent='Начать сначала';
+    btn.className='warn-btn danger';
+    btn.onclick=function(){ closeWarning(); violations=0; testActive=false;
+      var ss=document.getElementById('start-screen'),qs=document.getElementById('quiz-screen'),rs=document.getElementById('result-screen');
+      if(ss)ss.style.display=''; if(qs)qs.style.display='none'; if(rs)rs.style.display='none'; };
+  } else {
+    icon.textContent='⚠️'; title.textContent='Вы покинули страницу!';
+    text.textContent='Во время теста нельзя открывать другие вкладки. Следующее нарушение — тест сбросится!';
+    count.textContent='Нарушение '+violations+' из '+MAX_VIOLATIONS;
+    btn.textContent='Продолжить тест'; btn.className='warn-btn'; btn.onclick=closeWarning;
+  }
+  o.classList.add('open');
+}
+function closeWarning(){ document.getElementById('warn-overlay').classList.remove('open'); }
+
 </script>
+<div class="warn-overlay" id="warn-overlay">
+  <div class="warn-box">
+    <div class="warn-icon" id="warn-icon">⚠️</div>
+    <div class="warn-title" id="warn-title">Вы покинули страницу!</div>
+    <div class="warn-text" id="warn-text">Во время теста нельзя открывать другие вкладки.</div>
+    <div class="warn-count" id="warn-count"></div>
+    <button class="warn-btn" id="warn-btn" onclick="closeWarning()">Продолжить тест</button>
+  </div>
+</div>
 </body>
 </html>
