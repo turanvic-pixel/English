@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Числительные. Даты. Время.</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    background-color: #fff;
+    background-image: linear-gradient(#b3d1f7 1px, transparent 1px), linear-gradient(90deg, #b3d1f7 1px, transparent 1px);
+    background-size: 28px 28px;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 2rem 1rem 3rem;
+  }
+  .card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 16px;
+    border: 1.5px solid #c8dff7;
+    padding: 2rem 2rem 2.5rem;
+    max-width: 700px; width: 100%;
+    box-shadow: 0 4px 24px rgba(55,138,221,0.10);
+  }
+  h1 { text-align: center; font-size: 20px; font-weight: 700; color: #185FA5; margin-bottom: 0.2rem; }
+  .subtitle { text-align: center; font-size: 13px; color: #5b8dc7; margin-bottom: 1.5rem; }
+  .progress-bar { height: 7px; background: #dbeafe; border-radius: 99px; margin-bottom: 1rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: #378ADD; border-radius: 99px; transition: width 0.4s ease; }
+  .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .q-tag { font-size: 11px; background: #e0eeff; color: #185FA5; padding: 2px 9px; border-radius: 99px; font-weight: 600; }
+  .q-text { font-size: 17px; font-weight: 600; color: #1a2e4a; margin-bottom: 1.2rem; line-height: 1.6; }
+  .q-text code { font-family: Arial, sans-serif; background: #e8f2ff; color: #185FA5; padding: 1px 7px; border-radius: 5px; font-weight: 700; font-size: 17px; }
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .opt-btn {
+    padding: 11px 16px; border: 1.5px solid #c8dff7; border-radius: 10px;
+    background: #f5f9ff; color: #1a2e4a; font-size: 15px; cursor: pointer;
+    text-align: left; transition: background 0.13s, border-color 0.13s, transform 0.1s;
+    font-family: Arial, sans-serif;
+  }
+  .opt-btn:hover:not(:disabled) { background: #dbeafe; border-color: #378ADD; transform: translateX(3px); }
+  .opt-btn.correct { background: #d1fadf; border-color: #22c55e; color: #14532d; font-weight: 600; }
+  .opt-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #7f1d1d; }
+  .opt-btn:disabled { cursor: default; transform: none; }
+  .feedback { margin-top: 0.8rem; font-size: 14px; min-height: 20px; line-height: 1.6; }
+  .feedback.ok { color: #15803d; font-weight: 500; }
+  .feedback.err { color: #b91c1c; }
+  .next-btn {
+    margin-top: 1.1rem; padding: 10px 26px; border-radius: 10px;
+    border: 1.5px solid #378ADD; background: #378ADD; color: #fff;
+    font-size: 14px; font-weight: 600; cursor: pointer; display: none;
+    font-family: Arial, sans-serif; transition: background 0.15s;
+  }
+  .next-btn:hover { background: #185FA5; }
+  .result-card { text-align: center; padding: 1.5rem 0.5rem 0.5rem; }
+  .result-emoji { font-size: 52px; margin-bottom: 0.8rem; }
+  .result-score { font-size: 40px; font-weight: 700; color: #185FA5; }
+  .result-label { font-size: 14px; color: #7aa8d4; margin: 0.3rem 0 1.2rem; }
+  .result-msg { font-size: 15px; color: #1a2e4a; margin-bottom: 1.5rem; line-height: 1.7; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .restart-btn {
+    padding: 11px 32px; border-radius: 10px; border: 1.5px solid #378ADD;
+    background: #378ADD; color: #fff; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: Arial, sans-serif; transition: background 0.15s;
+  }
+  .restart-btn:hover { background: #185FA5; }
+  .mistakes-list { text-align: left; border-top: 1px solid #dbeafe; padding-top: 1.2rem; margin-top: 1.2rem; }
+  .mistake-item { font-size: 13px; color: #1a2e4a; padding: 9px 13px; background: #f5f9ff; border-radius: 8px; margin-bottom: 7px; border-left: 3px solid #22c55e; }
+  .mistake-item .m-q { color: #7aa8d4; margin-bottom: 3px; font-size: 12px; }
+  .mistake-item .m-a { color: #15803d; font-weight: 600; }
+  #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+  .hud { display:flex; flex-wrap:wrap; gap:7px; align-items:center; margin-bottom:.75rem; }
+  .hud-chip { font-size:12px; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; font-weight:600; }
+  .streak-badge { font-size:12px; font-weight:700; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; transition:all .3s; }
+  .streak-badge.hot  { background:#fff3dc; color:#b45309; }
+  .streak-badge.fire { background:linear-gradient(135deg,#fef3c7,#fde68a); color:#92400e; animation:sBurst .45s ease; }
+  @keyframes sBurst { 0%{transform:scale(1)} 40%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .timer-chip { font-size:12px; font-weight:700; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; transition:background .3s,color .3s; margin-left:auto; }
+  .timer-chip.warn   { background:#fff3dc; color:#b45309; }
+  .timer-chip.danger { background:#fee2e2; color:#b91c1c; }
+  .xp-row { display:flex; align-items:center; gap:8px; margin-bottom:.6rem; }
+  .xp-label { font-size:11px; color:#7aa8d4; font-weight:600; white-space:nowrap; }
+  .xp-track { flex:1; height:5px; background:#dbeafe; border-radius:4px; overflow:hidden; }
+  .xp-fill  { height:100%; background:linear-gradient(90deg,#378ADD,#a855f7); border-radius:4px; transition:width .5s ease; }
+  .xp-val   { font-size:12px; font-weight:700; color:#a855f7; min-width:38px; text-align:right; }
+  .hint-btn { font-size:12px; font-weight:600; background:#f5f9ff; border:1.5px solid #c8dff7; border-radius:8px; padding:6px 13px; cursor:pointer; color:#7aa8d4; font-family:Arial,sans-serif; transition:background .12s; }
+  .hint-btn:hover:not(:disabled) { background:#dbeafe; }
+  .hint-btn:disabled { opacity:.35; cursor:default; }
+  .xp-popup { position:fixed; pointer-events:none; font-weight:700; font-size:.95rem; border-radius:10px; padding:3px 13px; z-index:9999; animation:floatUp 1s ease forwards; }
+  .xp-popup.ok    { background:#d1fadf; color:#14532d; }
+  .xp-popup.bonus { background:#fef3c7; color:#92400e; }
+  .xp-popup.err   { background:#fee2e2; color:#7f1d1d; }
+  @keyframes floatUp { 0%{opacity:1;transform:translateY(0)} 80%{opacity:1} 100%{opacity:0;transform:translateY(-55px)} }
+  .stars-row { display:flex; justify-content:center; gap:6px; font-size:2rem; margin:.4rem 0 .5rem; }
+  .star { filter:grayscale(1) opacity(.3); display:inline-block; }
+  .star.lit { filter:none; animation:starPop .4s ease; }
+  @keyframes starPop { 0%{transform:scale(.5) rotate(-20deg)} 70%{transform:scale(1.3) rotate(5deg)} 100%{transform:scale(1) rotate(0deg)} }
+  .rank-badge { display:inline-block; padding:3px 16px; border-radius:99px; font-size:12px; font-weight:700; letter-spacing:.05em; margin-bottom:.4rem; }
+  .result-xp { font-size:14px; color:#a855f7; font-weight:700; margin-bottom:.3rem; }
+  .retry-btn { margin-top:.6rem; padding:10px 24px; border-radius:10px; border:1.5px solid #f59e0b; background:#fff3dc; color:#92400e; font-size:14px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; transition:background .15s; display:none; }
+  .retry-btn:hover { background:#fde68a; }
+  .next-stage-btn { margin-top:.6rem; padding:10px 24px; border-radius:10px; border:1.5px solid #22c55e; background:#d1fadf; color:#14532d; font-size:14px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; transition:background .15s; }
+  .next-stage-btn:hover { background:#bbf7d0; }
+  .ref-btn { margin-top:.7rem; display:block; width:100%; padding:9px 0; border-radius:10px; border:1.5px solid #c8dff7; background:#f5f9ff; color:#7aa8d4; font-size:13px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; transition:background .12s; text-align:center; }
+  .ref-btn:hover { background:#dbeafe; color:#185FA5; }
+  #start-screen { text-align:center; padding:.5rem 0 1rem; }
+  .start-btn { padding:12px 36px; border-radius:10px; border:1.5px solid #378ADD; background:#378ADD; color:#fff; font-size:15px; font-weight:700; cursor:pointer; font-family:Arial,sans-serif; transition:background .15px; margin-bottom:1rem; }
+  .start-btn:hover { background:#185FA5; }
+  .start-btn:disabled { background:#9dc6ee; border-color:#9dc6ee; cursor:default; }
+  .record-box { background:#f5f9ff; border:1.5px solid #dbeafe; border-radius:10px; padding:10px 16px; font-size:13px; color:#7aa8d4; margin-bottom:1rem; }
+  .record-box b { color:#185FA5; }
+  .toggle-row { display:flex; align-items:center; gap:10px; background:#f5f9ff; border:1.5px solid #dbeafe; border-radius:10px; padding:10px 14px; margin-bottom:1rem; }
+  .toggle-label { flex:1; text-align:left; font-size:13px; color:#1a2e4a; font-weight:600; }
+  .toggle-sub   { font-size:11px; color:#7aa8d4; font-weight:400; display:block; margin-top:1px; }
+  .toggle-switch { position:relative; width:44px; height:24px; flex-shrink:0; }
+  .toggle-switch input { opacity:0; width:0; height:0; }
+  .toggle-slider { position:absolute; inset:0; background:#c8dff7; border-radius:99px; cursor:pointer; transition:background .25s; }
+  .toggle-slider:before { content:''; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform .25s; box-shadow:0 1px 4px rgba(0,0,0,.15); }
+  .toggle-switch input:checked + .toggle-slider { background:#378ADD; }
+  .toggle-switch input:checked + .toggle-slider:before { transform:translateX(20px); }
+  #stage-panel { margin-bottom: 1.2rem; }
+  .hub-tabs { display:flex; border-bottom:2px solid #dbeafe; margin-bottom:1.2rem; }
+  .hub-tab { flex:1; background:none; border:none; padding:9px 0; font-size:13px; font-weight:500; color:#7aa8d4; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; font-family:Arial,sans-serif; transition:color .15s,border-color .15s; }
+  .hub-tab.active { color:#185FA5; border-bottom-color:#378ADD; font-weight:700; }
+  .hub-panel { display:none; }
+  .hub-panel.active { display:block; }
+  .unlock-rule { font-size:12px; color:#5b8dc7; background:#f0f7ff; border:1.5px solid #c8dff7; border-radius:10px; padding:8px 13px; margin-bottom:1rem; line-height:1.6; }
+  .ref-table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:1rem; }
+  .ref-table th { background:#e0eeff; color:#185FA5; padding:6px 10px; font-weight:700; text-align:left; }
+  .ref-table td { padding:6px 10px; border-bottom:1px solid #dbeafe; color:#1a2e4a; vertical-align:top; }
+  .ref-table tr:last-child td { border-bottom:none; }
+  .ref-section-title { font-size:13px; font-weight:700; color:#185FA5; margin:1rem 0 .4rem; }
+  .stage-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:1.2rem; }
+  .stage-card {
+    border: 1.5px solid #c8dff7; border-radius: 12px; padding: 12px 8px 10px;
+    background: #f5f9ff; cursor: pointer; text-align: center;
+    transition: background .15s, border-color .15s, transform .1s;
+    font-family: Arial, sans-serif;
+  }
+  .stage-card:hover { background: #dbeafe; border-color: #378ADD; transform: translateY(-2px); }
+  .stage-card.locked { opacity: .4; cursor: default; }
+  .stage-card.locked:hover { background: #f5f9ff; border-color: #c8dff7; transform: none; }
+  .stage-card.done { border-color: #22c55e; background: #f0fdf4; }
+  .stage-card.active-stage { border-color: #378ADD; background: #e0eeff; }
+  .stage-icon { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+  .stage-title { font-size: 12px; font-weight: 700; color: #185FA5; margin-bottom: 2px; }
+  .stage-desc { font-size: 10px; color: #7aa8d4; line-height: 1.4; }
+  .stage-badge { display:inline-block; font-size:9px; font-weight:700; padding:1px 7px; border-radius:99px; margin-top:4px; }
+  .stage-badge.done-badge { background:#d1fadf; color:#14532d; }
+  .stage-badge.lock-badge { background:#e0eeff; color:#7aa8d4; }
+  .stage-badge.open-badge { background:#e0eeff; color:#185FA5; }
+  .ref-modal-wrap { display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:500; align-items:center; justify-content:center; padding:1rem; }
+  .ref-modal-wrap.open { display:flex; }
+  .ref-modal { background:#fff; border-radius:16px; padding:1.5rem; max-width:620px; width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 8px 40px rgba(0,0,0,.18); }
+  .ref-modal h2 { font-size:16px; color:#185FA5; margin-bottom:1rem; }
+  .ref-close { float:right; background:none; border:none; font-size:20px; cursor:pointer; color:#7aa8d4; line-height:1; }
+
+.send-status { margin-top: 10px; font-size: 13px; font-weight: 600; min-height: 20px; }
+.send-status.ok { color: #14532d; }
+.send-status.err { color: #7f1d1d; }
+.name-input { padding: 9px 14px; border-radius: 8px; border: 1.5px solid #c8dff7; font-size: 14px; width: 100%; box-sizing: border-box; margin-bottom: 8px; font-family: Arial, sans-serif; }
+.name-input.err { border-color: #ef4444; }
+
+#timer-status { min-height: 18px; }
+#timer-status.timer-on  { color: #b45309; }
+#timer-status.timer-off { color: #6b7280; }
+
+  .warn-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:9000; align-items:center; justify-content:center; padding:1rem; }
+  .warn-overlay.open { display:flex; }
+  .warn-box { background:#fff; border-radius:16px; padding:2rem 1.5rem; max-width:360px; width:100%; text-align:center; }
+  .warn-icon { font-size:3rem; margin-bottom:.8rem; }
+  .warn-title { font-size:18px; font-weight:700; color:#b91c1c; margin-bottom:.6rem; }
+  .warn-text { font-size:14px; color:#1a2e4a; line-height:1.6; margin-bottom:1.2rem; }
+  .warn-count { font-size:13px; font-weight:700; color:#b91c1c; background:#fee2e2; border-radius:8px; padding:6px 14px; display:inline-block; margin-bottom:1.2rem; }
+  .warn-btn { padding:10px 28px; border-radius:10px; border:none; background:#378ADD; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:Arial,sans-serif; }
+  .warn-btn.danger { background:#ef4444; }
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+
+<!-- СПРАВОЧНИК -->
+<div class="ref-modal-wrap" id="ref-modal">
+  <div class="ref-modal">
+    <button class="ref-close" onclick="toggleRef()">✕</button>
+    <h2>📋 Справочник: Числительные. Даты. Время.</h2>
+
+    <p class="ref-section-title">🔢 Количественные числительные (Cardinal numbers)</p>
+    <table class="ref-table">
+      <tr><th>Цифра</th><th>Английский</th><th>Цифра</th><th>Английский</th></tr>
+      <tr><td>1</td><td><b>one</b></td><td>11</td><td><b>eleven</b></td></tr>
+      <tr><td>2</td><td><b>two</b></td><td>12</td><td><b>twelve</b></td></tr>
+      <tr><td>3</td><td><b>three</b></td><td>13</td><td><b>thirteen</b> (-teen)</td></tr>
+      <tr><td>4</td><td><b>four</b></td><td>15</td><td><b>fifteen</b> (five→fif)</td></tr>
+      <tr><td>5</td><td><b>five</b></td><td>20</td><td><b>twenty</b></td></tr>
+      <tr><td>6</td><td><b>six</b></td><td>30</td><td><b>thirty</b></td></tr>
+      <tr><td>7</td><td><b>seven</b></td><td>40</td><td><b>forty</b> (без u!)</td></tr>
+      <tr><td>8</td><td><b>eight</b></td><td>50</td><td><b>fifty</b></td></tr>
+      <tr><td>9</td><td><b>nine</b></td><td>100</td><td><b>a (one) hundred</b></td></tr>
+      <tr><td>10</td><td><b>ten</b></td><td>1000</td><td><b>a (one) thousand</b></td></tr>
+    </table>
+    <p style="font-size:12px;color:#5b8dc7;margin-bottom:.8rem">💡 13–19: основа + <b>-teen</b> (thirteen, fourteen…) &nbsp;|&nbsp; 20–90: основа + <b>-ty</b> &nbsp;|&nbsp; 21, 35…: десятки + единицы через пробел (twenty one, thirty five)</p>
+
+    <p class="ref-section-title">📋 Порядковые числительные (Ordinal numbers)</p>
+    <table class="ref-table">
+      <tr><th>№</th><th>Английский</th><th>№</th><th>Английский</th></tr>
+      <tr><td>1st</td><td><b>the first</b> (исключение)</td><td>8th</td><td><b>the eighth</b></td></tr>
+      <tr><td>2nd</td><td><b>the second</b> (исключение)</td><td>9th</td><td><b>the ninth</b></td></tr>
+      <tr><td>3rd</td><td><b>the third</b> (исключение)</td><td>12th</td><td><b>the twelfth</b></td></tr>
+      <tr><td>4th</td><td><b>the fourth</b> (+th)</td><td>20th</td><td><b>the twentieth</b> (-y→-ieth)</td></tr>
+      <tr><td>5th</td><td><b>the fifth</b> (five→fif)</td><td>21st</td><td><b>the twenty first</b></td></tr>
+      <tr><td>6th</td><td><b>the sixth</b></td><td>30th</td><td><b>the thirtieth</b></td></tr>
+      <tr><td>7th</td><td><b>the seventh</b></td><td>100th</td><td><b>the hundredth</b></td></tr>
+    </table>
+    <p style="font-size:12px;color:#5b8dc7;margin-bottom:.8rem">💡 Правило: 1st, 2nd, 3rd — исключения. С 4-го: слово + <b>-th</b>. Десятки на -y: -y → -ie + th (twenty → twentieth)</p>
+
+    <p class="ref-section-title">🕐 Время по-английски</p>
+    <p style="font-size:12px;color:#5b8dc7;margin-bottom:.5rem">Формула: <b>It's (минуты) past/to (час в 12-ч. формате)</b></p>
+    <table class="ref-table">
+      <tr><th>Время</th><th>По-английски</th><th>Перевод</th></tr>
+      <tr><td>XX:00</td><td><b>It's … o'clock</b></td><td>ровно … часов</td></tr>
+      <tr><td>XX:15</td><td><b>It's a quarter past …</b></td><td>четверть … (прошло 15 мин)</td></tr>
+      <tr><td>XX:30</td><td><b>It's half past …</b></td><td>половина … (прошло 30 мин)</td></tr>
+      <tr><td>XX:45</td><td><b>It's a quarter to …</b></td><td>без четверти … (до след. часа 15 мин)</td></tr>
+      <tr><td>XX:05</td><td><b>It's five past …</b></td><td>пять минут … (прошло)</td></tr>
+      <tr><td>XX:10</td><td><b>It's ten past …</b></td><td>десять минут … (прошло)</td></tr>
+      <tr><td>XX:20</td><td><b>It's twenty past …</b></td><td>двадцать минут … (прошло)</td></tr>
+      <tr><td>XX:25</td><td><b>It's twenty five past …</b></td><td>двадцать пять минут … (прошло)</td></tr>
+      <tr><td>XX:40</td><td><b>It's twenty to …</b></td><td>без двадцати …</td></tr>
+      <tr><td>XX:50</td><td><b>It's ten to …</b></td><td>без десяти …</td></tr>
+      <tr><td>XX:55</td><td><b>It's five to …</b></td><td>без пяти …</td></tr>
+    </table>
+    <p style="font-size:12px;color:#5b8dc7;margin-bottom:.8rem">💡 <b>past</b> = прошло (до :30) &nbsp;|&nbsp; <b>to</b> = осталось до следующего часа (после :30). Часы — в 12-часовом формате!</p>
+
+    <p class="ref-section-title">📅 Даты и годы</p>
+    <table class="ref-table">
+      <tr><th>Запись</th><th>По-английски</th></tr>
+      <tr><td>1812</td><td><b>eighteen twelve</b> (пары двузначных)</td></tr>
+      <tr><td>1900</td><td><b>nineteen hundred</b></td></tr>
+      <tr><td>2007</td><td><b>two thousand (and) seven</b></td></tr>
+      <tr><td>2014</td><td><b>twenty fourteen</b></td></tr>
+      <tr><td>25.07.1976</td><td><b>the twenty-fifth of July, nineteen seventy-six</b></td></tr>
+    </table>
+    <p style="font-size:12px;color:#5b8dc7">💡 Дату читают <b>порядковым</b> числительным с артиклем <b>the</b>. Формат: the [день] of [месяц], [год]</p>
+  </div>
+</div>
+
+<div class="card">
+  <div id="stage-panel">
+    <h1>🔢 Числительные. Даты. Время.</h1>
+    <p class="subtitle">Английский язык · 6 ступеней · вопросы перемешиваются</p>
+    <div class="stage-grid" id="stage-grid"></div>
+  </div>
+
+  <div id="start-screen">
+          <div style="margin-bottom:1rem;">
+        <div style="font-weight:600;color:#185FA5;margin-bottom:.5rem;font-size:14px;">👤 Представьтесь перед началом теста</div>
+        <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
+        <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+      </div>
+<div class="hub-tabs">
+      <button class="hub-tab active" onclick="switchHubTab('play')">📝 Тест</button>
+      <button class="hub-tab" onclick="switchHubTab('table')">📋 Справочник</button>
+    </div>
+    <div class="hub-panel active" id="htab-play">
+      <div class="unlock-rule" style="background:#f0f7ff;border-color:#c8dff7;line-height:2;font-size:12px">
+        <div style="font-weight:700;color:#185FA5;font-size:13px;margin-bottom:4px">🎮 Правила игры</div>
+        🔓 <b>Разблокировка:</b> следующая ступень открывается при <b>70%+</b> правильных ответов.<br>
+        ⭐ <b>XP:</b> +10 за правильный ответ · −3 за ошибку.<br>
+        🔥 <b>Серия (streak):</b> 3+ ответа подряд → бонус +5 XP, значок становится оранжевым. 5+ → огонь и конфетти!<br>
+        ⏱ <b>Таймер:</b> 15 секунд на вопрос. Ответ за &lt;8 сек → +5 XP бонус за скорость.<br>
+        💡 <b>Подсказки:</b> 3 штуки на тест — показывают правильный ответ без штрафа за XP.<br>
+        🔁 <b>Работа над ошибками:</b> после теста можно переиграть только вопросы с ошибками.<br>
+        🏅 <b>Ранги:</b> 0–49% Новичок · 50–69% Ученик · 70–89% Знаток · 90–100% Мастер.
+      </div>
+      <div class="record-box" id="record-box">Начните со ступени 1, чтобы разблокировать следующие!</div>
+      <div class="toggle-row">
+        <div class="toggle-label">⏱ Таймер
+          <span class="toggle-sub">Включите для дополнительного XP за быстрые ответы</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="timer-toggle" onchange="onTimerToggle(this)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+<button class="start-btn" id="main-start-btn" onclick="startCurrentStage()">▶ Начать ступень 1</button>
+    </div>
+    <div class="hub-panel" id="htab-table">
+      <button class="ref-btn" onclick="toggleRef()">📋 Открыть полный справочник</button>
+    </div>
+  </div>
+
+  <div id="quiz-screen" style="display:none">
+    <div class="xp-row">
+      <span class="xp-label">XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      <span class="xp-val" id="xp-val">0</span>
+    </div>
+    <div class="hud">
+      <span class="hud-chip" id="stage-chip">Ступень 1</span>
+      <span class="hud-chip"><span id="counter-cur">1</span> / <span id="counter-tot">10</span></span>
+      <span class="streak-badge" id="streak-badge">🔥 0</span>
+      <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Подсказка (<span id="hint-count">3</span>)</button>
+      <span class="timer-chip" id="timer-chip" style="display:none">⏱ 15</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="q-meta">
+      <span class="q-tag" id="q-tag">Ступень 1</span>
+      <button class="ref-btn" style="display:inline-block;width:auto;margin:0;padding:4px 12px;font-size:11px" onclick="toggleRef()">📋</button>
+    </div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQ()">Далее →</button>
+  </div>
+
+  <div id="result-screen" style="display:none">
+    <div class="result-card">
+      <div class="result-emoji" id="res-emoji">⭐</div>
+      <div class="stars-row" id="stars-row"></div>
+      <div id="rank-badge-wrap"></div>
+      <div class="result-score" id="res-score">0/0</div>
+      <div class="result-label" id="res-label">правильных ответов</div>
+      <div class="result-xp" id="res-xp"></div>
+      <div class="result-msg" id="res-msg"></div>
+      <button class="next-stage-btn" id="next-stage-btn" onclick="goNextStage()" style="display:none">▶ Следующая ступень →</button>
+      <br>
+      <button class="retry-btn" id="retry-btn" onclick="retryMistakes()">🔁 Работа над ошибками</button>
+      <br>
+      
+      <div id="send-status" class="send-status"></div>
+      <div id="timer-status"></div>
+      <button class="restart-btn" onclick="goStart()">↩ На главную</button>
+      <div class="mistakes-list" id="mistakes-block"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// СТУПЕНЬ 1 — Количественные числительные (10 вопросов)
+// ══════════════════════════════════════════════
+var Q_S1 = [
+  {tag:"Ступень 1",q:"Выберите правильный вариант:\n<code>5</code>",opts:["five","fine","fife"],ans:0,exp:"5 → five. Это базовое числительное, нужно просто запомнить."},
+  {tag:"Ступень 1",q:"Выберите правильный вариант:\n<code>13</code>",opts:["thirteen","thirty","threeten"],ans:0,exp:"13 → thirteen. Правило: основа three → thir + teen = thirteen (13–19 добавляем -teen)."},
+  {tag:"Ступень 1",q:"Выберите правильный вариант:\n<code>40</code>",opts:["forty","fourty","fourteen"],ans:0,exp:"40 → forty. Внимание: пишется forty, а НЕ fourty! Буква u выпадает."},
+  {tag:"Ступень 1",q:"Выберите правильный вариант:\n<code>15</code>",opts:["fifteen","fiveteen","fifty"],ans:0,exp:"15 → fifteen. Особенность: five → fif (not fiveteen). Fifteen = fif + teen."},
+  {tag:"Ступень 1",q:"Выберите правильный вариант:\n<code>20</code>",opts:["twenty","twelve","tweny"],ans:0,exp:"20 → twenty. Двадцать — twenty. Не путайте с twelve (12)!"},
+  {tag:"Ступень 1",q:"Выберите правильный вариант:\n<code>18</code>",opts:["eighteen","eighty","eightten"],ans:0,exp:"18 → eighteen. Правило: eight + teen = eighteen (обратите внимание: одна буква t, не две!)."},
+  {tag:"Ступень 1",q:"Выберите правильный вариант:\n<code>45</code>",opts:["forty five","fourty five","fourteen five"],ans:0,exp:"45 → forty five. Десятки: forty (40, без u!), единицы: five (5). Пишутся раздельно."},
+  {tag:"Ступень 1",q:"Выберите правильный вариант:\n<code>12</code>",opts:["twelve","twenty","twelfth"],ans:0,exp:"12 → twelve. Это исключение, нужно запомнить. Twelfth — это 12-й (порядковое)."},
+  {tag:"Ступень 1",q:"Выберите правильный вариант:\n<code>100</code>",opts:["a hundred","a thousand","one tens"],ans:0,exp:"100 → a hundred (или one hundred). Hundred = сотня. Thousand = тысяча (1000)."},
+  {tag:"Ступень 1",q:"Выберите правильный вариант:\n<code>76</code>",opts:["seventy six","seventeen six","sixty seven"],ans:0,exp:"76 → seventy six. Seventy (70) + six (6). Правило: десятки + единицы через пробел."}
+];
+
+// ══════════════════════════════════════════════
+// СТУПЕНЬ 2 — Порядковые числительные (15 вопросов)
+// ══════════════════════════════════════════════
+var Q_S2 = [
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>1st</code>",opts:["the first","the one","the oneth"],ans:0,exp:"1st → the first. Это исключение! Не образуется от one + th. Нужно запомнить: first."},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>2nd</code>",opts:["the second","the two","the twond"],ans:0,exp:"2nd → the second. Это исключение! Не two + th, а отдельное слово second."},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>3rd</code>",opts:["the third","the three","the thirdth"],ans:0,exp:"3rd → the third. Это исключение! Не three + th, а third (заменяется корень)."},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>5th</code>",opts:["the fifth","the fiveth","the five"],ans:0,exp:"5th → the fifth. Особенность: five → fif + th = fifth. Не fiveth!"},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>8th</code>",opts:["the eighth","the eighthth","the eightth"],ans:0,exp:"8th → the eighth. Особенность: eight + h → eighth (не добавляем вторую t, только -h!)."},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>9th</code>",opts:["the ninth","the nineth","the ninethe"],ans:0,exp:"9th → the ninth. Особенность: nine теряет конечную -e: nin + th = ninth."},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>12th</code>",opts:["the twelfth","the twelveth","the tweltfh"],ans:0,exp:"12th → the twelfth. Особенность: twelve → twelv → twelfth (v→f и + th)."},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>7th</code>",opts:["the seventh","the sevens","the seventhth"],ans:0,exp:"7th → the seventh. Правило: seven + th = seventh. Всё по правилу!"},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>20th</code>",opts:["the twentieth","the twentyth","the twentiath"],ans:0,exp:"20th → the twentieth. Правило для десятков: -y → -ie + th: twenty → twentieth."},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>30th</code>",opts:["the thirtieth","the thirtyth","the thirteenth"],ans:0,exp:"30th → the thirtieth. Правило: thirty → -y заменяем на -ie + th = thirtieth. Thirteen — это 13 (количественное!)."},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>21st</code>",opts:["the twenty first","the twenty one","the twentyfirst"],ans:0,exp:"21st → the twenty first. Составное порядковое: twenty (20) + first (1-й). Последнее слово — порядковое!"},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>4th</code>",opts:["the fourth","the four","the fortieth"],ans:0,exp:"4th → the fourth. Правило: four + th = fourth. Fortieth — это 40-й (the fortieth)."},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>6th</code>",opts:["the sixth","the six","the sixtieth"],ans:0,exp:"6th → the sixth. Правило: six + th = sixth. Sixtieth — это 60-й."},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>50th</code>",opts:["the fiftieth","the fiftyth","the fifteenth"],ans:0,exp:"50th → the fiftieth. Правило: fifty → -y → -ie + th = fiftieth. Fifteenth — это 15-й."},
+  {tag:"Ступень 2",q:"Выберите правильный вариант:\n<code>100th</code>",opts:["the hundredth","the hundredeth","the hundreds"],ans:0,exp:"100th → the hundredth. Правило: hundred + th = hundredth. Всё по правилу!"}
+];
+
+// ══════════════════════════════════════════════
+// СТУПЕНЬ 3 — Время (ровно, половина, четверть) (15 вопросов)
+// ══════════════════════════════════════════════
+var Q_S3 = [
+  {tag:"Ступень 3",q:"Как сказать время по-английски?\n<code>13:00</code>",opts:["It's one o'clock.","It's one past twelve.","It's half past one."],ans:0,exp:"13:00 → It's one o'clock. 13:00 = 1:00 (12-ч. формат). Ровный час = … o'clock."},
+  {tag:"Ступень 3",q:"Как сказать время по-английски?\n<code>15:00</code>",opts:["It's three o'clock.","It's fifteen o'clock.","It's three past zero."],ans:0,exp:"15:00 → It's three o'clock. 15:00 = 3:00 (12-ч. формат). Ровный час = three o'clock."},
+  {tag:"Ступень 3",q:"Как сказать время по-английски?\n<code>17:00</code>",opts:["It's five o'clock.","It's seventeen o'clock.","It's five past twelve."],ans:0,exp:"17:00 → It's five o'clock. 17:00 = 5:00. В английском всегда используем 12-часовой формат!"},
+  {tag:"Ступень 3",q:"Как сказать время по-английски?\n<code>13:30</code>",opts:["It's half past one.","It's half to one.","It's thirty past one."],ans:0,exp:"13:30 → It's half past one. 1 час 30 минут. Half past = половина. Past = прошло. Говорим: half past + ЧАС (1)."},
+  {tag:"Ступень 3",q:"Как сказать время по-английски?\n<code>16:30</code>",opts:["It's half past four.","It's half to four.","It's four thirty o'clock."],ans:0,exp:"16:30 → It's half past four. 16:30 = 4:30. Half past four = половина пятого (прошло 30 мин после 4)."},
+  {tag:"Ступень 3",q:"Как сказать время по-английски?\n<code>19:30</code>",opts:["It's half past seven.","It's half past nineteen.","It's thirty to eight."],ans:0,exp:"19:30 → It's half past seven. 19:30 = 7:30. Используем 12-ч. формат: seven (не nineteen!)."},
+  {tag:"Ступень 3",q:"Как сказать время по-английски?\n<code>13:15</code>",opts:["It's a quarter past one.","It's a quarter to one.","It's fifteen past twelve."],ans:0,exp:"13:15 → It's a quarter past one. 1:15. A quarter = четверть (15 мин). Past = прошло. Прошло 15 мин после 1."},
+  {tag:"Ступень 3",q:"Как сказать время по-английски?\n<code>10:15</code>",opts:["It's a quarter past ten.","It's a quarter to ten.","It's fifteen to eleven."],ans:0,exp:"10:15 → It's a quarter past ten. Прошло четверть часа после 10. Past = прошло → используем текущий час (ten)."},
+  {tag:"Ступень 3",q:"Как сказать время по-английски?\n<code>15:15</code>",opts:["It's a quarter past three.","It's a quarter to three.","It's three fifteen o'clock."],ans:0,exp:"15:15 → It's a quarter past three. 15:15 = 3:15. A quarter past three = четверть четвёртого."},
+  {tag:"Ступень 3",q:"Как сказать время по-английски?\n<code>13:45</code>",opts:["It's a quarter to two.","It's a quarter past one.","It's forty-five past one."],ans:0,exp:"13:45 → It's a quarter to two. 1:45. До 2:00 осталось 15 мин (четверть). To = до. Говорим: a quarter to + СЛЕДУЮЩИЙ ЧАС (two)."},
+  {tag:"Ступень 3",q:"Как сказать время по-английски?\n<code>14:45</code>",opts:["It's a quarter to three.","It's a quarter past two.","It's fifteen to two."],ans:0,exp:"14:45 → It's a quarter to three. 14:45 = 2:45. До 3:00 осталось 15 мин. To = до → следующий час three."},
+  {tag:"Ступень 3",q:"Как сказать время по-английски?\n<code>18:45</code>",opts:["It's a quarter to seven.","It's a quarter past six.","It's forty-five past six."],ans:0,exp:"18:45 → It's a quarter to seven. 18:45 = 6:45. До 7 осталось 15 мин. To = до следующего часа seven."},
+  {tag:"Ступень 3",q:"Что означает фраза?\n<code>It's half past six.</code>",opts:["18:30","06:15","19:30"],ans:0,exp:"It's half past six = 18:30 или 6:30. Half past = 30 минут после шести. Six = 6 часов."},
+  {tag:"Ступень 3",q:"Что означает фраза?\n<code>It's a quarter to five.</code>",opts:["04:45","05:15","04:15"],ans:0,exp:"It's a quarter to five = 4:45. To five = до пяти. A quarter = 15 мин до 5:00. Значит 4:45."},
+  {tag:"Ступень 3",q:"Выберите правильную фразу для времени <code>20:00</code>:",opts:["It's eight o'clock.","It's twenty o'clock.","It's eight past zero."],ans:0,exp:"20:00 → It's eight o'clock. 20:00 = 8 по 12-часовому формату. В английском нет «twenty o'clock»!"}
+];
+
+// ══════════════════════════════════════════════
+// СТУПЕНЬ 4 — Время (минуты past и to) (15 вопросов)
+// ══════════════════════════════════════════════
+var Q_S4 = [
+  {tag:"Ступень 4",q:"Как сказать время по-английски?\n<code>13:05</code>",opts:["It's five past one.","It's five to one.","It's five past two."],ans:0,exp:"13:05 → It's five past one. Прошло 5 минут после 1. Five (5) + past (прошло) + one (1 час)."},
+  {tag:"Ступень 4",q:"Как сказать время по-английски?\n<code>14:05</code>",opts:["It's five past two.","It's five to two.","It's five past three."],ans:0,exp:"14:05 → It's five past two. 14:05 = 2:05. Прошло 5 минут после 2 часов. Five past two."},
+  {tag:"Ступень 4",q:"Как сказать время по-английски?\n<code>18:05</code>",opts:["It's five past six.","It's five to six.","It's five past seven."],ans:0,exp:"18:05 → It's five past six. 18:05 = 6:05. Прошло 5 мин после 6. Past = прошло → текущий час six."},
+  {tag:"Ступень 4",q:"Как сказать время по-английски?\n<code>17:20</code>",opts:["It's twenty past five.","It's twenty to five.","It's twenty past six."],ans:0,exp:"17:20 → It's twenty past five. 17:20 = 5:20. Прошло 20 мин после 5. Twenty past five."},
+  {tag:"Ступень 4",q:"Как сказать время по-английски?\n<code>19:25</code>",opts:["It's twenty five past seven.","It's twenty five to seven.","It's twenty five past eight."],ans:0,exp:"19:25 → It's twenty five past seven. 7:25. Прошло 25 мин после 7. Past → текущий час seven."},
+  {tag:"Ступень 4",q:"Как сказать время по-английски?\n<code>14:55</code>",opts:["It's five to three.","It's five past two.","It's five to two."],ans:0,exp:"14:55 → It's five to three. 14:55 = 2:55. До 3:00 осталось 5 мин. To = до → СЛЕДУЮЩИЙ час three."},
+  {tag:"Ступень 4",q:"Как сказать время по-английски?\n<code>16:50</code>",opts:["It's ten to five.","It's ten past four.","It's ten to four."],ans:0,exp:"16:50 → It's ten to five. 4:50. До 5:00 осталось 10 мин. To = до следующего часа five."},
+  {tag:"Ступень 4",q:"Как сказать время по-английски?\n<code>17:40</code>",opts:["It's twenty to six.","It's twenty past five.","It's twenty to five."],ans:0,exp:"17:40 → It's twenty to six. 5:40. До 6:00 осталось 20 мин. To = до следующего часа six."},
+  {tag:"Ступень 4",q:"Что означает фраза?\n<code>It's ten past three.</code>",opts:["03:10","03:50","02:50"],ans:0,exp:"It's ten past three = 3:10. Ten (10 мин) + past (прошло) + three (3 часа). Значит 3:10."},
+  {tag:"Ступень 4",q:"Что означает фраза?\n<code>It's twenty to eight.</code>",opts:["07:40","08:20","07:20"],ans:0,exp:"It's twenty to eight = 7:40. Twenty (20 мин) + to (до) + eight (8 часов). До 8:00 осталось 20 мин = 7:40."},
+  {tag:"Ступень 4",q:"Когда используется <code>past</code>, а когда <code>to</code>?",opts:["past — если прошло ≤30 мин; to — если до следующего часа ≤30 мин","past — всегда для чётных минут","to — всегда для нечётных минут"],ans:0,exp:"Правило: past = прошло (1–30 мин после часа). To = осталось (1–29 мин до следующего часа). Граница — 30 минут: half past."},
+  {tag:"Ступень 4",q:"Как сказать время по-английски?\n<code>10:05</code>",opts:["It's five past ten.","It's five to ten.","It's five past eleven."],ans:0,exp:"10:05 → It's five past ten. Прошло 5 мин после 10. Past = прошло → текущий час ten."},
+  {tag:"Ступень 4",q:"Как сказать время по-английски?\n<code>11:50</code>",opts:["It's ten to twelve.","It's ten past eleven.","It's ten to eleven."],ans:0,exp:"11:50 → It's ten to twelve. До полуночи/полудня (12) осталось 10 мин. To = до следующего часа twelve."},
+  {tag:"Ступень 4",q:"Как сказать время по-английски?\n<code>16:35</code>",opts:["It's twenty five to five.","It's twenty five past four.","It's thirty five past four."],ans:0,exp:"16:35 → It's twenty five to five. 4:35. До 5:00 осталось 25 мин. To → следующий час five. Twenty five to five."},
+  {tag:"Ступень 4",q:"Как сказать время по-английски?\n<code>15:10</code>",opts:["It's ten past three.","It's ten to three.","It's ten past four."],ans:0,exp:"15:10 → It's ten past three. 3:10. Прошло 10 мин после 3. Past → текущий час three."}
+];
+
+// ══════════════════════════════════════════════
+// СТУПЕНЬ 5 — Годы и даты (15 вопросов)
+// ══════════════════════════════════════════════
+var Q_S5 = [
+  {tag:"Ступень 5",q:"Как прочитать год по-английски?\n<code>1812</code>",opts:["eighteen twelve","eight twelve","eighteen hundred twelve"],ans:0,exp:"1812 → eighteen twelve. Правило для годов до 2000: делим на пары двузначных. 18 + 12 = eighteen twelve."},
+  {tag:"Ступень 5",q:"Как прочитать год по-английски?\n<code>1900</code>",opts:["nineteen hundred","nineteen zero zero","nine hundred"],ans:0,exp:"1900 → nineteen hundred. Если год оканчивается на 00: первые две цифры + hundred. 19 = nineteen + hundred."},
+  {tag:"Ступень 5",q:"Как прочитать год по-английски?\n<code>2007</code>",opts:["two thousand and seven","twenty seven","two thousand seven hundred"],ans:0,exp:"2007 → two thousand and seven. Годы с 2001–2009: two thousand (and) + цифра. And — необязательно."},
+  {tag:"Ступень 5",q:"Как прочитать год по-английски?\n<code>2014</code>",opts:["twenty fourteen","two thousand fourteen","twenty forty"],ans:0,exp:"2014 → twenty fourteen. Годы 2010–2099 можно читать как пары: twenty (20) + fourteen (14). Как до 2000!"},
+  {tag:"Ступень 5",q:"Как прочитать год по-английски?\n<code>1976</code>",opts:["nineteen seventy-six","ninety seventy-six","nineteen sixty-seven"],ans:0,exp:"1976 → nineteen seventy-six. Делим: 19 = nineteen, 76 = seventy-six. Итого: nineteen seventy-six."},
+  {tag:"Ступень 5",q:"Как прочитать год по-английски?\n<code>1066</code>",opts:["ten sixty-six","one zero six six","one thousand sixty-six"],ans:0,exp:"1066 → ten sixty-six. Делим: 10 = ten, 66 = sixty-six. Ten sixty-six."},
+  {tag:"Ступень 5",q:"Как прочитать дату по-английски?\n<code>25.07</code>",opts:["the twenty-fifth of July","twenty five July","July the twenty five"],ans:0,exp:"25.07 → the twenty-fifth of July. Дата: the + ПОРЯДКОВОЕ (twenty-fifth) + of + месяц. 25 = twenty-fifth."},
+  {tag:"Ступень 5",q:"Как прочитать дату по-английски?\n<code>01.09</code>",opts:["the first of September","the one of September","September one"],ans:0,exp:"01.09 → the first of September. Дата: the + ПОРЯДКОВОЕ + of + месяц. 1 = first (исключение!)."},
+  {tag:"Ступень 5",q:"Как прочитать дату по-английски?\n<code>31.12</code>",opts:["the thirty-first of December","the thirty one of December","the thirtieth of December"],ans:0,exp:"31.12 → the thirty-first of December. 31 = thirty-first (составное порядковое: thirty + first). Не thirtieth!"},
+  {tag:"Ступень 5",q:"Как прочитать дату по-английски?\n<code>14.02</code>",opts:["the fourteenth of February","the fourteen of February","the fourth of February"],ans:0,exp:"14.02 → the fourteenth of February. 14 = the fourteenth (fourteen + th). Не путайте с fourth (4th)!"},
+  {tag:"Ступень 5",q:"Как прочитать дату по-английски?\n<code>15.03</code>",opts:["the fifteenth of March","the fifteen of March","the fiftieth of March"],ans:0,exp:"15.03 → the fifteenth of March. 15 = fifteen → the fifteenth (+th). Fiftieth — это 50-й!"},
+  {tag:"Ступень 5",q:"Как прочитать полную дату?\n<code>25.07.1976</code>",opts:["the twenty-fifth of July, nineteen seventy-six","twenty five July nineteen seventy-six","July the twenty-fifth, nineteen seventy six"],ans:0,exp:"25.07.1976 → the twenty-fifth of July, nineteen seventy-six. Порядок: the [день] of [месяц], [год]. Запятая между месяцем и годом!"},
+  {tag:"Ступень 5",q:"Как прочитать год?\n<code>2000</code>",opts:["two thousand","twenty hundred","two millions"],ans:0,exp:"2000 → two thousand. Two thousand = две тысячи. Не путайте: twenty hundred — так обычно не говорят для 2000."},
+  {tag:"Ступень 5",q:"Как прочитать год?\n<code>1914</code>",opts:["nineteen fourteen","ninety fourteen","nineteen forty"],ans:0,exp:"1914 → nineteen fourteen. 19 = nineteen, 14 = fourteen. Nineteen forty — это 1940!"},
+  {tag:"Ступень 5",q:"Выберите правильный формат записи даты:\n<code>the third of August</code>",opts:["03.08","08.03","30.08"],ans:0,exp:"The third of August = 03.08. Third = 3-й. August = август (8-й месяц). Итого: 3 августа = 03.08."}
+];
+
+// ══════════════════════════════════════════════
+// СТУПЕНЬ 6 — Смешанная (30 вопросов из всех тем)
+// ══════════════════════════════════════════════
+var Q_S6_EXTRA = [
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>19</code>",opts:["nineteen","ninety","nine"],ans:0,exp:"19 → nineteen. Nine + teen = nineteen. Ninety = 90!"},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>11th</code>",opts:["the eleventh","the eleven","the eleventhy"],ans:0,exp:"11th → the eleventh. Eleven + th = eleventh. Всё по правилу."},
+  {tag:"Ступень 6",q:"Как сказать время?\n<code>16:15</code>",opts:["It's a quarter past four.","It's a quarter to four.","It's fifteen to five."],ans:0,exp:"16:15 → It's a quarter past four. 16:15 = 4:15. Прошло 15 мин (четверть) после 4. Past four."},
+  {tag:"Ступень 6",q:"Как прочитать год?\n<code>1900</code>",opts:["nineteen hundred","nineteen zero zero","nineteen thousands"],ans:0,exp:"1900 → nineteen hundred. Правило: год на -00 → первые две цифры + hundred."},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>32</code>",opts:["thirty two","thirteen two","three twelve"],ans:0,exp:"32 → thirty two. Thirty (30) + two (2). Пишутся раздельно через пробел."},
+  {tag:"Ступень 6",q:"Как сказать время?\n<code>11:45</code>",opts:["It's a quarter to twelve.","It's a quarter past eleven.","It's fifteen past eleven."],ans:0,exp:"11:45 → It's a quarter to twelve. До 12 осталось 15 мин. To = до следующего часа twelve."},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>80</code>",opts:["eighty","eight","eighthy"],ans:0,exp:"80 → eighty. Eight + y = eighty. Только одна h, как в eight."},
+  {tag:"Ступень 6",q:"Как прочитать дату?\n<code>07.11</code>",opts:["the seventh of November","the seven of November","November seven"],ans:0,exp:"07.11 → the seventh of November. 7 = the seventh (seven + th). November = ноябрь."},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>98</code>",opts:["ninety eight","nineteen eight","nine eight"],ans:0,exp:"98 → ninety eight. Ninety (90) + eight (8). Ninety = 90, nineteen = 19!"},
+  {tag:"Ступень 6",q:"Как сказать время?\n<code>19:55</code>",opts:["It's five to eight.","It's five past seven.","It's five to seven."],ans:0,exp:"19:55 → It's five to eight. 7:55. До 8:00 осталось 5 мин. To = до следующего часа eight."},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>55</code>",opts:["fifty five","fiveteen five","five fifty"],ans:0,exp:"55 → fifty five. Fifty (50) + five (5). Fiveteen — не существует! Fifteen = 15."},
+  {tag:"Ступень 6",q:"Как прочитать год?\n<code>2021</code>",opts:["twenty twenty one","two thousand twenty one","twenty and twenty one"],ans:0,exp:"2021 → twenty twenty one. Правило XXI века: можно читать как пары — twenty (20) + twenty one (21). Оба варианта верны, но этот — современнее."},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>13th</code>",opts:["the thirteenth","the thirteen","the thirtienth"],ans:0,exp:"13th → the thirteenth. Thirteen + th = thirteenth. Не путайте: thirtieth — это 30-й!"},
+  {tag:"Ступень 6",q:"Как сказать время?\n<code>14:30</code>",opts:["It's half past two.","It's half to two.","It's two thirty o'clock."],ans:0,exp:"14:30 → It's half past two. 2:30. Прошло 30 мин после 2. Half past two."},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>1000</code>",opts:["a thousand","a hundred","one millions"],ans:0,exp:"1000 → a thousand (или one thousand). A hundred = 100. A million = 1 000 000."},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>64</code>",opts:["sixty four","sixteen four","six four"],ans:0,exp:"64 → sixty four. Sixty (60) + four (4). Sixteen = 16, не 60!"},
+  {tag:"Ступень 6",q:"Как прочитать дату?\n<code>22.04</code>",opts:["the twenty-second of April","the twenty two of April","the twenty-second of August"],ans:0,exp:"22.04 → the twenty-second of April. 22 = the twenty-second. April = апрель (4-й месяц). August = август (8-й)!"},
+  {tag:"Ступень 6",q:"Как сказать время?\n<code>10:25</code>",opts:["It's twenty five past ten.","It's twenty five to ten.","It's twenty five past eleven."],ans:0,exp:"10:25 → It's twenty five past ten. Прошло 25 мин после 10. Past = прошло → текущий час ten."},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>41</code>",opts:["forty one","fourteen one","four one"],ans:0,exp:"41 → forty one. Forty (40, без u!) + one (1). Fourteen = 14."},
+  {tag:"Ступень 6",q:"Как прочитать год?\n<code>1492</code>",opts:["fourteen ninety-two","fourteen hundred ninety two","four ninety two"],ans:0,exp:"1492 → fourteen ninety-two. Делим: 14 = fourteen, 92 = ninety-two. Классическое чтение годов."},
+  {tag:"Ступень 6",q:"Как сказать время?\n<code>18:40</code>",opts:["It's twenty to seven.","It's twenty past six.","It's forty past six."],ans:0,exp:"18:40 → It's twenty to seven. 6:40. До 7:00 осталось 20 мин. To = до следующего часа seven."},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>16th</code>",opts:["the sixteenth","the sixteen","the sixty"],ans:0,exp:"16th → the sixteenth. Sixteen + th = sixteenth. Sixty = 60, sixty → sixtieth (60th)!"},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>83</code>",opts:["eighty three","eighteen three","eight three"],ans:0,exp:"83 → eighty three. Eighty (80) + three (3). Eighteen = 18, не 80!"},
+  {tag:"Ступень 6",q:"Как прочитать дату?\n<code>09.05</code>",opts:["the ninth of May","the nine of May","the nineth of May"],ans:0,exp:"09.05 → the ninth of May. 9 = ninth (nine → nin + th, e выпадает). May = май. Nineth — неправильно, правильно ninth!"},
+  {tag:"Ступень 6",q:"Как сказать время?\n<code>13:20</code>",opts:["It's twenty past one.","It's twenty to one.","It's twenty past two."],ans:0,exp:"13:20 → It's twenty past one. 1:20. Прошло 20 мин после 1. Past = прошло → текущий час one."},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>67</code>",opts:["sixty seven","sixteen seven","six seven"],ans:0,exp:"67 → sixty seven. Sixty (60) + seven (7). Sixteen = 16!"},
+  {tag:"Ступень 6",q:"Как прочитать год?\n<code>1066</code>",opts:["ten sixty-six","sixteen sixty-six","one thousand sixty six"],ans:0,exp:"1066 → ten sixty-six. 10 = ten, 66 = sixty-six. Классическое чтение пар."},
+  {tag:"Ступень 6",q:"Как сказать время?\n<code>17:35</code>",opts:["It's twenty five to six.","It's twenty five past five.","It's thirty five past five."],ans:0,exp:"17:35 → It's twenty five to six. 5:35. До 6:00 осталось 25 мин. To = до следующего часа six."},
+  {tag:"Ступень 6",q:"Выберите правильный вариант:\n<code>75</code>",opts:["seventy five","seventeen five","seven five"],ans:0,exp:"75 → seventy five. Seventy (70) + five (5). Seventeen = 17, не 70!"},
+  {tag:"Ступень 6",q:"Как прочитать полную дату?\n<code>01.01.2000</code>",opts:["the first of January, two thousand","one January two thousand","the first January two thousands"],ans:0,exp:"01.01.2000 → the first of January, two thousand. Порядок: the [день] of [месяц], [год]. January = январь. 2000 = two thousand."}
+];
+
+var STAGE_CONFIG = [
+  {label:"Ступень 1", icon:"🔢", desc:"Количественные числительные", questions:Q_S1, total:10},
+  {label:"Ступень 2", icon:"📋", desc:"Порядковые числительные", questions:Q_S2, total:15},
+  {label:"Ступень 3", icon:"🕐", desc:"Время: ровно, половина, четверть", questions:Q_S3, total:15},
+  {label:"Ступень 4", icon:"⏱", desc:"Время: минуты past и to", questions:Q_S4, total:15},
+  {label:"Ступень 5", icon:"📅", desc:"Годы и даты", questions:Q_S5, total:15},
+  {label:"Ступень 6", icon:"🌟", desc:"Смешанные задания", questions:null, total:30}
+];
+
+var N = STAGE_CONFIG.length;
+var currentStage=0, selectedStage=0;
+var stageUnlocked=[true,false,false,false,false,false];
+var stageDone=[false,false,false,false,false,false];
+var stageScores=[0,0,0,0,0,0];
+var questions=[], cur=0, score=0, mistakes=[], results=[], retryMode=false;
+var total=10, xp=0, streak=0, hints=3;
+var timerInterval=null, timerSec=0;
+var MAX_XP=200, timerEnabled=false;
+
+function loadProgress(){
+  try{
+    var raw=null;
+    try{raw=localStorage.getItem('nums6_progress');}catch(e){}
+    if(!raw){try{raw=sessionStorage.getItem('nums6_progress');}catch(e){}}
+    if(!raw) return;
+    var d=JSON.parse(raw);
+    if(d){stageUnlocked=d.unlocked||stageUnlocked;stageDone=d.done||stageDone;stageScores=d.scores||stageScores;}
+  }catch(e){}
+}
+function saveProgress(){
+  var d=JSON.stringify({unlocked:stageUnlocked,done:stageDone,scores:stageScores});
+  try{localStorage.setItem('nums6_progress',d);}catch(e){}
+  try{sessionStorage.setItem('nums6_progress',d);}catch(e){}
+}
+loadProgress();
+
+function buildStage6(){
+  var all=[];
+  [Q_S1,Q_S2,Q_S3,Q_S4,Q_S5].forEach(function(arr){all=all.concat(arr);});
+  all=all.concat(Q_S6_EXTRA);
+  return shuffle(all).slice(0,30);
+}
+
+function renderStageGrid(){
+  var g=document.getElementById('stage-grid');
+  var html='';
+  for(var i=0;i<N;i++){
+    var sc=STAGE_CONFIG[i];
+    var unlocked=stageUnlocked[i];
+    var done=stageDone[i];
+    var cls='stage-card'+(i===selectedStage?' active-stage':'')+(done?' done':'')+(unlocked?'':' locked');
+    var badge=done?'<span class="stage-badge done-badge">✓ '+stageScores[i]+'/'+sc.total+'</span>':
+              unlocked?'<span class="stage-badge open-badge">'+sc.total+' заданий</span>':
+              '<span class="stage-badge lock-badge">🔒</span>';
+    html+='<div class="'+cls+'" id="sc'+i+'" onclick="pickStage('+i+')">'+
+      '<span class="stage-icon">'+sc.icon+'</span>'+
+      '<div class="stage-title">'+sc.label+'</div>'+
+      '<div class="stage-desc">'+sc.desc+'</div>'+badge+'</div>';
+  }
+  g.innerHTML=html;
+}
+
+function pickStage(i){
+  if(!stageUnlocked[i]) return;
+  selectedStage=i;
+  renderStageGrid();
+  document.getElementById('main-start-btn').textContent='▶ Начать '+STAGE_CONFIG[i].label;
+  var rec=document.getElementById('record-box');
+  if(stageDone[i]) rec.innerHTML='Лучший результат: <b>'+stageScores[i]+'/'+STAGE_CONFIG[i].total+'</b> — '+STAGE_CONFIG[i].label;
+  else rec.innerHTML='Ступень <b>'+(i+1)+'</b>: '+STAGE_CONFIG[i].desc;
+}
+
+function switchHubTab(t){
+  document.querySelectorAll('.hub-tab').forEach(function(b){b.classList.toggle('active',b.textContent.trim().indexOf(t==='play'?'Тест':'Справ')!==-1);});
+  document.getElementById('htab-play').classList.toggle('active',t==='play');
+  document.getElementById('htab-table').classList.toggle('active',t==='table');
+}
+
+function goStart(){
+  retryMode=false;
+  loadProgress();
+  renderStageGrid();
+  pickStage(selectedStage);
+  document.getElementById('start-screen').style.display='';
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='none';
+}
+
+function startCurrentStage(){
+  violations = 0; testActive = true;
+  var _nameEl = document.getElementById('inp-name');
+  var _groupEl = document.getElementById('inp-group');
+  if(_nameEl && !_nameEl.value.trim()){_nameEl.classList.add('err');_nameEl.focus();return;}
+  if(_groupEl && !_groupEl.value.trim()){_groupEl.classList.add('err');_groupEl.focus();return;}
+  if(_nameEl) _nameEl.classList.remove('err');
+  if(_groupEl) _groupEl.classList.remove('err');
+ startStage(selectedStage,false); }
+
+function startStage(idx,retry){
+  currentStage=idx;
+  var sc=STAGE_CONFIG[idx];
+  var pool=idx===5?buildStage6():sc.questions.slice();
+  questions=shuffle(pool).slice(0,sc.total);
+  total=questions.length;
+  cur=0; score=0; mistakes=[]; results=[]; xp=0; streak=0; hints=3;
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='';
+  document.getElementById('stage-chip').textContent=sc.label;
+  document.getElementById('counter-tot').textContent=total;
+  document.getElementById('hint-count').textContent=hints;
+  document.getElementById('hint-btn').disabled=false;
+  var chip=document.getElementById('timer-chip');
+  chip.style.display=timerEnabled?'':'none';
+  updateXpUI(); updateStreakUI();
+  showQuestion();
+}
+
+// shuffledOpts хранит перемешанные варианты для текущего вопроса
+var shuffledOpts=[];
+
+function showQuestion(){
+  var q=questions[cur];
+  document.getElementById('counter-cur').textContent=cur+1;
+  document.getElementById('prog-fill').style.width=Math.round(cur/total*100)+'%';
+  document.getElementById('q-tag').textContent=q.tag;
+  document.getElementById('q-text').innerHTML=q.q.replace(/\n/g,'<br>');
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('next-btn').style.display='none';
+  // Перемешиваем варианты, запоминаем оригинальные индексы
+  var indexed=q.opts.map(function(o,i){return {text:o,orig:i};});
+  shuffledOpts=indexed.slice().sort(function(){return Math.random()-0.5;});
+  var opts=document.getElementById('options');
+  opts.innerHTML='';
+  shuffledOpts.forEach(function(item,pos){
+    var b=document.createElement('button');
+    b.className='opt-btn'; b.textContent=item.text;
+    b.onclick=function(){answer(item.orig, pos);};
+    opts.appendChild(b);
+  });
+  if(timerEnabled) startTimer();
+}
+
+function answer(origIdx, btnPos){
+  if(timerEnabled) stopTimer();
+  var q=questions[cur];
+  var btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  // Находим кнопку с правильным ответом по тексту
+  var correctText=q.opts[q.ans];
+  btns.forEach(function(b){
+    if(b.textContent===correctText) b.classList.add('correct');
+  });
+  var ok=(origIdx===q.ans);
+  if(!ok) btns[btnPos].classList.add('wrong');
+  var fb=document.getElementById('feedback');
+  var timeSec=timerEnabled?(15-timerSec):null;
+  var bonus=0;
+  if(ok){
+    score++;streak++;
+    var xpGain=10;
+    if(streak>=3){bonus+=5;xpGain+=5;}
+    if(timerEnabled&&timeSec!==null&&timeSec<8){bonus+=5;xpGain+=5;}
+    xp+=xpGain; if(xp>MAX_XP)xp=MAX_XP;
+    fb.innerHTML='✓ '+q.exp; fb.className='feedback ok';
+    showXpPopup('+'+xpGain+'XP'+(bonus>0?' 🔥':''),'ok');
+    if(streak>=5) launchConfetti();
+  } else {
+    mistakes.push({q:q.q.replace(/<[^>]+>/g,'').replace(/\n/g,' '),ans:q.opts[q.ans]});
+    streak=0; xp=Math.max(0,xp-3);
+    fb.innerHTML='✗ Правильно: <b>'+q.opts[q.ans]+'</b>. '+q.exp; fb.className='feedback err';
+    showXpPopup('-3XP','err');
+  }
+  results.push({ok:ok,q:q});
+  updateXpUI(); updateStreakUI();
+  document.getElementById('next-btn').style.display='inline-block';
+}
+
+function nextQ(){
+  cur++;
+  if(cur>=total) finishStage();
+  else showQuestion();
+}
+
+function startTimer(){
+  timerSec=15;
+  var chip=document.getElementById('timer-chip');
+  chip.textContent='⏱ '+timerSec; chip.className='timer-chip';
+  clearInterval(timerInterval);
+  timerInterval=setInterval(function(){
+    timerSec--;
+    chip.textContent='⏱ '+timerSec;
+    chip.className='timer-chip'+(timerSec<=5?' danger':timerSec<=8?' warn':'');
+    if(timerSec<=0){stopTimer();answer(-1, -1);}
+  },1000);
+}
+function stopTimer(){ clearInterval(timerInterval); }
+
+function updateXpUI(){
+  document.getElementById('xp-fill').style.width=Math.round(xp/MAX_XP*100)+'%';
+  document.getElementById('xp-val').textContent=xp;
+}
+function updateStreakUI(){
+  var b=document.getElementById('streak-badge');
+  b.textContent='🔥 '+streak;
+  b.className='streak-badge'+(streak>=5?' fire':streak>=3?' hot':'');
+}
+function showXpPopup(txt,cls){
+  var el=document.createElement('div');
+  el.className='xp-popup '+cls; el.textContent=txt;
+  el.style.cssText='top:'+Math.round(window.scrollY+window.innerHeight*.35)+'px;left:'+Math.round(window.innerWidth*.6)+'px';
+  document.body.appendChild(el);
+  setTimeout(function(){el.remove();},1100);
+}
+function useHint(){
+  if(hints<=0) return;
+  hints--;
+  document.getElementById('hint-count').textContent=hints;
+  var q=questions[cur];
+  document.getElementById('feedback').innerHTML='💡 Подсказка: правильный ответ — <b>«'+q.opts[q.ans]+'»</b>. Попробуйте ещё раз!';
+  document.getElementById('feedback').className='feedback ok';
+  if(hints===0) document.getElementById('hint-btn').disabled=true;
+}
+function onTimerToggle(el){ timerEnabled=el.checked; }
+
+function finishStage(){
+  testActive = false;
+  // Send to Google Forms
+  var _name = (document.getElementById('inp-name') ? document.getElementById('inp-name').value.trim() : '') || 'Аноним';
+  var _group = (document.getElementById('inp-group') ? document.getElementById('inp-group').value.trim() : '') || '—';
+  var _result = score + '/' + total;
+  var _xp = xp;
+  sendToGoogleForms(_name, _group, 'Числа', _result, _xp, (typeof timerEnabled !== 'undefined' ? timerEnabled : false));
+
+  var pct=score/total;
+  stageScores[currentStage]=Math.max(stageScores[currentStage]||0,score);
+  stageDone[currentStage]=true;
+  if(pct>=0.7){
+    for(var k=0;k<=currentStage+1&&k<N;k++) stageUnlocked[k]=true;
+  }
+  saveProgress();
+  showFinalResult(pct);
+}
+
+function showFinalResult(pct){
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='block';
+  var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
+  var rank=pct>=0.9?{name:'Мастер',bg:'#ede9fe',color:'#6d28d9'}:
+           pct>=0.7?{name:'Знаток',bg:'#e4eef8',color:'#1A4A7A'}:
+           pct>=0.5?{name:'Ученик',bg:'#e4f0ea',color:'#2D5A3D'}:
+                   {name:'Новичок',bg:'#f0eaf8',color:'#6B2FA0'};
+  var emoji=pct===1?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
+  var unlockMsg='';
+  if(pct>=0.7 && currentStage<N-1) unlockMsg=' 🔓 Ступень '+(currentStage+2)+' открыта!';
+  var msg=pct===1?'Отлично! Все ответы верны!'+unlockMsg:
+          pct>=0.8?'Очень хорошо! Разберите ошибки ниже.'+unlockMsg:
+          pct>=0.7?'Хороший результат!'+unlockMsg:
+          'Нужно набрать 70%+ для разблокировки следующей ступени. Попробуйте ещё раз!';
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-score').textContent=score+' / '+total;
+  document.getElementById('res-label').textContent='правильных ответов · '+STAGE_CONFIG[currentStage].label;
+  document.getElementById('res-xp').textContent='⭐ '+xp+' XP';
+  document.getElementById('res-msg').textContent=msg;
+  var starsHTML='';
+  for(var i=1;i<=3;i++) starsHTML+='<span class="star'+(stars>=i?' lit':'')+'" style="animation-delay:'+((i-1)*.18)+'s">⭐</span>';
+  document.getElementById('stars-row').innerHTML=starsHTML;
+  document.getElementById('rank-badge-wrap').innerHTML='<span class="rank-badge" style="background:'+rank.bg+';color:'+rank.color+'">🏅 '+rank.name+'</span>';
+  renderStageGrid();
+  if(pct>=0.9) launchBigConfetti();
+  var nextBtn=document.getElementById('next-stage-btn');
+  if(currentStage<N-1 && stageUnlocked[currentStage+1]){
+    nextBtn.style.display='inline-block';
+    nextBtn.textContent='▶ '+STAGE_CONFIG[currentStage+1].label+' →';
+  } else { nextBtn.style.display='none'; }
+  var wrongCount=results.filter(function(r){return !r.ok;}).length;
+  var retryBtn=document.getElementById('retry-btn');
+  if(wrongCount>0&&!retryMode){retryBtn.style.display='inline-block';retryBtn.textContent='🔁 Работа над ошибками ('+wrongCount+')';}
+  else{retryBtn.style.display='none';}
+  var mBlock=document.getElementById('mistakes-block');
+  if(mistakes.length>0){
+    var html='<h3 style="font-size:14px;font-weight:600;color:#7aa8d4;margin-bottom:.75rem">Разбор ошибок:</h3>';
+    mistakes.forEach(function(m){html+='<div class="mistake-item"><div class="m-q">'+m.q+'</div><div class="m-a">✓ '+m.ans+'</div></div>';});
+    mBlock.innerHTML=html;
+  } else { mBlock.innerHTML=''; }
+}
+
+function retryMistakes(){
+  var wrong=results.filter(function(r){return !r.ok;});
+  if(!wrong.length) return;
+  retryMode=true;
+  questions=wrong.map(function(r){return r.q;});
+  total=questions.length; cur=0; score=0; mistakes=[]; results=[];
+  xp=0; streak=0; hints=3;
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='';
+  document.getElementById('counter-tot').textContent=total;
+  document.getElementById('hint-count').textContent=hints;
+  document.getElementById('hint-btn').disabled=false;
+  document.getElementById('timer-chip').style.display=timerEnabled?'':'none';
+  updateXpUI(); updateStreakUI();
+  showQuestion();
+}
+
+function goNextStage(){
+  var next=currentStage+1;
+  if(next<N && stageUnlocked[next]){ selectedStage=next; startStage(next,false); }
+}
+
+function toggleRef(){
+  var m=document.getElementById('ref-modal');
+  m.classList.toggle('open');
+}
+document.addEventListener('click',function(e){
+  var m=document.getElementById('ref-modal');
+  if(m&&m.classList.contains('open')&&e.target===m) m.classList.remove('open');
+});
+
+function shuffle(arr){ return arr.slice().sort(function(){return Math.random()-.5;}); }
+
+// ══ CONFETTI ══
+var canvas=document.getElementById('confetti-canvas');
+var ctx=canvas.getContext('2d');
+var particles=[],animId=null;
+var COLORS=['#378ADD','#22c55e','#f59e0b','#ef4444','#a855f7','#ec4899','#14b8a6'];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize(); window.addEventListener('resize',resize);
+function createParticle(x,y,big){
+  var angle=Math.random()*Math.PI*2,speed=big?(Math.random()*10+5):(Math.random()*7+3);
+  return{x:x,y:y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-(big?8:4),color:COLORS[Math.floor(Math.random()*COLORS.length)],size:big?(Math.random()*10+5):(Math.random()*7+3),rotation:Math.random()*360,rotSpeed:(Math.random()-.5)*8,alpha:1,shape:Math.random()>.5?'rect':'circle'};
+}
+function spawnBurst(x,y,count,big){for(var i=0;i<count;i++)particles.push(createParticle(x,y,big));}
+function launchConfetti(){var rect=document.querySelector('.card').getBoundingClientRect();spawnBurst(rect.left+rect.width/2,rect.top+rect.height*.3,50,false);if(!animId)animate();}
+function launchBigConfetti(){var cx=window.innerWidth/2,cy=window.innerHeight/2;spawnBurst(cx,cy,130,true);setTimeout(function(){spawnBurst(cx-220,cy,70,true);},200);setTimeout(function(){spawnBurst(cx+220,cy,70,true);},400);if(!animId)animate();}
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.vx*=.99;p.rotation+=p.rotSpeed;p.alpha-=.016;ctx.save();ctx.globalAlpha=Math.max(0,p.alpha);ctx.translate(p.x,p.y);ctx.rotate(p.rotation*Math.PI/180);ctx.fillStyle=p.color;if(p.shape==='rect'){ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);}else{ctx.beginPath();ctx.arc(0,0,p.size/2,0,Math.PI*2);ctx.fill();}ctx.restore();});
+  particles=particles.filter(function(p){return p.alpha>0;});
+  if(particles.length>0){animId=requestAnimationFrame(animate);}else{animId=null;ctx.clearRect(0,0,canvas.width,canvas.height);}
+}
+
+goStart();
+
+function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
+  var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdfme_aKvoexXRSz7LTn5dxgY_7P2lBJsokU3puqehRxZVslw/formResponse';
+  var body = new FormData();
+  body.append('entry.1795360459', name);
+  body.append('entry.1572037373', group);
+  body.append('entry.1562414669', testName);
+  body.append('entry.994594767', result + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ') + (violations > 0 ? ' | ⚠️ Покидал: ' + violations + ' раз' : ' | ✅ Не покидал'));
+  body.append('entry.1290836239', xpEarned);
+  fetch(formUrl, {method:'POST', body:body, mode:'no-cors'})
+  .then(function(){
+    var el=document.getElementById('send-status');
+    if(el){el.textContent='✅ Результат отправлен преподавателю'; el.className='send-status ok';}
+    var tel=document.getElementById('timer-status');
+    if(tel){tel.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен'; tel.className=timerOn?'timer-on':'timer-off';}
+  }).catch(function(){
+    var el=document.getElementById('send-status');
+    if(el){el.textContent='⚠️ Нет соединения — результат не отправлен'; el.className='send-status err';}
+    var tel=document.getElementById('timer-status');
+    if(tel){tel.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен'; tel.className=timerOn?'timer-on':'timer-off';}
+  });
+}
+
+
+var violations = 0;
+var testActive = false;
+var MAX_VIOLATIONS = 2;
+
+document.addEventListener('visibilitychange', function(){
+  if(!testActive) return;
+  if(document.hidden){
+    violations++;
+    showWarning();
+  }
+});
+
+function showWarning(){
+  var overlay = document.getElementById('warn-overlay');
+  var icon = document.getElementById('warn-icon');
+  var title = document.getElementById('warn-title');
+  var text = document.getElementById('warn-text');
+  var count = document.getElementById('warn-count');
+  var btn = document.getElementById('warn-btn');
+  if(violations >= MAX_VIOLATIONS){
+    icon.textContent = '🚫';
+    title.textContent = 'Тест сброшен!';
+    text.textContent = 'Вы покидали страницу ' + violations + ' раза. Тест начат заново.';
+    count.textContent = 'Нарушений: ' + violations;
+    btn.textContent = 'Начать сначала';
+    btn.className = 'warn-btn danger';
+    btn.onclick = function(){ closeWarning(); violations=0; testActive=false;
+      document.getElementById('start-screen').style.display='';
+      document.getElementById('quiz-screen').style.display='none';
+      if(document.getElementById('result-screen')) document.getElementById('result-screen').style.display='none';
+    };
+  } else {
+    icon.textContent = '⚠️';
+    title.textContent = 'Вы покинули страницу!';
+    text.textContent = 'Во время теста нельзя открывать другие вкладки. Следующее нарушение — тест сбросится!';
+    count.textContent = 'Нарушение ' + violations + ' из ' + MAX_VIOLATIONS;
+    btn.textContent = 'Продолжить тест';
+    btn.className = 'warn-btn';
+    btn.onclick = closeWarning;
+  }
+  overlay.classList.add('open');
+}
+
+function closeWarning(){
+  document.getElementById('warn-overlay').classList.remove('open');
+}
+
+</script>
+
+<div class="warn-overlay" id="warn-overlay">
+  <div class="warn-box">
+    <div class="warn-icon" id="warn-icon">⚠️</div>
+    <div class="warn-title" id="warn-title">Вы покинули страницу!</div>
+    <div class="warn-text" id="warn-text">Во время теста нельзя открывать другие вкладки.</div>
+    <div class="warn-count" id="warn-count"></div>
+    <button class="warn-btn" id="warn-btn" onclick="closeWarning()">Продолжить тест</button>
+  </div>
+</div>
+
+</body>
+</html>
