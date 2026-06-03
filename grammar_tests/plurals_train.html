@@ -467,6 +467,9 @@ document.addEventListener('visibilitychange', function(){
   if(!testActive) return;
   if(document.hidden){
     violations++;
+    if(violations > MAX_VIOLATIONS){
+      testActive = false;
+    }
     showWarning();
   }
 });
