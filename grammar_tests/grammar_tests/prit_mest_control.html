@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Притяжательные местоимения — Контрольный тест</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    background-color: #fff;
+    background-image: linear-gradient(#b3d1f7 1px, transparent 1px), linear-gradient(90deg, #b3d1f7 1px, transparent 1px);
+    background-size: 28px 28px;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 2rem 1rem 3rem;
+  }
+  .card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 16px;
+    border: 1.5px solid #c8dff7;
+    padding: 2rem 2rem 2.5rem;
+    max-width: 680px; width: 100%;
+    box-shadow: 0 4px 24px rgba(55,138,221,0.10);
+  }
+  h1 { text-align: center; font-size: 20px; font-weight: 700; color: #185FA5; margin-bottom: 0.2rem; }
+  .subtitle { text-align: center; font-size: 13px; color: #5b8dc7; margin-bottom: 1.5rem; }
+  .progress-bar { height: 7px; background: #dbeafe; border-radius: 99px; margin-bottom: 1rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: #378ADD; border-radius: 99px; transition: width 0.4s ease; }
+  .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .q-tag { font-size: 11px; background: #e0eeff; color: #185FA5; padding: 2px 9px; border-radius: 99px; font-weight: 600; }
+  .q-text { font-size: 17px; font-weight: 600; color: #1a2e4a; margin-bottom: 1.2rem; line-height: 1.6; }
+  .q-text code { font-family: Arial, sans-serif; background: #e8f2ff; color: #185FA5; padding: 1px 7px; border-radius: 5px; font-weight: 700; font-size: 17px; }
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .opt-btn {
+    padding: 11px 16px; border: 1.5px solid #c8dff7; border-radius: 10px;
+    background: #f5f9ff; color: #1a2e4a; font-size: 15px; cursor: pointer;
+    text-align: left; transition: background .13s, border-color .13s, transform .1s;
+    font-family: Arial, sans-serif;
+  }
+  .opt-btn:hover:not(:disabled) { background: #dbeafe; border-color: #378ADD; transform: translateX(3px); }
+  .opt-btn.correct { background: #d1fadf; border-color: #22c55e; color: #14532d; font-weight: 600; }
+  .opt-btn.wrong   { background: #fee2e2; border-color: #ef4444; color: #7f1d1d; }
+  .opt-btn:disabled { cursor: default; transform: none; }
+  .feedback { margin-top: .8rem; font-size: 14px; min-height: 20px; line-height: 1.6; }
+  .feedback.ok  { color: #15803d; font-weight: 500; }
+  .feedback.err { color: #b91c1c; }
+  .hint-btn { font-size: 12px; font-weight: 600; background: #f5f9ff; border: 1.5px solid #c8dff7; border-radius: 8px; padding: 6px 13px; cursor: pointer; color: #7aa8d4; font-family: Arial,sans-serif; transition: background .12s; }
+  .hint-btn:hover:not(:disabled) { background: #dbeafe; }
+  .hint-btn:disabled { opacity: .35; cursor: default; }
+  .next-btn {
+    margin-top: 1.1rem; padding: 10px 26px; border-radius: 10px;
+    border: 1.5px solid #378ADD; background: #378ADD; color: #fff;
+    font-size: 14px; font-weight: 600; cursor: pointer; display: none;
+    font-family: Arial,sans-serif; transition: background .15s;
+  }
+  .next-btn:hover { background: #185FA5; }
+  #start-screen { text-align: center; padding: .5rem 0 1rem; }
+  .start-info { background: #f5f9ff; border: 1.5px solid #dbeafe; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #5b8dc7; margin-bottom: 1.2rem; line-height: 1.7; text-align: left; }
+  .start-info b { color: #185FA5; }
+  .toggle-row { display: flex; align-items: center; gap: 10px; background: #f5f9ff; border: 1.5px solid #dbeafe; border-radius: 10px; padding: 10px 14px; margin-bottom: 1rem; text-align: left; }
+  .toggle-label { flex: 1; font-size: 13px; color: #1a2e4a; font-weight: 600; }
+  .toggle-sub   { font-size: 11px; color: #7aa8d4; font-weight: 400; display: block; margin-top: 1px; }
+  .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: #c8dff7; border-radius: 99px; cursor: pointer; transition: background .25s; }
+  .toggle-slider:before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .25s; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+  .toggle-switch input:checked + .toggle-slider { background: #378ADD; }
+  .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
+  .start-btn { padding: 12px 36px; border-radius: 10px; border: 1.5px solid #378ADD; background: #378ADD; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; font-family: Arial,sans-serif; transition: background .15s; }
+  .start-btn:hover { background: #185FA5; }
+  .hud { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; margin-bottom: .75rem; }
+  .hud-chip { font-size: 12px; background: #e0eeff; color: #185FA5; border-radius: 99px; padding: 4px 12px; font-weight: 600; }
+  .streak-badge { font-size: 12px; font-weight: 700; background: #e0eeff; color: #185FA5; border-radius: 99px; padding: 4px 12px; transition: all .3s; }
+  .streak-badge.hot  { background: #fff3dc; color: #b45309; }
+  .streak-badge.fire { background: linear-gradient(135deg,#fef3c7,#fde68a); color: #92400e; animation: sBurst .45s ease; }
+  @keyframes sBurst { 0%{transform:scale(1)} 40%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .timer-chip { font-size: 12px; font-weight: 700; background: #e0eeff; color: #185FA5; border-radius: 99px; padding: 4px 12px; transition: background .3s,color .3s; margin-left: auto; display: none; }
+  .timer-chip.warn   { background: #fff3dc; color: #b45309; }
+  .timer-chip.danger { background: #fee2e2; color: #b91c1c; }
+  .xp-row { display: flex; align-items: center; gap: 8px; margin-bottom: .6rem; }
+  .xp-label { font-size: 11px; color: #7aa8d4; font-weight: 600; white-space: nowrap; }
+  .xp-track { flex: 1; height: 5px; background: #dbeafe; border-radius: 4px; overflow: hidden; }
+  .xp-fill  { height: 100%; background: linear-gradient(90deg,#378ADD,#a855f7); border-radius: 4px; transition: width .5s ease; }
+  .xp-val   { font-size: 12px; font-weight: 700; color: #a855f7; min-width: 38px; text-align: right; }
+  .xp-popup { position: fixed; pointer-events: none; font-weight: 700; font-size: .95rem; border-radius: 10px; padding: 3px 13px; z-index: 9999; animation: floatUp 1s ease forwards; }
+  .xp-popup.ok    { background: #d1fadf; color: #14532d; }
+  .xp-popup.bonus { background: #fef3c7; color: #92400e; }
+  .xp-popup.err   { background: #fee2e2; color: #7f1d1d; }
+  @keyframes floatUp { 0%{opacity:1;transform:translateY(0)} 80%{opacity:1} 100%{opacity:0;transform:translateY(-55px)} }
+  .result-card { text-align: center; padding: 1.5rem .5rem .5rem; }
+  .result-emoji { font-size: 52px; margin-bottom: .8rem; }
+  .stars-row { display: flex; justify-content: center; gap: 6px; font-size: 2rem; margin: .4rem 0 .5rem; }
+  .star { filter: grayscale(1) opacity(.3); display: inline-block; }
+  .star.lit { filter: none; animation: starPop .4s ease; }
+  @keyframes starPop { 0%{transform:scale(.5) rotate(-20deg)} 70%{transform:scale(1.3) rotate(5deg)} 100%{transform:scale(1) rotate(0)} }
+  .rank-badge { display: inline-block; padding: 3px 16px; border-radius: 99px; font-size: 12px; font-weight: 700; letter-spacing: .05em; margin-bottom: .4rem; }
+  .result-score { font-size: 40px; font-weight: 700; color: #185FA5; }
+  .result-label { font-size: 14px; color: #7aa8d4; margin: .3rem 0 1.2rem; }
+  .result-xp    { font-size: 14px; color: #a855f7; font-weight: 700; margin-bottom: .3rem; }
+  .result-msg   { font-size: 15px; color: #1a2e4a; margin-bottom: 1.5rem; line-height: 1.7; max-width: 440px; margin-left: auto; margin-right: auto; }
+  .restart-btn  { padding: 11px 32px; border-radius: 10px; border: 1.5px solid #378ADD; background: #378ADD; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; font-family: Arial,sans-serif; transition: background .15s; }
+  .restart-btn:hover  { background: #185FA5; }
+  .retry-btn    { margin-top: .6rem; padding: 10px 24px; border-radius: 10px; border: 1.5px solid #f59e0b; background: #fff3dc; color: #92400e; font-size: 14px; font-weight: 600; cursor: pointer; font-family: Arial,sans-serif; transition: background .15s; display: none; }
+  .retry-btn:hover { background: #fde68a; }
+  .mistakes-list { text-align: left; border-top: 1px solid #dbeafe; padding-top: 1.2rem; margin-top: 1.2rem; }
+  .mistakes-list h3 { font-size: 14px; font-weight: 600; color: #7aa8d4; margin-bottom: .75rem; }
+  .mistake-item { font-size: 13px; color: #1a2e4a; padding: 9px 13px; background: #f5f9ff; border-radius: 8px; margin-bottom: 7px; border-left: 3px solid #22c55e; }
+  .mistake-item .m-q { color: #7aa8d4; margin-bottom: 3px; font-size: 12px; }
+  .mistake-item .m-a { color: #15803d; font-weight: 600; }
+  .ref-title { font-size: 14px; font-weight: 700; color: #185FA5; margin: 1.5rem 0 .5rem; }
+  .ref-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .ref-table th { background: #e0eeff; color: #185FA5; padding: 6px 10px; font-weight: 700; text-align: left; }
+  .ref-table td { padding: 6px 10px; border-bottom: 1px solid #dbeafe; color: #1a2e4a; vertical-align: top; }
+  .ref-table tr:last-child td { border-bottom: none; }
+  .ref-note { font-size: 12px; color: #7aa8d4; margin-top: .8rem; line-height: 1.6; }
+  #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+
+.send-status { margin-top: 10px; font-size: 13px; font-weight: 600; min-height: 20px; }
+.send-status.ok { color: #14532d; }
+.send-status.err { color: #7f1d1d; }
+.name-input { padding: 9px 14px; border-radius: 8px; border: 1.5px solid #c8dff7; font-size: 14px; width: 100%; box-sizing: border-box; margin-bottom: 8px; font-family: Arial, sans-serif; }
+.name-input.err { border-color: #ef4444; }
+#timer-status { min-height: 18px; margin-top: 6px; font-size: 13px; font-weight: 600; }
+#timer-status.timer-on  { color: #b45309; }
+#timer-status.timer-off { color: #6b7280; }
+
+  .warn-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:9000; align-items:center; justify-content:center; padding:1rem; }
+  .warn-overlay.open { display:flex; }
+  .warn-box { background:#fff; border-radius:16px; padding:2rem 1.5rem; max-width:360px; width:100%; text-align:center; }
+  .warn-icon { font-size:3rem; margin-bottom:.8rem; }
+  .warn-title { font-size:18px; font-weight:700; color:#b91c1c; margin-bottom:.6rem; }
+  .warn-text { font-size:14px; color:#1a2e4a; line-height:1.6; margin-bottom:1.2rem; }
+  .warn-count { font-size:13px; font-weight:700; color:#b91c1c; background:#fee2e2; border-radius:8px; padding:6px 14px; display:inline-block; margin-bottom:1.2rem; }
+  .warn-btn { padding:10px 28px; border-radius:10px; border:none; background:#378ADD; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:Arial,sans-serif; }
+  .warn-btn.danger { background:#ef4444; }
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+<div class="card">
+  <h1>Притяжательные местоимения</h1>
+  <p class="subtitle">Английский язык · 10 вопросов из 35</p>
+
+  <!-- ══ СТАРТ ══ -->
+  <div id="start-screen">
+          <div style="margin-bottom:1rem;">
+        <div style="font-weight:600;color:#185FA5;margin-bottom:.5rem;font-size:14px;">👤 Представьтесь перед началом теста</div>
+        <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
+        <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+      </div>
+<div class="start-info">
+      В базе <b>35 вопросов</b>. При каждом запуске выбираются <b>10 случайных</b> — порядок меняется каждый раз.
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-label">⏱ Таймер
+        <span class="toggle-sub">15 секунд на вопрос · бонус XP за быстрый ответ</span>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="timer-toggle" onchange="timerEnabled=this.checked">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+<button class="start-btn" onclick="startQuiz()">▶ Начать тест</button>
+
+    <div class="ref-title">📋 Справочник</div>
+    <table class="ref-table">
+      <tr><th>Местоимение</th><th>Перевод</th><th>Кто владелец</th><th>Примеры</th></tr>
+      <tr><td><b style="color:#185FA5">my</b></td><td>мой / моя / моё / мои</td><td>я</td><td>my book, my friend</td></tr>
+      <tr><td><b style="color:#185FA5">your</b></td><td>твой / ваш</td><td>ты / вы</td><td>your pen, your teacher</td></tr>
+      <tr><td><b style="color:#185FA5">his</b></td><td>его</td><td>он (мужчина)</td><td>his bag, his sister</td></tr>
+      <tr><td><b style="color:#185FA5">her</b></td><td>её</td><td>она (женщина)</td><td>her cat, her mother</td></tr>
+      <tr><td><b style="color:#185FA5">its</b></td><td>его / её (предмет)</td><td>предмет, животное</td><td>its name, its colour</td></tr>
+      <tr><td><b style="color:#185FA5">our</b></td><td>наш / наша / наши</td><td>мы</td><td>our class, our school</td></tr>
+      <tr><td><b style="color:#185FA5">their</b></td><td>их</td><td>они</td><td>their dog, their books</td></tr>
+    </table>
+    <p class="ref-note">⚠️ Местоимение зависит от <b style="color:#185FA5">владельца</b>, а не от рода предмета: «его книга» → <b>his book</b>, «её стол» → <b>her table</b>.</p>
+  </div>
+
+  <!-- ══ ТЕСТ ══ -->
+  <div id="quiz-screen" style="display:none">
+    <div class="xp-row">
+      <span class="xp-label">⭐ XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      <span class="xp-val" id="xp-val">0</span>
+    </div>
+    <div class="hud">
+      <span class="hud-chip">Вопрос <b id="counter-cur">1</b> из <b id="counter-tot">10</b></span>
+      <span class="hud-chip">✓ <b id="hud-ok">0</b> &nbsp;✗ <b id="hud-err">0</b></span>
+      <span class="streak-badge" id="streak-badge">🔥 <span id="streak-val">0</span></span>
+      <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Подсказка (3)</button>
+      <span class="timer-chip" id="timer-chip">⏱ <b id="timer-val">15</b></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+    <div class="q-meta">
+      <span class="q-tag" id="qtag"></span>
+    </div>
+    <div class="q-text" id="qtext"></div>
+    <div id="answer-area"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Следующий →</button>
+  </div>
+
+  <!-- ══ ИТОГ ══ -->
+  <div id="result-screen" style="display:none">
+    <div class="result-card">
+      <div class="result-emoji" id="res-emoji">⭐</div>
+      <div class="stars-row" id="stars-row"></div>
+      <div id="rank-badge-wrap"></div>
+      <div class="result-score" id="res-score">0 / 10</div>
+      <div class="result-label">правильных ответов</div>
+      <div class="result-xp" id="res-xp"></div>
+      <div class="result-msg" id="res-msg"></div>
+      
+      <div id="send-status" class="send-status"></div>
+      <div id="timer-status"></div>
+      <button class="restart-btn" onclick="startQuiz()">🔄 Новый тест (другие вопросы)</button>
+      <br>
+      <button class="retry-btn" id="retry-btn" onclick="retryMistakes()">🔁 Работа над ошибками</button>
+      <div class="mistakes-list" id="mistakes-block"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════
+// БАЗА — 35 вопросов
+// ══════════════════════════
+var ALL_QUESTIONS = [
+  // Ступень 1 · перевод с русского (20 вопросов)
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nМоя книга — ___ book",opts:["my","your","his","her"],ans:0,exp:"Моя — принадлежит мне → my"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nТвоя ручка — ___ pen",opts:["my","your","his","her"],ans:1,exp:"Твоя — принадлежит тебе → your"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nЕго сумка — ___ bag",opts:["my","your","his","her"],ans:2,exp:"Его — владелец мужчина → his"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nЕё кошка — ___ cat",opts:["my","your","his","her"],ans:3,exp:"Её — владелец женщина → her"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nНаш класс — ___ class",opts:["my","our","their","its"],ans:1,exp:"Наш — принадлежит нам (мы) → our"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nИх собака — ___ dog",opts:["our","their","his","its"],ans:1,exp:"Их — принадлежит им (они) → their"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nЕго имя (кошки) — ___ name",opts:["her","our","its","their"],ans:2,exp:"Имя предмета или животного → its"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nМоя школа — ___ school",opts:["my","your","our","their"],ans:0,exp:"Моя — принадлежит мне → my"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nВаш учитель — ___ teacher",opts:["my","your","his","our"],ans:1,exp:"Ваш — принадлежит вам → your"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nЕё мама — ___ mother",opts:["his","her","its","our"],ans:1,exp:"Её — владелец женщина → her"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nЕго брат — ___ brother",opts:["her","his","its","their"],ans:1,exp:"Его — владелец мужчина → his"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nНаша школа — ___ school",opts:["my","your","our","their"],ans:2,exp:"Наша — принадлежит нам → our"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nИх книги — ___ books",opts:["our","his","their","her"],ans:2,exp:"Их — принадлежит им → their"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nМой друг — ___ friend",opts:["my","your","his","our"],ans:0,exp:"Мой — принадлежит мне → my"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nЕё сестра — ___ sister",opts:["his","her","its","their"],ans:1,exp:"Её — владелец женщина → her"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nЕго папа — ___ father",opts:["her","its","his","our"],ans:2,exp:"Его — владелец мужчина → his"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nИх класс — ___ class",opts:["our","its","her","their"],ans:3,exp:"Их — принадлежит им → their"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nЦвет кошки — ___ colour",opts:["his","her","its","their"],ans:2,exp:"Цвет предмета / животного → its"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nНаш город — ___ city",opts:["my","your","our","their"],ans:2,exp:"Наш — принадлежит нам → our"},
+  {tag:"Рус. → англ.",q:"Выберите правильное местоимение:\nТвоя сумка — ___ bag",opts:["my","your","his","her"],ans:1,exp:"Твоя — принадлежит тебе → your"},
+  // Ступень 2 · замена существительного (15 вопросов)
+  {tag:"Замена",q:"Замените на местоимение:\nTom's book — ___ book",opts:["my","her","his","their"],ans:2,exp:"Tom's — принадлежит Тому (мужчина) → his book"},
+  {tag:"Замена",q:"Замените на местоимение:\nAnna's cat — ___ cat",opts:["his","her","its","our"],ans:1,exp:"Anna's — принадлежит Анне (женщина) → her cat"},
+  {tag:"Замена",q:"Замените на местоимение:\nMary and I — ___ class",opts:["their","your","our","my"],ans:2,exp:"Mary and I = мы → our class"},
+  {tag:"Замена",q:"Замените на местоимение:\nThe dog's name — ___ name",opts:["his","her","its","their"],ans:2,exp:"The dog's — животное → its name"},
+  {tag:"Замена",q:"Замените на местоимение:\nAlex and Mary's dog — ___ dog",opts:["our","its","his","their"],ans:3,exp:"Alex and Mary = они → their dog"},
+  {tag:"Замена",q:"Замените на местоимение:\nMy mother's bag — ___ bag",opts:["my","his","her","its"],ans:2,exp:"My mother = она (женщина) → her bag"},
+  {tag:"Замена",q:"Замените на местоимение:\nMy father's car — ___ car",opts:["my","his","her","our"],ans:1,exp:"My father = он (мужчина) → his car"},
+  {tag:"Замена",q:"Замените на местоимение:\nThe school's name — ___ name",opts:["his","her","its","their"],ans:2,exp:"The school's — предмет → its name"},
+  {tag:"Замена",q:"Замените на местоимение:\nThe students' books — ___ books",opts:["our","its","her","their"],ans:3,exp:"The students = они → their books"},
+  {tag:"Замена",q:"Замените на местоимение:\nNick's pen — ___ pen",opts:["her","his","its","our"],ans:1,exp:"Nick's — принадлежит Нику (мужчина) → his pen"},
+  {tag:"Замена",q:"Замените на местоимение:\nLisa's friend — ___ friend",opts:["his","her","its","their"],ans:1,exp:"Lisa's — принадлежит Лизе (женщина) → her friend"},
+  {tag:"Замена",q:"Замените на местоимение:\nYou and I — ___ teacher",opts:["their","your","our","my"],ans:2,exp:"You and I = мы → our teacher"},
+  {tag:"Замена",q:"Замените на местоимение:\nThe cat's food — ___ food",opts:["his","her","its","their"],ans:2,exp:"The cat's — животное → its food"},
+  {tag:"Замена",q:"Замените на местоимение:\nBen and Kate's house — ___ house",opts:["our","his","her","their"],ans:3,exp:"Ben and Kate = они → their house"},
+  {tag:"Замена",q:"Замените на местоимение:\nMy sister's room — ___ room",opts:["my","his","her","its"],ans:2,exp:"My sister = она (женщина) → her room"}
+];
+
+// ══ СОСТОЯНИЕ ══
+var questions=[], cur=0, score=0, total=10;
+var mistakes=[], results=[], retryMode=false;
+var xp=0, streak=0, hints=3, MAX_XP=150;
+var timerEnabled=false, timerInterval=null, timerSec=0, qStartTime=0;
+
+function shuffle(arr){ return arr.slice().sort(function(){return Math.random()-.5;}); }
+
+function startQuiz(){
+  violations = 0; testActive = true;
+  var _ne=document.getElementById('inp-name'),_ge=document.getElementById('inp-group');
+  if(_ne&&!_ne.value.trim()){_ne.classList.add('err');_ne.focus();return;}
+  if(_ge&&!_ge.value.trim()){_ge.classList.add('err');_ge.focus();return;}
+  if(_ne)_ne.classList.remove('err');if(_ge)_ge.classList.remove('err');
+
+  retryMode=false;
+  questions=shuffle(ALL_QUESTIONS.slice()).slice(0,10);
+  total=10; cur=0; score=0; mistakes=[]; results=[];
+  xp=0; streak=0; hints=3;
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='';
+  document.getElementById('counter-tot').textContent=total;
+  document.getElementById('timer-chip').style.display=timerEnabled?'':'none';
+  updateXpUI(); updateStreakUI();
+  showQuestion();
+}
+
+function showQuestion(){
+  if(cur>=total){ showResult(); return; }
+  var q=questions[cur];
+  document.getElementById('progress').style.width=(cur/total*100)+'%';
+  document.getElementById('counter-cur').textContent=cur+1;
+  document.getElementById('hud-ok').textContent=score;
+  document.getElementById('hud-err').textContent=results.filter(function(r){return !r.ok;}).length;
+  document.getElementById('hint-btn').textContent='💡 Подсказка ('+hints+')';
+  document.getElementById('hint-btn').disabled=(hints<=0);
+  document.getElementById('qtag').textContent=q.tag;
+  var lines=q.q.split('\n'), html='';
+  lines.forEach(function(line,i){
+    if(i===0&&lines.length>1) html+='<span style="font-size:13px;color:#7aa8d4;font-weight:400">'+line+'</span><br>';
+    else html+=line.replace(/___/g,'<code>___</code>');
+  });
+  document.getElementById('qtext').innerHTML=html;
+  var area=document.getElementById('answer-area'); area.innerHTML='';
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('nextBtn').style.display='none';
+  var div=document.createElement('div'); div.className='options';
+  q.opts.forEach(function(opt,i){
+    var btn=document.createElement('button');
+    btn.className='opt-btn'; btn.dataset.idx=i;
+    btn.textContent=(i+1)+')  '+opt;
+    btn.onclick=(function(idx){return function(){selectChoice(idx);};})(i);
+    div.appendChild(btn);
+  });
+  area.appendChild(div);
+  if(timerEnabled) startTimer(15); else resetTimerUI();
+  qStartTime=Date.now();
+}
+
+function selectChoice(idx){
+  stopTimer();
+  var q=questions[cur];
+  var btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById('feedback');
+  var elapsed=(Date.now()-qStartTime)/1000;
+  var ok=(idx===q.ans);
+  if(ok){
+    btns[idx].classList.add('correct'); streak++;
+    var fast=timerEnabled&&elapsed<5;
+    var streakBonus=streak>=3?3:0;
+    var gained=10+(fast?5:0)+streakBonus;
+    fb.textContent='✓ Правильно! '+q.exp+(fast?' ⚡':'')+(streakBonus?' 🔥':'');
+    fb.className='feedback ok';
+    score++; addXP(gained,(fast||streakBonus)?'bonus':'ok'); launchConfetti();
+  } else {
+    btns[idx].classList.add('wrong'); btns[q.ans].classList.add('correct');
+    fb.textContent='✗ Неверно. '+q.exp;
+    fb.className='feedback err'; streak=0;
+    mistakes.push({q:q.q.split('\n').slice(-1)[0], ans:q.opts[q.ans]});
+  }
+  updateStreakUI(); results.push({ok:ok,q:q});
+  var nb=document.getElementById('nextBtn');
+  nb.style.display='inline-block';
+  nb.textContent=cur<total-1?'Следующий →':'Посмотреть результат →';
+}
+
+function nextQuestion(){ cur++; if(cur<total) showQuestion(); else showResult(); }
+
+function useHint(){
+  if(hints<=0) return;
+  var q=questions[cur]; hints--;
+  var btns=Array.from(document.querySelectorAll('.opt-btn:not(:disabled)'));
+  var wrongs=btns.filter(function(b){return parseInt(b.dataset.idx)!==q.ans;});
+  if(wrongs.length){ var pick=wrongs[Math.floor(Math.random()*wrongs.length)]; pick.disabled=true; pick.style.opacity='.2'; }
+  document.getElementById('hint-btn').textContent='💡 Подсказка ('+hints+')';
+  if(hints<=0) document.getElementById('hint-btn').disabled=true;
+}
+
+function startTimer(sec){
+  stopTimer(); timerSec=sec; updateTimerUI();
+  timerInterval=setInterval(function(){
+    timerSec--; updateTimerUI();
+    if(timerSec<=0){ clearInterval(timerInterval); timerInterval=null; timeOut(); }
+  },1000);
+}
+function stopTimer(){ if(timerInterval){ clearInterval(timerInterval); timerInterval=null; } }
+function resetTimerUI(){
+  document.getElementById('timer-val').textContent='15';
+  document.getElementById('timer-chip').className='timer-chip';
+}
+function updateTimerUI(){
+  document.getElementById('timer-val').textContent=timerSec;
+  document.getElementById('timer-chip').className='timer-chip'+(timerSec<=5?' danger':timerSec<=9?' warn':'');
+}
+function timeOut(){
+  var q=questions[cur];
+  document.getElementById('feedback').textContent='⏰ Время вышло!';
+  document.getElementById('feedback').className='feedback err';
+  streak=0; updateStreakUI();
+  document.querySelectorAll('.opt-btn').forEach(function(b){
+    b.disabled=true;
+    if(parseInt(b.dataset.idx)===q.ans) b.classList.add('correct');
+  });
+  results.push({ok:false,q:q});
+  mistakes.push({q:q.q.split('\n').slice(-1)[0], ans:q.opts[q.ans]});
+  var nb=document.getElementById('nextBtn');
+  nb.style.display='inline-block';
+  nb.textContent=cur<total-1?'Следующий →':'Посмотреть результат →';
+}
+
+function addXP(amount,type){
+  xp=Math.min(xp+amount,MAX_XP); updateXpUI();
+  var fb=document.getElementById('feedback'); if(!fb) return;
+  var rect=fb.getBoundingClientRect();
+  var pop=document.createElement('div');
+  pop.className='xp-popup '+type; pop.textContent='+'+amount+' XP';
+  pop.style.left=(rect.left+rect.width/2-30)+'px';
+  pop.style.top=(rect.top+window.scrollY-8)+'px';
+  document.body.appendChild(pop);
+  setTimeout(function(){pop.remove();},1100);
+}
+function updateXpUI(){
+  document.getElementById('xp-fill').style.width=Math.min(100,xp/MAX_XP*100)+'%';
+  document.getElementById('xp-val').textContent=xp;
+}
+function updateStreakUI(){
+  document.getElementById('streak-val').textContent=streak;
+  document.getElementById('streak-badge').className='streak-badge'+(streak>=5?' fire':streak>=3?' hot':'');
+}
+
+function showResult(){
+  testActive = false;
+  var _name=(document.getElementById('inp-name')?document.getElementById('inp-name').value.trim():'')||'Аноним';
+  var _group=(document.getElementById('inp-group')?document.getElementById('inp-group').value.trim():'')||'—';
+  sendToGoogleForms(_name,_group,'Притяжательные — Контроль',score+'/'+total,0,(typeof timerEnabled !== 'undefined' ? timerEnabled : false));
+
+  stopTimer();
+  document.getElementById('progress').style.width='100%';
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='block';
+  var pct=score/total;
+  var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
+  var rank=pct>=0.9?{name:'Мастер',bg:'#ede9fe',color:'#6d28d9'}:
+           pct>=0.7?{name:'Знаток',bg:'#e4eef8',color:'#1A4A7A'}:
+           pct>=0.5?{name:'Ученик',bg:'#e4f0ea',color:'#2D5A3D'}:
+                   {name:'Новичок',bg:'#f0eaf8',color:'#6B2FA0'};
+  var emoji=pct===1?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
+  var msg=pct===1?'Отлично! Все 10 ответов верны! Попробуйте новый набор вопросов.':
+          pct>=0.8?'Очень хорошо! Разберите ошибки и попробуйте снова.':
+          pct>=0.7?'Хороший результат! Каждый раз вопросы разные — тренируйтесь дальше.':
+          pct>=0.5?'Неплохо, но есть над чем поработать. Разберите ошибки!':
+                  'Нужно ещё поработать. Повторите таблицу и попробуйте снова!';
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-score').textContent=score+' / '+total;
+  document.getElementById('res-xp').textContent='⭐ '+xp+' XP';
+  document.getElementById('res-msg').textContent=msg;
+  var starsHTML='';
+  for(var i=1;i<=3;i++) starsHTML+='<span class="star'+(stars>=i?' lit':'')+'" style="animation-delay:'+((i-1)*.18)+'s">⭐</span>';
+  document.getElementById('stars-row').innerHTML=starsHTML;
+  document.getElementById('rank-badge-wrap').innerHTML='<span class="rank-badge" style="background:'+rank.bg+';color:'+rank.color+'">🏅 '+rank.name+'</span>';
+  if(pct>=0.9) launchBigConfetti();
+  var wrongCount=results.filter(function(r){return !r.ok;}).length;
+  var retryBtn=document.getElementById('retry-btn');
+  retryBtn.style.display=(wrongCount>0&&!retryMode)?'inline-block':'none';
+  if(wrongCount>0&&!retryMode) retryBtn.textContent='🔁 Работа над ошибками ('+wrongCount+')';
+  var mBlock=document.getElementById('mistakes-block');
+  if(mistakes.length>0){
+    var html='<h3>Разбор ошибок:</h3>';
+    mistakes.forEach(function(m){ html+='<div class="mistake-item"><div class="m-q">'+m.q+'</div><div class="m-a">✓ '+m.ans+'</div></div>'; });
+    mBlock.innerHTML=html;
+  } else { mBlock.innerHTML=''; }
+}
+
+function retryMistakes(){
+  var wrong=results.filter(function(r){return !r.ok;});
+  if(!wrong.length) return;
+  retryMode=true;
+  questions=wrong.map(function(r){return r.q;});
+  total=questions.length; cur=0; score=0; mistakes=[]; results=[];
+  xp=0; streak=0; hints=3;
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='';
+  document.getElementById('counter-tot').textContent=total;
+  document.getElementById('timer-chip').style.display=timerEnabled?'':'none';
+  updateXpUI(); updateStreakUI();
+  showQuestion();
+}
+
+// ══ КОНФЕТТИ ══
+var canvas=document.getElementById('confetti-canvas');
+var ctx=canvas.getContext('2d');
+var particles=[],animId=null;
+var COLORS=['#378ADD','#22c55e','#f59e0b','#ef4444','#a855f7','#ec4899','#14b8a6'];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize(); window.addEventListener('resize',resize);
+function createParticle(x,y,big){
+  var angle=Math.random()*Math.PI*2,speed=big?(Math.random()*10+5):(Math.random()*7+3);
+  return{x:x,y:y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-(big?8:4),color:COLORS[Math.floor(Math.random()*COLORS.length)],size:big?(Math.random()*10+5):(Math.random()*7+3),rotation:Math.random()*360,rotSpeed:(Math.random()-.5)*8,alpha:1,shape:Math.random()>.5?'rect':'circle'};
+}
+function spawnBurst(x,y,count,big){for(var i=0;i<count;i++)particles.push(createParticle(x,y,big));}
+function launchConfetti(){var rect=document.querySelector('.card').getBoundingClientRect();spawnBurst(rect.left+rect.width/2,rect.top+rect.height*.3,40,false);if(!animId)animate();}
+function launchBigConfetti(){var cx=window.innerWidth/2,cy=window.innerHeight/2;spawnBurst(cx,cy,130,true);setTimeout(function(){spawnBurst(cx-220,cy,70,true);},200);setTimeout(function(){spawnBurst(cx+220,cy,70,true);},400);if(!animId)animate();}
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.vx*=.99;p.rotation+=p.rotSpeed;p.alpha-=.016;ctx.save();ctx.globalAlpha=Math.max(0,p.alpha);ctx.translate(p.x,p.y);ctx.rotate(p.rotation*Math.PI/180);ctx.fillStyle=p.color;if(p.shape==='rect'){ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);}else{ctx.beginPath();ctx.arc(0,0,p.size/2,0,Math.PI*2);ctx.fill();}ctx.restore();});
+  particles=particles.filter(function(p){return p.alpha>0;});
+  if(particles.length>0){animId=requestAnimationFrame(animate);}else{animId=null;ctx.clearRect(0,0,canvas.width,canvas.height);}
+}
+
+function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
+  var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdfme_aKvoexXRSz7LTn5dxgY_7P2lBJsokU3puqehRxZVslw/formResponse';
+  var body = new FormData();
+  body.append('entry.1795360459', name);
+  body.append('entry.1572037373', group);
+  body.append('entry.1562414669', testName);
+  body.append('entry.994594767', result + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ') + (violations > 0 ? ' | ⚠️ Покидал: ' + violations + ' раз' : ' | ✅ Не покидал'));
+  body.append('entry.1290836239', xpEarned);
+  fetch(formUrl, {method:'POST', body:body, mode:'no-cors'})
+  .then(function(){
+    var el=document.getElementById('send-status');
+    if(el){el.textContent='✅ Результат отправлен преподавателю'; el.className='send-status ok';}
+    var tel=document.getElementById('timer-status');
+    if(tel){tel.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен'; tel.className=timerOn?'timer-on':'timer-off';}
+  }).catch(function(){
+    var el=document.getElementById('send-status');
+    if(el){el.textContent='⚠️ Нет соединения — результат не отправлен'; el.className='send-status err';}
+    var tel=document.getElementById('timer-status');
+    if(tel){tel.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен'; tel.className=timerOn?'timer-on':'timer-off';}
+  });
+}
+
+
+var violations = 0;
+var testActive = false;
+var MAX_VIOLATIONS = 2;
+
+document.addEventListener('visibilitychange', function(){
+  if(!testActive) return;
+  if(document.hidden){
+    violations++;
+    showWarning();
+  }
+});
+
+function showWarning(){
+  var overlay = document.getElementById('warn-overlay');
+  var icon = document.getElementById('warn-icon');
+  var title = document.getElementById('warn-title');
+  var text = document.getElementById('warn-text');
+  var count = document.getElementById('warn-count');
+  var btn = document.getElementById('warn-btn');
+  if(violations >= MAX_VIOLATIONS){
+    icon.textContent = '🚫';
+    title.textContent = 'Тест сброшен!';
+    text.textContent = 'Вы покидали страницу ' + violations + ' раза. Тест начат заново.';
+    count.textContent = 'Нарушений: ' + violations;
+    btn.textContent = 'Начать сначала';
+    btn.className = 'warn-btn danger';
+    btn.onclick = function(){ closeWarning(); violations=0; testActive=false;
+      document.getElementById('start-screen').style.display='';
+      document.getElementById('quiz-screen').style.display='none';
+      if(document.getElementById('result-screen')) document.getElementById('result-screen').style.display='none';
+    };
+  } else {
+    icon.textContent = '⚠️';
+    title.textContent = 'Вы покинули страницу!';
+    text.textContent = 'Во время теста нельзя открывать другие вкладки. Следующее нарушение — тест сбросится!';
+    count.textContent = 'Нарушение ' + violations + ' из ' + MAX_VIOLATIONS;
+    btn.textContent = 'Продолжить тест';
+    btn.className = 'warn-btn';
+    btn.onclick = closeWarning;
+  }
+  overlay.classList.add('open');
+}
+
+function closeWarning(){
+  document.getElementById('warn-overlay').classList.remove('open');
+}
+
+</script>
+
+<div class="warn-overlay" id="warn-overlay">
+  <div class="warn-box">
+    <div class="warn-icon" id="warn-icon">⚠️</div>
+    <div class="warn-title" id="warn-title">Вы покинули страницу!</div>
+    <div class="warn-text" id="warn-text">Во время теста нельзя открывать другие вкладки.</div>
+    <div class="warn-count" id="warn-count"></div>
+    <button class="warn-btn" id="warn-btn" onclick="closeWarning()">Продолжить тест</button>
+  </div>
+</div>
+
+</body>
+</html>
