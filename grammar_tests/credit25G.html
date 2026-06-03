@@ -322,7 +322,7 @@ function switchHubTab(name){
 }
 
 function goStart(){
-  violations = 0; testActive = true;
+  testActive = false;
   stopTimer();
   document.getElementById('start-screen').style.display='';
   document.getElementById('quiz-screen').style.display='none';
@@ -346,6 +346,7 @@ function starsStr(n){ return '⭐'.repeat(n)+'☆'.repeat(3-n); }
 
 // ══ QUIZ START ══
 function startQuiz(){
+  violations = 0; testActive = true;
   var _nameEl = document.getElementById('inp-name');
   var _groupEl = document.getElementById('inp-group');
   if(_nameEl && !_nameEl.value.trim()){_nameEl.classList.add('err');_nameEl.focus();return;}
