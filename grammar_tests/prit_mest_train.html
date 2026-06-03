@@ -167,6 +167,13 @@
   .warn-count { font-size:13px; font-weight:700; color:#b91c1c; background:#fee2e2; border-radius:8px; padding:6px 14px; display:inline-block; margin-bottom:1.2rem; }
   .warn-btn { padding:10px 28px; border-radius:10px; border:none; background:#378ADD; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:Arial,sans-serif; }
   .warn-btn.danger { background:#ef4444; }
+
+  .result-grade { font-size: 1.5rem; font-weight: 800; margin: .3rem 0 .5rem; padding: .3rem 1.2rem; border-radius: 12px; display: inline-block; }
+  .grade-5 { background: #d1fae5; color: #065f46; }
+  .grade-4 { background: #dbeafe; color: #1e40af; }
+  .grade-3 { background: #fef3c7; color: #92400e; }
+  .grade-2 { background: #fee2e2; color: #b91c1c; }
+  .grade-1 { background: #f3f4f6; color: #6b7280; }
 </style>
 </head>
 <body>
@@ -301,6 +308,8 @@
     <div class="stars-row" id="stars-row"></div>
     <div id="rank-badge-wrap"></div>
     <div class="result-score" id="res-score"></div>
+    <div id="res-grade" class="result-grade"></div>
+
     <div class="result-label" id="res-label">правильных ответов</div>
     <div class="result-xp" id="res-xp"></div>
     <div class="result-msg" id="res-msg"></div>
@@ -715,7 +724,13 @@ function showFinalResult(pct){
           pct>=0.5?'Неплохо, но нужно набрать 70% для следующей ступени. Попробуйте снова!':
                   'Нужно ещё поработать. Нужно минимум '+needPct+'% ('+Math.ceil(total*0.7)+'/'+total+') для разблокировки!';
   document.getElementById('res-emoji').textContent=emoji;
-  document.getElementById('res-score').textContent=score+' / '+total;
+  document.getElementById('res-score').textContent=score+' / '+total
+  var _pct_disp = Math.round(score / (total||1) * 100);
+  var _gr = _pct_disp>=90?'5 (Отлично)':_pct_disp>=75?'4 (Хорошо)':_pct_disp>=50?'3 (Удовл.)':_pct_disp>=10?'2 (Неудовл.)':'1 (Не зачтено)';
+  var _grClass = _pct_disp>=90?'grade-5':_pct_disp>=75?'grade-4':_pct_disp>=50?'grade-3':_pct_disp>=10?'grade-2':'grade-1';
+  var _grEl = document.getElementById('res-grade');
+  if(_grEl){ _grEl.textContent = 'Оценка: ' + _gr; _grEl.className = 'result-grade ' + _grClass; }
+;
   document.getElementById('res-label').textContent='правильных ответов · '+STAGE_CONFIG[currentStage].label;
   document.getElementById('res-xp').textContent='⭐ '+xp+' XP';
   document.getElementById('res-msg').textContent=msg;
