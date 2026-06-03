@@ -791,11 +791,11 @@ function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
   body.append('entry.1795360459', name);
   body.append('entry.1572037373', group);
   body.append('entry.1562414669', testName);
-  var _pct = Math.round(_result.split('/')[0] / (_result.split('/')[1]||1) * 100);
+  var _pct = Math.round(result.split('/')[0] / (result.split('/')[1]||1) * 100);
   var _grade = getGrade(_pct);
   var _attempt = getAttemptNum('attempt_countable_uncountable');
   var _hintsUsed = (3 - hints);
-  var _resultFull = _result + ' (' + _pct + '%) | Оценка: ' + _grade + ' | Попытка: ' + _attempt + (' | Подсказок: ' + _hintsUsed + '/3' + '') + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ') + (violations > 0 ? ' | ⚠️ Покидал: ' + violations + ' раз' : ' | ✅ Не покидал');
+  var _resultFull = result + ' (' + _pct + '%) | Оценка: ' + _grade + ' | Попытка: ' + _attempt + (' | Подсказок: ' + _hintsUsed + '/3' + '') + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ') + (violations > 0 ? ' | ⚠️ Покидал: ' + violations + ' раз' : ' | ✅ Не покидал');
   body.append('entry.994594767', _resultFull);
   body.append('entry.1290836239', xpEarned);
   fetch(formUrl, {method:'POST', body:body, mode:'no-cors'})
