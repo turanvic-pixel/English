@@ -556,6 +556,7 @@ function saveProgress(){
 }
 
 function tryStart(){
+  violations = 0; testActive = true;
   var nameEl = document.getElementById('inp-name');
   var groupEl = document.getElementById('inp-group');
   var name = nameEl.value.trim();
