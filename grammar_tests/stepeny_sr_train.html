@@ -911,7 +911,13 @@ function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
 var violations = 0, testActive = false, MAX_VIOLATIONS = 1;
 document.addEventListener('visibilitychange', function(){
   if(!testActive) return;
-  if(document.hidden){ violations++; showWarning(); }
+  if(document.hidden){
+    violations++;
+    if(violations > MAX_VIOLATIONS){
+      testActive = false; // stop counting, reset immediately
+    }
+    showWarning();
+  }
 });
 function showWarning(){
   var o=document.getElementById('warn-overlay'),icon=document.getElementById('warn-icon'),
@@ -937,6 +943,11 @@ function showWarning(){
 function doReset(){
   document.getElementById('warn-overlay').classList.remove('open');
   violations=0; testActive=false;
+  // Try file-specific reset function first
+  if(typeof goStart === 'function') { goStart(); return; }
+  if(typeof restartStage === 'function') { restartStage(); return; }
+  if(typeof restart === 'function') { restart(); return; }
+  // Fallback: show start screen
   var ss=document.getElementById('start-screen'),qs=document.getElementById('quiz-screen'),rs=document.getElementById('result-screen');
   if(ss)ss.style.display=''; if(qs)qs.style.display='none'; if(rs)rs.style.display='none';
 }
