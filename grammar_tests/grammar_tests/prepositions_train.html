@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Предлоги: место, направление, время</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif; min-height: 100vh;
+    background-color: #fff;
+    background-image: linear-gradient(#b3d1f7 1px, transparent 1px), linear-gradient(90deg, #b3d1f7 1px, transparent 1px);
+    background-size: 28px 28px;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 2rem 1rem 3rem;
+  }
+  .card { background: rgba(255,255,255,0.95); border-radius: 16px; border: 1.5px solid #c8dff7; padding: 2rem 2rem 2.5rem; max-width: 700px; width: 100%; box-shadow: 0 4px 24px rgba(55,138,221,0.10); }
+  h1 { text-align: center; font-size: 20px; font-weight: 700; color: #185FA5; margin-bottom: 0.2rem; }
+  .subtitle { text-align: center; font-size: 13px; color: #5b8dc7; margin-bottom: 1.5rem; }
+  .progress-bar { height: 7px; background: #dbeafe; border-radius: 99px; margin-bottom: 1rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: #378ADD; border-radius: 99px; transition: width 0.4s ease; }
+  .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+  .q-tag { font-size: 11px; background: #e0eeff; color: #185FA5; padding: 2px 9px; border-radius: 99px; font-weight: 600; }
+  .q-situation { font-size: 13px; color: #5b8dc7; background: #f0f7ff; border-left: 3px solid #378ADD; padding: 7px 12px; border-radius: 0 8px 8px 0; margin-bottom: 10px; line-height: 1.5; }
+  .q-illustration { width: 100%; max-height: 110px; margin-bottom: 10px; border-radius: 10px; overflow: hidden; background: #f8fbff; border: 1px solid #dbeafe; display: flex; align-items: center; justify-content: center; }
+  .q-illustration svg { width: 100%; height: 110px; }
+  .q-text { font-size: 17px; font-weight: 600; color: #1a2e4a; margin-bottom: 1.2rem; line-height: 1.7; }
+  .blank { display: inline-block; background: #e8f2ff; color: #185FA5; border-bottom: 2px solid #378ADD; padding: 0 10px; border-radius: 4px; font-weight: 700; min-width: 60px; text-align: center; }
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .opt-btn { padding: 11px 16px; border: 1.5px solid #c8dff7; border-radius: 10px; background: #f5f9ff; color: #1a2e4a; font-size: 15px; cursor: pointer; text-align: left; transition: background 0.13s, border-color 0.13s, transform 0.1s; font-family: Arial, sans-serif; }
+  .opt-btn:hover:not(:disabled) { background: #dbeafe; border-color: #378ADD; transform: translateX(3px); }
+  .opt-btn.correct { background: #d1fadf; border-color: #22c55e; color: #14532d; font-weight: 600; }
+  .opt-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #7f1d1d; }
+  .opt-btn:disabled { cursor: default; transform: none; }
+  .feedback { margin-top: 0.8rem; font-size: 14px; min-height: 20px; line-height: 1.6; }
+  .feedback.ok { color: #15803d; font-weight: 500; }
+  .feedback.err { color: #b91c1c; }
+  .next-btn { margin-top: 1.1rem; padding: 10px 26px; border-radius: 10px; border: 1.5px solid #378ADD; background: #378ADD; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; display: none; font-family: Arial, sans-serif; transition: background 0.15s; }
+  .next-btn:hover { background: #185FA5; }
+  .result-card { text-align: center; padding: 1.5rem 0.5rem 0.5rem; }
+  .result-emoji { font-size: 52px; margin-bottom: 0.8rem; }
+  .result-score { font-size: 40px; font-weight: 700; color: #185FA5; }
+  .result-label { font-size: 14px; color: #7aa8d4; margin: 0.3rem 0 1.2rem; }
+  .result-msg { font-size: 15px; color: #1a2e4a; margin-bottom: 1.5rem; line-height: 1.7; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .restart-btn { padding: 11px 32px; border-radius: 10px; border: 1.5px solid #378ADD; background: #378ADD; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; font-family: Arial, sans-serif; }
+  .restart-btn:hover { background: #185FA5; }
+  .mistakes-list { text-align: left; border-top: 1px solid #dbeafe; padding-top: 1.2rem; margin-top: 1.2rem; }
+  .mistake-item { font-size: 13px; color: #1a2e4a; padding: 9px 13px; background: #f5f9ff; border-radius: 8px; margin-bottom: 7px; border-left: 3px solid #22c55e; }
+  .mistake-item .m-q { color: #7aa8d4; margin-bottom: 3px; font-size: 12px; }
+  .mistake-item .m-a { color: #15803d; font-weight: 600; }
+  #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+  .hud { display:flex; flex-wrap:wrap; gap:7px; align-items:center; margin-bottom:.75rem; }
+  .hud-chip { font-size:12px; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; font-weight:600; }
+  .streak-badge { font-size:12px; font-weight:700; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; transition:all .3s; }
+  .streak-badge.hot  { background:#fff3dc; color:#b45309; }
+  .streak-badge.fire { background:linear-gradient(135deg,#fef3c7,#fde68a); color:#92400e; animation:sBurst .45s ease; }
+  @keyframes sBurst { 0%{transform:scale(1)} 40%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .timer-chip { font-size:12px; font-weight:700; background:#e0eeff; color:#185FA5; border-radius:99px; padding:4px 12px; transition:background .3s,color .3s; margin-left:auto; }
+  .timer-chip.warn   { background:#fff3dc; color:#b45309; }
+  .timer-chip.danger { background:#fee2e2; color:#b91c1c; }
+  .xp-row { display:flex; align-items:center; gap:8px; margin-bottom:.6rem; }
+  .xp-label { font-size:11px; color:#7aa8d4; font-weight:600; white-space:nowrap; }
+  .xp-track { flex:1; height:5px; background:#dbeafe; border-radius:4px; overflow:hidden; }
+  .xp-fill  { height:100%; background:linear-gradient(90deg,#378ADD,#a855f7); border-radius:4px; transition:width .5s ease; }
+  .xp-val   { font-size:12px; font-weight:700; color:#a855f7; min-width:38px; text-align:right; }
+  .hint-btn { font-size:12px; font-weight:600; background:#f5f9ff; border:1.5px solid #c8dff7; border-radius:8px; padding:6px 13px; cursor:pointer; color:#7aa8d4; font-family:Arial,sans-serif; transition:background .12s; }
+  .hint-btn:hover:not(:disabled) { background:#dbeafe; }
+  .hint-btn:disabled { opacity:.35; cursor:default; }
+  .xp-popup { position:fixed; pointer-events:none; font-weight:700; font-size:.95rem; border-radius:10px; padding:3px 13px; z-index:9999; animation:floatUp 1s ease forwards; }
+  .xp-popup.ok  { background:#d1fadf; color:#14532d; }
+  .xp-popup.err { background:#fee2e2; color:#7f1d1d; }
+  @keyframes floatUp { 0%{opacity:1;transform:translateY(0)} 80%{opacity:1} 100%{opacity:0;transform:translateY(-55px)} }
+  .stars-row { display:flex; justify-content:center; gap:6px; font-size:2rem; margin:.4rem 0 .5rem; }
+  .star { filter:grayscale(1) opacity(.3); display:inline-block; }
+  .star.lit { filter:none; animation:starPop .4s ease; }
+  @keyframes starPop { 0%{transform:scale(.5) rotate(-20deg)} 70%{transform:scale(1.3) rotate(5deg)} 100%{transform:scale(1) rotate(0deg)} }
+  .rank-badge { display:inline-block; padding:3px 16px; border-radius:99px; font-size:12px; font-weight:700; letter-spacing:.05em; margin-bottom:.4rem; }
+  .result-xp { font-size:14px; color:#a855f7; font-weight:700; margin-bottom:.3rem; }
+  .retry-btn { margin-top:.6rem; padding:10px 24px; border-radius:10px; border:1.5px solid #f59e0b; background:#fff3dc; color:#92400e; font-size:14px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; display:none; }
+  .retry-btn:hover { background:#fde68a; }
+  .next-stage-btn { margin-top:.6rem; padding:10px 24px; border-radius:10px; border:1.5px solid #22c55e; background:#d1fadf; color:#14532d; font-size:14px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; }
+  .next-stage-btn:hover { background:#bbf7d0; }
+  .ref-btn { margin-top:.7rem; display:block; width:100%; padding:9px 0; border-radius:10px; border:1.5px solid #c8dff7; background:#f5f9ff; color:#7aa8d4; font-size:13px; font-weight:600; cursor:pointer; font-family:Arial,sans-serif; text-align:center; }
+  .ref-btn:hover { background:#dbeafe; color:#185FA5; }
+  #start-screen { text-align:center; padding:.5rem 0 1rem; }
+  .start-btn { padding:12px 36px; border-radius:10px; border:1.5px solid #378ADD; background:#378ADD; color:#fff; font-size:15px; font-weight:700; cursor:pointer; font-family:Arial,sans-serif; margin-bottom:1rem; }
+  .start-btn:hover { background:#185FA5; }
+  .record-box { background:#f5f9ff; border:1.5px solid #dbeafe; border-radius:10px; padding:10px 16px; font-size:13px; color:#7aa8d4; margin-bottom:1rem; }
+  .record-box b { color:#185FA5; }
+  .toggle-row { display:flex; align-items:center; gap:10px; background:#f5f9ff; border:1.5px solid #dbeafe; border-radius:10px; padding:10px 14px; margin-bottom:1rem; }
+  .toggle-label { flex:1; text-align:left; font-size:13px; color:#1a2e4a; font-weight:600; }
+  .toggle-sub { font-size:11px; color:#7aa8d4; font-weight:400; display:block; margin-top:1px; }
+  .toggle-switch { position:relative; width:44px; height:24px; flex-shrink:0; }
+  .toggle-switch input { opacity:0; width:0; height:0; }
+  .toggle-slider { position:absolute; inset:0; background:#c8dff7; border-radius:99px; cursor:pointer; transition:background .25s; }
+  .toggle-slider:before { content:""; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform .25s; box-shadow:0 1px 4px rgba(0,0,0,.15); }
+  .toggle-switch input:checked + .toggle-slider { background:#378ADD; }
+  .toggle-switch input:checked + .toggle-slider:before { transform:translateX(20px); }
+  .stage-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:1.2rem; }
+  .stage-card { border: 1.5px solid #c8dff7; border-radius: 12px; padding: 12px 8px 10px; background: #f5f9ff; cursor: pointer; text-align: center; transition: background .15s, border-color .15s, transform .1s; font-family: Arial, sans-serif; }
+  .stage-card:hover { background: #dbeafe; border-color: #378ADD; transform: translateY(-2px); }
+  .stage-card.locked { opacity: .4; cursor: default; }
+  .stage-card.locked:hover { background: #f5f9ff; border-color: #c8dff7; transform: none; }
+  .stage-card.done { border-color: #22c55e; background: #f0fdf4; }
+  .stage-card.active-stage { border-color: #378ADD; background: #e0eeff; }
+  .stage-icon { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+  .stage-title { font-size: 12px; font-weight: 700; color: #185FA5; margin-bottom: 2px; }
+  .stage-desc { font-size: 10px; color: #7aa8d4; line-height: 1.4; }
+  .stage-badge { display:inline-block; font-size:9px; font-weight:700; padding:1px 7px; border-radius:99px; margin-top:4px; }
+  .stage-badge.done-badge { background:#d1fadf; color:#14532d; }
+  .stage-badge.lock-badge { background:#e0eeff; color:#7aa8d4; }
+  .stage-badge.open-badge { background:#e0eeff; color:#185FA5; }
+  .unlock-rule { font-size:12px; color:#5b8dc7; background:#f0f7ff; border:1.5px solid #c8dff7; border-radius:10px; padding:8px 13px; margin-bottom:1rem; line-height:1.6; }
+  .ref-table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:1rem; }
+  .ref-table th { background:#e0eeff; color:#185FA5; padding:6px 10px; font-weight:700; text-align:left; }
+  .ref-table td { padding:6px 10px; border-bottom:1px solid #dbeafe; color:#1a2e4a; vertical-align:top; }
+  .ref-table tr:last-child td { border-bottom:none; }
+  .ref-section-title { font-size:13px; font-weight:700; color:#185FA5; margin:1rem 0 .4rem; }
+  .ref-modal-wrap { display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:500; align-items:center; justify-content:center; padding:1rem; }
+  .ref-modal-wrap.open { display:flex; }
+  .ref-modal { background:#fff; border-radius:16px; padding:1.5rem; max-width:620px; width:100%; max-height:88vh; overflow-y:auto; box-shadow:0 8px 40px rgba(0,0,0,.18); }
+  .ref-modal h2 { font-size:16px; color:#185FA5; margin-bottom:1rem; }
+  .ref-close { float:right; background:none; border:none; font-size:20px; cursor:pointer; color:#7aa8d4; line-height:1; }
+
+.send-status { margin-top: 10px; font-size: 13px; font-weight: 600; min-height: 20px; }
+.send-status.ok { color: #14532d; }
+.send-status.err { color: #7f1d1d; }
+.name-input { padding: 9px 14px; border-radius: 8px; border: 1.5px solid #c8dff7; font-size: 14px; width: 100%; box-sizing: border-box; margin-bottom: 8px; font-family: Arial, sans-serif; }
+.name-input.err { border-color: #ef4444; }
+#timer-status { min-height: 18px; margin-top: 6px; font-size: 13px; font-weight: 600; }
+#timer-status.timer-on  { color: #b45309; }
+#timer-status.timer-off { color: #6b7280; }
+
+  .warn-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:9000; align-items:center; justify-content:center; padding:1rem; }
+  .warn-overlay.open { display:flex; }
+  .warn-box { background:#fff; border-radius:16px; padding:2rem 1.5rem; max-width:360px; width:100%; text-align:center; }
+  .warn-icon { font-size:3rem; margin-bottom:.8rem; }
+  .warn-title { font-size:18px; font-weight:700; color:#b91c1c; margin-bottom:.6rem; }
+  .warn-text { font-size:14px; color:#1a2e4a; line-height:1.6; margin-bottom:1.2rem; }
+  .warn-count { font-size:13px; font-weight:700; color:#b91c1c; background:#fee2e2; border-radius:8px; padding:6px 14px; display:inline-block; margin-bottom:1.2rem; }
+  .warn-btn { padding:10px 28px; border-radius:10px; border:none; background:#378ADD; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:Arial,sans-serif; }
+  .warn-btn.danger { background:#ef4444; }
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+
+<div class="ref-modal-wrap" id="ref-modal">
+  <div class="ref-modal">
+    <button class="ref-close" onclick="toggleRef()">&#x2715;</button>
+    <h2>&#x1F4CB; Справочник: Предлоги места, направления и времени</h2>
+    <p class="ref-section-title">&#x1F4CD; Предлоги места (Place) — статичное положение</p>
+    <table class="ref-table">
+      <tr><th>Предлог</th><th>Значение</th><th>Ключевой признак</th></tr>
+      <tr><td><b>in</b></td><td>внутри</td><td>закрытое пространство, неподвижно</td></tr>
+      <tr><td><b>on</b></td><td>на поверхности</td><td>контакт с горизонтальной/вертикальной плоскостью</td></tr>
+      <tr><td><b>under</b></td><td>под</td><td>ниже горизонтальной плоскости</td></tr>
+      <tr><td><b>behind</b></td><td>позади</td><td>сзади вертикального объекта</td></tr>
+      <tr><td><b>over</b></td><td>над</td><td>выше, без касания</td></tr>
+      <tr><td><b>next to</b></td><td>рядом с</td><td>сбоку, вплотную</td></tr>
+      <tr><td><b>in front of</b></td><td>перед</td><td>лицом к объекту, напротив входа</td></tr>
+    </table>
+    <p class="ref-section-title">&#x27A1;&#xFE0F; Предлоги направления (Direction) — движение</p>
+    <table class="ref-table">
+      <tr><th>Предлог</th><th>Значение</th><th>Ключевой признак</th></tr>
+      <tr><td><b>into</b></td><td>внутрь</td><td>движение снаружи → внутрь закрытого пространства</td></tr>
+      <tr><td><b>out of</b></td><td>наружу</td><td>движение изнутри → наружу</td></tr>
+      <tr><td><b>across</b></td><td>поперёк</td><td>с одной стороны на другую (открытая поверхность)</td></tr>
+      <tr><td><b>through</b></td><td>сквозь</td><td>движение внутри объёма от входа до выхода</td></tr>
+      <tr><td><b>over</b></td><td>через сверху</td><td>перепрыгнуть / перелететь через вершину</td></tr>
+    </table>
+    <p class="ref-section-title">&#x1F550; Предлоги времени (Time)</p>
+    <table class="ref-table">
+      <tr><th>Предлог</th><th>Когда</th><th>Примеры</th></tr>
+      <tr><td><b>AT</b></td><td>точное время; ночь; праздники</td><td>at 8 o'clock, at night, at Christmas, at noon</td></tr>
+      <tr><td><b>IN</b></td><td>месяц, год, сезон, часть дня; «через»</td><td>in June, in 2022, in spring, in the morning, in two weeks</td></tr>
+      <tr><td><b>ON</b></td><td>день недели, конкретная дата</td><td>on Friday, on 27 May, on Monday morning</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h1>&#x1F5FA;&#xFE0F; Предлоги: место, направление, время</h1>
+  <p class="subtitle">3 ступени &middot; Контекстные задания &middot; Однозначные вопросы &middot; Геймификация</p>
+
+  <div id="start-screen">
+          <div style="margin-bottom:1rem;">
+        <div style="font-weight:600;color:#185FA5;margin-bottom:.5rem;font-size:14px;">👤 Представьтесь перед началом теста</div>
+        <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
+        <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+      </div>
+<div class="unlock-rule">&#x1F513; Для открытия следующей ступени нужно набрать <b>70%+</b> правильных ответов.</div>
+    <div class="stage-grid" id="stage-grid"></div>
+    <div class="record-box" id="record-box">Рекорды загружаются...</div>
+    <div class="toggle-row">
+      <label class="toggle-label">&#x23F1; Таймер <span class="toggle-sub">20 секунд на вопрос</span></label>
+      <label class="toggle-switch">
+        <input type="checkbox" id="timer-toggle" onchange="onTimerToggle(this)">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+<button class="start-btn" id="start-btn" onclick="startSelected()">&#x25B6; Начать</button>
+  </div>
+
+  <div id="quiz-screen" style="display:none">
+    <div class="xp-row">
+      <span class="xp-label">&#x2B50; XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      <span class="xp-val" id="xp-val">0</span>
+    </div>
+    <div class="hud">
+      <span class="hud-chip" id="stage-chip">Ступень 1</span>
+      <span class="hud-chip">&#x2753; <span id="counter-cur">1</span>/<span id="counter-tot">20</span></span>
+      <span class="hud-chip">&#x2705; <span id="score-live">0</span></span>
+      <span class="streak-badge" id="streak-badge">&#x1F525; 0 подряд</span>
+      <span class="timer-chip" id="timer-chip" style="display:none">&#x23F1; 20</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="q-meta">
+      <span class="q-tag" id="q-tag">Место</span>
+      <button class="hint-btn" id="hint-btn" onclick="useHint()">&#x1F4A1; Подсказка (<span id="hint-count">3</span>)</button>
+    </div>
+    <div class="q-situation" id="q-situation"></div>
+    <div class="q-illustration" id="q-illustration"></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Следующий &rarr;</button>
+  </div>
+
+  <div id="result-screen" style="display:none">
+    <div class="result-card">
+      <div class="result-emoji" id="res-emoji">&#x1F3C6;</div>
+      <div class="stars-row" id="stars-row"></div>
+      <div id="rank-badge-wrap"></div>
+      <div class="result-score" id="res-score">0/20</div>
+      <div class="result-label" id="res-label">правильных ответов</div>
+      <div class="result-xp" id="res-xp">&#x2B50; 0 XP</div>
+      <div class="result-msg" id="res-msg"></div>
+      
+      <div id="send-status" class="send-status"></div>
+      <div id="timer-status"></div>
+      <button class="restart-btn" onclick="goStart()">&larr; На главную</button>
+      <button class="next-stage-btn" id="next-stage-btn" onclick="goNextStage()" style="display:none">&#x25B6; Далее &rarr;</button>
+      <button class="retry-btn" id="retry-btn" onclick="retryMistakes()">&#x1F501; Работа над ошибками</button>
+    </div>
+    <div class="mistakes-list" id="mistakes-block"></div>
+  </div>
+
+  <button class="ref-btn" onclick="toggleRef()">&#x1F4CB; Справочник по предлогам</button>
+</div>
+
+<script>
+
+var Q_S1_ALL = [
+  {tag:"Место/Направление",sit:"🚗 Кошка внутри салона. Машина стоит — статика.",q:"The cat is sitting ___ the car.",opts:["in","into","through"],ans:0,exp:"IN — предлог места «внутри». Кошка находится внутри машины (статика). INTO — только при движении внутрь."},
+  {tag:"Место/Направление",sit:"🚗 Человек садится в машину — движение снаружи внутрь.",q:"She got ___ the car and drove away.",opts:["into","in","through"],ans:0,exp:"INTO — направление: движение снаружи → внутрь. IN — только статика (она уже в машине)."},
+  {tag:"Место/Направление",sit:"🚗 Человек выходит из машины — движение изнутри наружу.",q:"He got ___ the car and walked to the shop.",opts:["out of","from","into"],ans:0,exp:"OUT OF — из закрытого пространства наружу. FROM — начало маршрута (I came from London), не выход из объёма."},
+  {tag:"Место/Направление",sit:"🐕 Собака прячется ниже уровня дивана.",q:"The dog is hiding ___ the sofa.",opts:["under","behind","next to"],ans:0,exp:"UNDER — под (ниже горизонтальной плоскости). BEHIND — позади вертикального объекта. NEXT TO — рядом сбоку."},
+  {tag:"Место/Направление",sit:"🏠 Гараж позади дома — если смотреть от улицы, он сзади.",q:"The garage is ___ the house.",opts:["behind","under","over"],ans:0,exp:"BEHIND — позади (сзади вертикального объекта). UNDER — под. OVER — над."},
+  {tag:"Место/Направление",sit:"💡 Лампа висит над столом и не касается его.",q:"The lamp is hanging ___ the dining table.",opts:["over","under","behind"],ans:0,exp:"OVER — над (без касания). Лампа выше стола и нависает над ним. UNDER — под. BEHIND — позади."},
+  {tag:"Место/Направление",sit:"🚶 Человек стоит напротив двери, смотрит на неё лицом.",q:"He is standing ___ the door, waiting to enter.",opts:["in front of","behind","next to"],ans:0,exp:"IN FRONT OF — перед (лицом к объекту). BEHIND — он был бы со стороны петель. NEXT TO — рядом сбоку."},
+  {tag:"Место/Направление",sit:"🏪 Два здания стоят стена к стене, бок о бок.",q:"The pharmacy is ___ the supermarket.",opts:["next to","in front of","behind"],ans:0,exp:"NEXT TO — рядом с, сбоку (стена к стене). IN FRONT OF — только если аптека прямо перед входом в супермаркет."},
+  {tag:"Место/Направление",sit:"🌊 Человек прыгает в бассейн — тело летит внутрь воды.",q:"She jumped ___ the swimming pool.",opts:["into","in","out of"],ans:0,exp:"INTO — движение внутрь (снаружи → внутрь). IN — статика: she is in the pool (она уже в бассейне). OUT OF — наружу."},
+  {tag:"Место/Направление",sit:"🚕 Пассажир открывает дверь такси и выходит — движение изнутри наружу.",q:"She got ___ the taxi and walked home.",opts:["out of","into","through"],ans:0,exp:"OUT OF — из закрытого пространства наружу. INTO — противоположное (садится в такси)."},
+  {tag:"Место/Направление",sit:"🚶 Дорога с двумя полосами. Человек переходит с одного тротуара на другой — поперёк.",q:"He walked ___ the road at the zebra crossing.",opts:["across","through","over"],ans:0,exp:"ACROSS — поперёк (с одной стороны на другую открытой поверхности). THROUGH — сквозь внутри. OVER — сверху через препятствие."},
+  {tag:"Место/Направление",sit:"🚂 Поезд движется внутри тоннеля насквозь — от входа до выхода.",q:"The train went ___ the long tunnel.",opts:["through","across","over"],ans:0,exp:"THROUGH — сквозь (внутри от входа до выхода). ACROSS — поперёк открытой поверхности. OVER — сверху."},
+  {tag:"Место/Направление",sit:"🐈 Кошка перепрыгивает забор — движение сверху через вершину.",q:"The cat jumped ___ the fence into the garden.",opts:["over","across","through"],ans:0,exp:"OVER — через (перепрыгнуть сверху). THROUGH — если был бы пролом в заборе. ACROSS — поперёк ровной поверхности."},
+  {tag:"Место/Направление",sit:"📚 Книга лежит на горизонтальной поверхности стола — прямой контакт.",q:"The book is ___ the table.",opts:["on","in","over"],ans:0,exp:"ON — на поверхности (контакт с горизонтальной плоскостью). IN — внутри закрытого пространства. OVER — нависает над, без контакта."},
+  {tag:"Место/Направление",sit:"🎒 Ключи лежат внутри закрытой сумки.",q:"My keys are ___ my bag.",opts:["in","on","into"],ans:0,exp:"IN — внутри закрытого пространства (сумка закрыта, статика). ON — на поверхности. INTO — только при движении внутрь."},
+  {tag:"Место/Направление",sit:"🌲 Туристы идут по тропинке внутри леса — они среди деревьев.",q:"We walked ___ the forest for an hour.",opts:["through","across","into"],ans:0,exp:"THROUGH — сквозь (движение внутри объёма). ACROSS — поперёк открытого поля. INTO — вход в лес (we walked into the forest = мы вошли в лес)."},
+  {tag:"Место/Направление",sit:"🌊 Пловец плывёт с одного берега реки на другой — поперёк.",q:"They swam ___ the river to the other bank.",opts:["across","through","over"],ans:0,exp:"ACROSS — поперёк (с берега на берег). THROUGH — сквозь внутри. OVER — над поверхностью воды."},
+  {tag:"Место/Направление",sit:"✉️ Письмо было внутри конверта. Человек достаёт его — движение изнутри наружу.",q:"He took the letter ___ the envelope.",opts:["out of","from","into"],ans:0,exp:"OUT OF — изнутри закрытого объёма наружу. FROM — начало маршрута (I flew from Paris), не выход из объёма."},
+  {tag:"Место/Направление",sit:"📱 Телефон в руке. Нужно убрать его в карман — действие помещения внутрь.",q:"Please put your phone ___ your pocket.",opts:["into","in","out of"],ans:0,exp:"INTO — движение внутрь (действие помещения). IN — статика (the phone is in my pocket = телефон уже в кармане)."},
+  {tag:"Место/Направление",sit:"🐈 Кошка сидела в коробке и выпрыгнула — движение изнутри наружу.",q:"The cat jumped ___ the box and ran away.",opts:["out of","into","over"],ans:0,exp:"OUT OF — движение изнутри наружу. INTO — противоположное: кошка залезает в коробку."},
+  {tag:"Место/Направление",sit:"⚽ Мяч катится по полу и закатывается ниже уровня кровати.",q:"The ball rolled ___ the bed.",opts:["under","behind","over"],ans:0,exp:"UNDER — под (ниже горизонтальной плоскости кровати). BEHIND — позади вертикального объекта. OVER — над."},
+  {tag:"Место/Направление",sit:"🖼️ Картина прикреплена к вертикальной поверхности стены.",q:"There is a picture ___ the wall.",opts:["on","over","in"],ans:0,exp:"ON — на поверхности (прикреплена к стене). IN — внутри. OVER — нависает над чем-то снизу."},
+  {tag:"Место/Направление",sit:"🏥 Больница позади парка — если смотреть с улицы, парк впереди, больница за ним.",q:"The hospital is ___ the park.",opts:["behind","next to","in front of"],ans:0,exp:"BEHIND — позади. Больница за парком. NEXT TO — сбоку. IN FRONT OF — была бы перед парком."},
+  {tag:"Место/Направление",sit:"🕷️ Паук ползёт по потолку — он крепится к поверхности потолка.",q:"The spider is ___ the ceiling.",opts:["on","over","above"],ans:0,exp:"ON — на поверхности (паук крепится к потолку как поверхности). OVER/ABOVE — нависает над чем-то снизу."},
+  {tag:"Место/Направление",sit:"🎒 Очки были внутри закрытой сумки. Человек достаёт их.",q:"She took her glasses ___ her bag.",opts:["out of","from","into"],ans:0,exp:"OUT OF — изнутри закрытого объёма наружу. FROM — начало маршрута (I came from school)."},
+  {tag:"Место/Направление",sit:"🚶 Толпа на площади. Человек протискивается сквозь людей — движение внутри толпы насквозь.",q:"They walked ___ the crowd to reach the exit.",opts:["through","across","over"],ans:0,exp:"THROUGH — сквозь (движение внутри, среди). ACROSS — поперёк открытой поверхности. OVER — через вершину сверху."},
+  {tag:"Место/Направление",sit:"🏫 Автобусная остановка напротив входа в школу — лицом к двери.",q:"The bus stop is right ___ the school.",opts:["in front of","behind","next to"],ans:0,exp:"IN FRONT OF — перед (напротив входа). NEXT TO — была бы сбоку. BEHIND — позади здания."},
+  {tag:"Место/Направление",sit:"🏠 Подарок спрятан ниже уровня кровати — не виден снаружи.",q:"He hid the present ___ the bed.",opts:["under","behind","next to"],ans:0,exp:"UNDER — под (ниже горизонтальной плоскости кровати). BEHIND — позади вертикального объекта. NEXT TO — рядом сбоку."},
+  {tag:"Место/Направление",sit:"🚪 Дверь открылась. Студент входит в класс — движение снаружи внутрь через дверной проём.",q:"The students walked ___ the classroom.",opts:["into","in","through"],ans:0,exp:"INTO — движение внутрь (снаружи → внутрь). IN — статика. THROUGH — если бы шли насквозь (вошли с одной стороны, вышли с другой)."},
+  {tag:"Место/Направление",sit:"✈️ Самолёт летит. Под ним — город. Самолёт выше города.",q:"The plane is flying ___ the city.",opts:["over","under","across"],ans:0,exp:"OVER — над (самолёт выше города). UNDER — под (было бы наоборот). ACROSS — поперёк (если пересекает горизонтально)."}
+];
+
+var Q_S2_ALL = [
+  {tag:"Время",sit:"📅 Называем месяц — большой период времени.",q:"My birthday is ___ March.",opts:["in","on","at"],ans:0,exp:"IN + месяц. In March = в марте. ON — для конкретной даты (on 5th March). AT — для точного времени."},
+  {tag:"Время",sit:"⏰ На часах конкретное время — 9:00.",q:"The class starts ___ 9 o'clock.",opts:["at","in","on"],ans:0,exp:"AT + точное время. At 9 o'clock = в 9 часов. IN — периоды. ON — дни и даты."},
+  {tag:"Время",sit:"📆 Называем день недели.",q:"We have a test ___ Friday.",opts:["on","in","at"],ans:0,exp:"ON + день недели. On Friday = в пятницу. IN — месяцы/сезоны. AT — точное время."},
+  {tag:"Время",sit:"📅 Называем год — большой период.",q:"She was born ___ 2005.",opts:["in","on","at"],ans:0,exp:"IN + год. In 2005 = в 2005 году. ON — для конкретных дат. AT — для точного времени."},
+  {tag:"Время",sit:"🌨️ Называем время года — зиму.",q:"It is very cold ___ winter.",opts:["in","on","at"],ans:0,exp:"IN + время года. In winter = зимой. ON — для дней. AT — для точного времени."},
+  {tag:"Время",sit:"🎉 Вечеринка назначена на конкретный день — субботу.",q:"The party is ___ Saturday evening.",opts:["on","in","at"],ans:0,exp:"ON + конкретный день. On Saturday evening = в субботу вечером. День + часть суток → всегда ON."},
+  {tag:"Время",sit:"🌙 Ночью — устойчивое выражение без артикля.",q:"Strange things happen ___ night.",opts:["at","in","on"],ans:0,exp:"AT night = ночью. Устойчивое выражение без артикля. Запомни: in the morning/evening, но AT night."},
+  {tag:"Время",sit:"⏳ Говорим «через 2 недели» — промежуток времени в будущем.",q:"I will call you ___ two weeks.",opts:["in","at","on"],ans:0,exp:"IN в значении «через». In two weeks = через две недели. Правило: in + период = через."},
+  {tag:"Время",sit:"📅 Называем конкретную дату — 15-е число.",q:"He was born ___ the 15th of April.",opts:["on","in","at"],ans:0,exp:"ON + дата. On the 15th of April = 15 апреля. IN April — в апреле (без числа)."},
+  {tag:"Время",sit:"☀️ Называем утро как часть дня — с артиклем the.",q:"We usually go to school ___ the morning.",opts:["in","at","on"],ans:0,exp:"IN the morning = по утрам. Части суток с the: in the morning / afternoon / evening. Исключение: AT night."},
+  {tag:"Время",sit:"🌸 Называем сезон — весну.",q:"Flowers bloom ___ spring.",opts:["in","at","on"],ans:0,exp:"IN + сезон. In spring = весной. ON — для дней. AT — для времени и праздников."},
+  {tag:"Время",sit:"✈️ Вылет назначен на конкретную дату — 27-е.",q:"His flight is ___ 27th May.",opts:["on","in","at"],ans:0,exp:"ON + дата. On 27th May = 27 мая. IN May — в мае (без числа). AT — точное время суток."},
+  {tag:"Время",sit:"🕛 Называем полдень — точную точку времени.",q:"The meeting is ___ noon.",opts:["at","in","on"],ans:0,exp:"AT noon = в полдень. Точные точки времени → AT. Аналогично: at midnight, at sunrise."},
+  {tag:"Время",sit:"⏳ Говорим «через месяц» — промежуток в будущем.",q:"She will finish the project ___ a month.",opts:["in","at","on"],ans:0,exp:"IN в значении «через». In a month = через месяц. Правило: in + промежуток = через."},
+  {tag:"Время",sit:"📆 Концерт в конкретный день недели — воскресенье.",q:"The concert is ___ Sunday.",opts:["on","in","at"],ans:0,exp:"ON + день недели. On Sunday = в воскресенье. IN — месяцы/сезоны. AT — точное время."},
+  {tag:"Время",sit:"☀️ Называем лето — сезон года.",q:"I love going to the beach ___ summer.",opts:["in","at","on"],ans:0,exp:"IN + сезон. In summer = летом. ON — для дней. AT — для точного времени."},
+  {tag:"Время",sit:"📞 Звонок в конкретный день с указанием части суток.",q:"She called me ___ Monday morning.",opts:["on","in","at"],ans:0,exp:"ON + конкретный день. On Monday morning = в понедельник утром. День + часть суток → всегда ON."},
+  {tag:"Время",sit:"🎄 Рождество — праздник как период (несколько дней).",q:"They met ___ Christmas.",opts:["at","on","in"],ans:0,exp:"AT + праздник-период. At Christmas = на Рождество. ON Christmas Day — если говорим об одном конкретном дне."},
+  {tag:"Время",sit:"⏳ Говорим «через 3 дня» — промежуток.",q:"We will leave ___ 3 days.",opts:["in","at","on"],ans:0,exp:"IN в значении «через». In 3 days = через 3 дня."},
+  {tag:"Время",sit:"⏰ Называем точное время начала урока — 8:30.",q:"The lesson starts ___ half past eight.",opts:["at","in","on"],ans:0,exp:"AT + точное время. At half past eight = в половине девятого. Любое время на часах → AT."},
+  {tag:"Время",sit:"🎓 Называем месяц окончания учёбы.",q:"She graduated ___ June.",opts:["in","on","at"],ans:0,exp:"IN + месяц. In June = в июне. ON — для конкретной даты (on 15th June). AT — точное время."},
+  {tag:"Время",sit:"🕑 Называем вторую половину дня как период.",q:"The store opens ___ the afternoon.",opts:["in","at","on"],ans:0,exp:"IN the afternoon = во второй половине дня. Части суток с the → IN. Исключение: at night."},
+  {tag:"Время",sit:"📅 Называем конкретный день — день рождения.",q:"He was promoted ___ his birthday.",opts:["on","in","at"],ans:0,exp:"ON + конкретный день. On his birthday = в день его рождения. День рождения — это конкретный день."},
+  {tag:"Время",sit:"🌆 Они приехали вечером — часть суток.",q:"They arrived ___ the evening.",opts:["in","at","on"],ans:0,exp:"IN the evening = вечером. Части суток с the → IN. AT night — исключение без артикля."},
+  {tag:"Время",sit:"🎆 Новый год — праздник как период.",q:"I will see you ___ New Year.",opts:["at","on","in"],ans:0,exp:"AT + праздник-период. At New Year = на Новый год. ON New Year's Day — только сам день 1 января."},
+  {tag:"Время",sit:"📝 Экзамен назначен на конкретную дату — 10-е число.",q:"The exam is ___ the 10th of June.",opts:["on","in","at"],ans:0,exp:"ON + дата. On the 10th of June = 10 июня. IN June — в июне (без числа)."},
+  {tag:"Время",sit:"⏳ Говорим «через несколько часов» — промежуток.",q:"They will come back ___ a few hours.",opts:["in","at","on"],ans:0,exp:"IN в значении «через». In a few hours = через несколько часов."},
+  {tag:"Время",sit:"📆 Она работает по конкретным дням недели.",q:"She works ___ Mondays and Wednesdays.",opts:["on","in","at"],ans:0,exp:"ON + день недели (и во множественном числе). On Mondays = по понедельникам. On Wednesdays = по средам."},
+  {tag:"Время",sit:"⏰ Называем точное время отправления автобуса — 7:30.",q:"The bus leaves ___ half past seven.",opts:["at","in","on"],ans:0,exp:"AT + точное время. At half past seven = в половине восьмого."},
+  {tag:"Время",sit:"📅 Говорим «через год» — промежуток в будущем.",q:"He will finish his studies ___ a year.",opts:["in","at","on"],ans:0,exp:"IN в значении «через». In a year = через год. In 2025 (в 2025 году) и in a year (через год) — оба с IN!"}
+];
+
+var Q_S3_ALL = [
+  {tag:"Смешанный",sit:"🚪 Дверь открылась. Студент входит в комнату — снаружи внутрь.",q:"The student walked ___ the room.",opts:["into","in","through"],ans:0,exp:"INTO — движение внутрь. IN — статика. THROUGH — насквозь (вошёл с одной стороны, вышел с другой)."},
+  {tag:"Смешанный",sit:"📅 Называем месяц.",q:"We are going on holiday ___ July.",opts:["in","on","at"],ans:0,exp:"IN + месяц. In July = в июле."},
+  {tag:"Смешанный",sit:"🐠 Рыба плывёт с берега на берег — поперёк реки.",q:"The fish swam ___ the river to the other side.",opts:["across","through","over"],ans:0,exp:"ACROSS — поперёк (с берега на берег). THROUGH — сквозь (внутри объёма). OVER — над поверхностью."},
+  {tag:"Смешанный",sit:"⏰ Называем точное время начала экзамена — 10:30.",q:"The exam starts ___ 10:30.",opts:["at","in","on"],ans:0,exp:"AT + точное время. At 10:30 = в 10:30."},
+  {tag:"Смешанный",sit:"📱 Телефон лежит на горизонтальной поверхности стола — прямой контакт.",q:"She left her phone ___ the table.",opts:["on","in","over"],ans:0,exp:"ON — на поверхности. IN — внутри закрытого объёма. OVER — нависает над без касания."},
+  {tag:"Смешанный",sit:"📆 Встреча назначена на конкретный день — понедельник.",q:"We are meeting ___ Monday.",opts:["on","in","at"],ans:0,exp:"ON + день недели. On Monday = в понедельник."},
+  {tag:"Смешанный",sit:"🚂 Поезд движется внутри тоннеля — насквозь от входа до выхода.",q:"The train passed ___ the tunnel.",opts:["through","across","over"],ans:0,exp:"THROUGH — сквозь (внутри закрытого пространства). ACROSS — поперёк открытой поверхности. OVER — сверху."},
+  {tag:"Смешанный",sit:"⏳ Говорим «через шесть месяцев» — промежуток в будущем.",q:"We will finish the project ___ six months.",opts:["in","at","on"],ans:0,exp:"IN в значении «через». In six months = через шесть месяцев."},
+  {tag:"Смешанный",sit:"🐈 Кошка лежит и спит. Она на поверхности дивана — прямой контакт.",q:"The cat is sleeping ___ the sofa.",opts:["on","under","in"],ans:0,exp:"ON — на поверхности (контакт с горизонтальной плоскостью). UNDER — под диваном. IN — внутри."},
+  {tag:"Смешанный",sit:"⏰ Называем полночь — точная точка времени.",q:"He called me ___ midnight.",opts:["at","in","on"],ans:0,exp:"AT midnight = в полночь. Точная точка → AT. Аналогично: at noon, at 3 o'clock."},
+  {tag:"Смешанный",sit:"🔑 Ключи лежат внутри закрытой сумки — статика.",q:"My keys are ___ my bag.",opts:["in","on","into"],ans:0,exp:"IN — внутри закрытого пространства. ON — на поверхности. INTO — только при движении внутрь."},
+  {tag:"Смешанный",sit:"📅 Называем год рождения.",q:"She was born ___ 1998.",opts:["in","on","at"],ans:0,exp:"IN + год. In 1998 = в 1998 году."},
+  {tag:"Смешанный",sit:"🚕 Пассажир открывает дверь такси и садится — движение снаружи внутрь.",q:"She got ___ the taxi and said the address.",opts:["into","in","out of"],ans:0,exp:"INTO — движение внутрь закрытого пространства. IN — статика (she is in the taxi). OUT OF — движение наружу."},
+  {tag:"Смешанный",sit:"🌸 Называем сезон — весну.",q:"It rains a lot ___ spring.",opts:["in","at","on"],ans:0,exp:"IN + сезон. In spring = весной."},
+  {tag:"Смешанный",sit:"🐦 Птицы летят. Под ними — озеро. Птицы выше озера.",q:"The birds flew ___ the lake.",opts:["over","under","through"],ans:0,exp:"OVER — над (птицы выше озера). UNDER — под. THROUGH — сквозь внутри чего-то."},
+  {tag:"Смешанный",sit:"📅 Называем конкретную дату — 5 июля.",q:"His birthday is ___ 5th of July.",opts:["on","in","at"],ans:0,exp:"ON + дата. On the 5th of July = 5 июля. IN July — в июле (без числа)."},
+  {tag:"Смешанный",sit:"🚶 Дорога с двух сторон. Человек идёт на другой тротуар — поперёк.",q:"She walked ___ the road to buy milk.",opts:["across","through","into"],ans:0,exp:"ACROSS — поперёк (с одной стороны на другую). THROUGH — сквозь внутри. INTO — движение внутрь."},
+  {tag:"Смешанный",sit:"☀️ Называем утро — часть суток с артиклем the.",q:"He always drinks coffee ___ the morning.",opts:["in","at","on"],ans:0,exp:"IN the morning = по утрам. Части суток с the → IN. Исключение: at night."},
+  {tag:"Смешанный",sit:"🎒 Очки были в закрытой сумке. Человек открывает и достаёт их.",q:"She took her glasses ___ her bag.",opts:["out of","from","into"],ans:0,exp:"OUT OF — изнутри закрытого объёма наружу. FROM — начало маршрута, не выход из объёма."},
+  {tag:"Смешанный",sit:"📆 Магазин закрыт каждое воскресенье.",q:"The shop is closed ___ Sundays.",opts:["on","in","at"],ans:0,exp:"ON + день недели. On Sundays = по воскресеньям (регулярно)."},
+  {tag:"Смешанный",sit:"🖼️ Картина прикреплена к вертикальной поверхности стены.",q:"There is a beautiful picture ___ the wall.",opts:["on","in","over"],ans:0,exp:"ON — на поверхности (прикреплена к стене). IN — внутри. OVER — нависает над."},
+  {tag:"Смешанный",sit:"⏳ Говорим «через неделю» — промежуток в будущем.",q:"He will be back ___ a week.",opts:["in","at","on"],ans:0,exp:"IN в значении «через». In a week = через неделю."},
+  {tag:"Смешанный",sit:"🏠 Подарок спрятан ниже уровня кровати — не виден.",q:"She hid the present ___ the bed.",opts:["under","behind","next to"],ans:0,exp:"UNDER — под (ниже горизонтальной плоскости). BEHIND — позади вертикального объекта. NEXT TO — рядом сбоку."},
+  {tag:"Смешанный",sit:"🌆 Называем вечер — часть суток с артиклем.",q:"I enjoy reading ___ the evening.",opts:["in","at","on"],ans:0,exp:"IN the evening = вечером. Части суток с the → IN. AT night — исключение."},
+  {tag:"Смешанный",sit:"🏋️ Два здания стоят бок о бок — стена к стене.",q:"The gym is ___ the library.",opts:["next to","over","through"],ans:0,exp:"NEXT TO — рядом с (сбоку). OVER — над. THROUGH — сквозь."},
+  {tag:"Смешанный",sit:"📅 Называем конкретный день — понедельник утром.",q:"She called me ___ Monday morning.",opts:["on","in","at"],ans:0,exp:"ON + конкретный день. On Monday morning = в понедельник утром. День + часть суток → всегда ON."},
+  {tag:"Смешанный",sit:"🔑 Ключи кладут в ящик стола — действие помещения внутрь.",q:"He put the keys ___ the drawer.",opts:["into","in","on"],ans:0,exp:"INTO — движение внутрь (действие). IN — статика (ключи уже в ящике). ON — на поверхности."},
+  {tag:"Смешанный",sit:"🎄 Рождество — праздник как период (несколько дней).",q:"We had a great time ___ Christmas.",opts:["at","on","in"],ans:0,exp:"AT + праздник-период. At Christmas = на Рождество. ON Christmas Day — конкретный день."},
+  {tag:"Смешанный",sit:"🚌 Автобусная остановка напротив входа в школу.",q:"The bus stop is ___ the school.",opts:["in front of","behind","next to"],ans:0,exp:"IN FRONT OF — перед (напротив входа). NEXT TO — сбоку. BEHIND — позади здания."},
+  {tag:"Смешанный",sit:"✉️ Письмо внутри конверта. Человек достаёт его — движение изнутри наружу.",q:"She took the letter ___ the envelope.",opts:["out of","from","into"],ans:0,exp:"OUT OF — изнутри наружу. FROM — начало маршрута (I flew from London)."},
+  {tag:"Смешанный",sit:"⏰ Уроки каждый день начинаются в 8:00 — точное время на часах.",q:"Lessons start ___ 8 o'clock every day.",opts:["at","in","on"],ans:0,exp:"AT + точное время. At 8 o'clock = в 8 часов."},
+  {tag:"Смешанный",sit:"🌊 Ребёнок прыгает в бассейн — тело летит снаружи внутрь воды.",q:"The child jumped ___ the pool.",opts:["into","in","out of"],ans:0,exp:"INTO — движение внутрь. IN — статика (she is in the pool). OUT OF — наружу."},
+  {tag:"Смешанный",sit:"🏔️ Дорога ведёт сквозь горы — движение внутри горного массива насквозь.",q:"The road goes ___ the mountains.",opts:["through","across","over"],ans:0,exp:"THROUGH — сквозь (внутри, насквозь). OVER — перевалить через горы сверху. ACROSS — поперёк открытой поверхности."},
+  {tag:"Смешанный",sit:"📆 Называем конкретную дату экзамена.",q:"The exam is ___ the 15th of May.",opts:["on","in","at"],ans:0,exp:"ON + дата. On the 15th of May = 15 мая."},
+  {tag:"Смешанный",sit:"🐕 Собака прячется ниже уровня дивана.",q:"The dog is hiding ___ the sofa.",opts:["under","behind","next to"],ans:0,exp:"UNDER — под (ниже горизонтальной плоскости). BEHIND — позади вертикального объекта. NEXT TO — рядом."},
+  {tag:"Смешанный",sit:"⏳ Говорим «через два месяца» — промежуток.",q:"She will arrive ___ two months.",opts:["in","at","on"],ans:0,exp:"IN в значении «через». In two months = через два месяца."},
+  {tag:"Смешанный",sit:"🚗 Пассажир выходит из машины — движение изнутри наружу.",q:"He got ___ the car and rang the doorbell.",opts:["out of","into","through"],ans:0,exp:"OUT OF — из закрытого пространства наружу. INTO — противоположное (садится в машину)."},
+  {tag:"Смешанный",sit:"☀️ Называем лето — сезон года.",q:"We swim every day ___ summer.",opts:["in","at","on"],ans:0,exp:"IN + сезон. In summer = летом."},
+  {tag:"Смешанный",sit:"📅 Он бегает по субботам — конкретный день недели.",q:"He goes jogging ___ Saturdays.",opts:["on","in","at"],ans:0,exp:"ON + день недели. On Saturdays = по субботам (регулярно)."},
+  {tag:"Смешанный",sit:"🌊 Пловцы плывут с одного берега на другой — поперёк реки.",q:"They swam ___ the river to reach the boat.",opts:["across","through","over"],ans:0,exp:"ACROSS — поперёк (с берега на берег). THROUGH — сквозь внутри. OVER — над поверхностью."},
+  {tag:"Смешанный",sit:"💡 Люстра висит над обеденным столом — без касания.",q:"The chandelier is hanging ___ the dining table.",opts:["over","under","behind"],ans:0,exp:"OVER — над (без касания, нависает). UNDER — под столом. BEHIND — позади."},
+  {tag:"Смешанный",sit:"⏰ Магазин закрывается в 22:00 — точное время.",q:"The supermarket closes ___ 10 pm.",opts:["at","in","on"],ans:0,exp:"AT + точное время. At 10 pm = в 22:00."},
+  {tag:"Смешанный",sit:"🐈 Кошка была снаружи коробки и залезла внутрь — движение снаружи внутрь.",q:"The cat got ___ the box and sat there.",opts:["into","out of","over"],ans:0,exp:"INTO — движение внутрь. OUT OF — противоположное (движение наружу). OVER — через вершину."},
+  {tag:"Смешанный",sit:"🎆 Новый год — праздник как период времени.",q:"We always travel ___ New Year.",opts:["at","on","in"],ans:0,exp:"AT + праздник-период. At New Year = на Новый год. ON New Year's Day — только 1 января."},
+  {tag:"Смешанный",sit:"🚶 Толпа на площади. Человек идёт внутри толпы сквозь людей к выходу.",q:"She pushed ___ the crowd to reach the stage.",opts:["through","across","over"],ans:0,exp:"THROUGH — сквозь (движение внутри, среди людей). ACROSS — поперёк открытой поверхности. OVER — через вершину."},
+  {tag:"Смешанный",sit:"📚 Бабушка живёт внутри населённого пункта — маленькой деревни.",q:"My grandmother lives ___ a small village.",opts:["in","at","on"],ans:0,exp:"IN + населённый пункт. In a village / city / country. AT — конкретная точка (at the station, at the corner)."},
+  {tag:"Смешанный",sit:"⏰ Шум разбудил ночью. Называем точное время — полночь.",q:"She woke up ___ midnight because of a loud noise.",opts:["at","in","on"],ans:0,exp:"AT midnight = в полночь. Точная точка → AT. Аналогично: at noon, at 3 o'clock."},
+  {tag:"Смешанный",sit:"🚗 Машина едет по мосту. Мост нависает над рекой.",q:"We drove ___ the bridge to cross the river.",opts:["over","across","through"],ans:0,exp:"OVER — над/через (мост над рекой; drive over the bridge = проехать по мосту). ACROSS — тоже возможно, но OVER подчёркивает высоту над водой."},
+  {tag:"Смешанный",sit:"🌙 Ночью в пустыне — устойчивое выражение.",q:"It gets very cold ___ night in the desert.",opts:["at","in","on"],ans:0,exp:"AT night = ночью. Устойчивое выражение без артикля. In the night — тоже используется, но at night — стандарт."},
+  {tag:"Смешанный",sit:"🏠 Ботинки стоят на полу под кроватью — ниже уровня кровати.",q:"His shoes are ___ the bed.",opts:["under","behind","next to"],ans:0,exp:"UNDER — под (ниже горизонтальной плоскости кровати). BEHIND — позади вертикального объекта. NEXT TO — рядом сбоку."}
+];
+
+var SVG_MAP = {
+  "time_evening": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="200" height="100" fill="#312e81"/>
+    <circle cx="160" cy="35" r="18" fill="#fde68a" opacity="0.7"/>
+    <rect x="0" y="65" width="200" height="35" fill="#1e1b4b"/>
+    <rect x="20" y="48" width="15" height="22" fill="#6b7280"/>
+    <rect x="50" y="40" width="18" height="30" fill="#4b5563"/>
+    <rect x="80" y="52" width="22" height="18" fill="#6b7280"/>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#e0e7ff" font-family="Arial">вечером</text>
+  </svg>`,
+  "time_clock": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="48" r="38" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <circle cx="100" cy="48" r="3" fill="#7c3aed"/>
+    <line x1="100" y1="48" x2="100" y2="18" stroke="#1f2937" stroke-width="2.5"/>
+    <line x1="100" y1="48" x2="122" y2="48" stroke="#1f2937" stroke-width="2"/>
+    <text x="100" y="14" text-anchor="middle" font-size="8" fill="#6b7280" font-family="Arial">12</text>
+    <text x="140" y="51" text-anchor="middle" font-size="8" fill="#6b7280" font-family="Arial">3</text>
+    <text x="100" y="90" text-anchor="middle" font-size="8" fill="#6b7280" font-family="Arial">6</text>
+    <text x="60" y="51" text-anchor="middle" font-size="8" fill="#6b7280" font-family="Arial">9</text>
+    <text x="100" y="97" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">в 9 часов</text>
+  </svg>`,
+  "under_bed": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="20" y="30" width="160" height="35" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <rect x="20" y="62" width="15" height="22" rx="2" fill="#6b7280"/>
+    <rect x="165" y="62" width="15" height="22" rx="2" fill="#6b7280"/>
+    <rect x="20" y="20" width="160" height="15" rx="4" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="100" y="84" text-anchor="middle" font-size="14" font-family="Arial">⚽</text>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#0369a1" font-family="Arial">под</text>
+  </svg>`,
+  "over_fence": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="88" y="30" width="24" height="55" rx="3" fill="#92400e"/>
+    <rect x="78" y="25" width="44" height="10" rx="3" fill="#b45309"/>
+    <ellipse cx="40" cy="60" rx="10" ry="14" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="40" cy="47" r="7" fill="#fb923c"/>
+    <path d="M50 50 Q100 5 150 50" stroke="#22c55e" stroke-width="2.5" fill="none" marker-end="url(#a7)"/>
+    <defs><marker id="a7" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22c55e"/></marker></defs>
+    <ellipse cx="160" cy="65" rx="10" ry="14" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5" opacity="0.4"/>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">через, сверху</text>
+  </svg>`,
+  "out_of_envelope": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="30" y="40" width="100" height="50" rx="4" fill="#fef3c7" stroke="#ca8a04" stroke-width="2"/>
+    <polyline points="30,40 80,70 130,40" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+    <rect x="145" y="20" width="45" height="30" rx="3" fill="#fff" stroke="#9ca3af" stroke-width="1.5"/>
+    <line x1="152" y1="28" x2="182" y2="28" stroke="#9ca3af" stroke-width="1"/>
+    <line x1="152" y1="34" x2="182" y2="34" stroke="#9ca3af" stroke-width="1"/>
+    <path d="M133 55 L143 35" stroke="#ef4444" stroke-width="2" marker-end="url(#a10)"/>
+    <defs><marker id="a10" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ef4444"/></marker></defs>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#b91c1c" font-family="Arial">изнутри наружу</text>
+  </svg>`,
+  "time_year": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="20" y="15" width="160" height="60" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <text x="100" y="55" text-anchor="middle" font-size="30" fill="#7c3aed" font-weight="bold" font-family="Arial">2005</text>
+    <text x="100" y="92" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">в 2005 году</text>
+  </svg>`,
+  "into_classroom": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="50" y="10" width="130" height="80" rx="5" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+    <rect x="50" y="25" width="20" height="50" fill="#bfdbfe" stroke="#378ADD" stroke-width="1.5"/>
+    <ellipse cx="20" cy="55" rx="10" ry="14" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="20" cy="42" r="7" fill="#fb923c"/>
+    <path d="M32 55 L48 55" stroke="#22c55e" stroke-width="2.5" marker-end="url(#a15)"/>
+    <defs><marker id="a15" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22c55e"/></marker></defs>
+    <text x="115" y="92" text-anchor="middle" font-size="10" fill="#0369a1" font-family="Arial">движение внутрь</text>
+  </svg>`,
+  "on_wall": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="200" height="100" fill="#f3f4f6"/>
+    <rect x="0" y="0" width="200" height="8" fill="#d1d5db"/>
+    <rect x="65" y="20" width="70" height="55" rx="3" fill="#fde68a" stroke="#f59e0b" stroke-width="2"/>
+    <rect x="72" y="27" width="56" height="41" fill="#93c5fd" opacity="0.6"/>
+    <circle cx="100" cy="17" r="3" fill="#6b7280"/>
+    <text x="100" y="92" text-anchor="middle" font-size="10" fill="#374151" font-family="Arial">на поверхности стены</text>
+  </svg>`,
+  "time_night": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="200" height="100" fill="#1e1b4b"/>
+    <circle cx="100" cy="42" r="22" fill="#fef9c3" opacity="0.9"/>
+    <circle cx="116" cy="30" r="16" fill="#1e1b4b"/>
+    <text x="40" y="30" font-size="10" fill="white" font-family="Arial">✦</text>
+    <text x="160" y="50" font-size="10" fill="white" font-family="Arial">✦</text>
+    <text x="70" y="15" font-size="8" fill="white" font-family="Arial">✦</text>
+    <text x="140" y="22" font-size="8" fill="white" font-family="Arial">✦</text>
+    <text x="100" y="90" text-anchor="middle" font-size="10" fill="#e0e7ff" font-family="Arial">ночью</text>
+  </svg>`,
+  "under_bed2": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="20" y="25" width="160" height="35" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <rect x="20" y="58" width="15" height="25" rx="2" fill="#6b7280"/>
+    <rect x="165" y="58" width="15" height="25" rx="2" fill="#6b7280"/>
+    <rect x="20" y="15" width="160" height="14" rx="4" fill="#bae6fd" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="100" y="82" text-anchor="middle" font-size="14" font-family="Arial">🎁</text>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#0369a1" font-family="Arial">под кроватью</text>
+  </svg>`,
+  "time_saturday": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="15" y="10" width="170" height="75" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <rect x="15" y="10" width="170" height="22" rx="8" fill="#7c3aed"/>
+    <text x="100" y="26" text-anchor="middle" font-size="11" fill="white" font-weight="bold" font-family="Arial">Mo Tu We Th Fr Sa Su</text>
+    <rect x="148" y="36" width="22" height="20" rx="3" fill="#7c3aed" opacity="0.25"/>
+    <text x="159" y="50" text-anchor="middle" font-size="11" fill="#7c3aed" font-weight="bold" font-family="Arial">Sa</text>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">в субботу</text>
+  </svg>`,
+  "in_front_of": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="80" y="10" width="80" height="75" rx="5" fill="#bfdbfe" stroke="#378ADD" stroke-width="2"/>
+    <rect x="98" y="55" width="24" height="30" rx="3" fill="#60a5fa"/>
+    <ellipse cx="38" cy="62" rx="12" ry="18" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="38" cy="46" r="9" fill="#fb923c"/>
+    <path d="M52 62 L78 62" stroke="#374151" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">перед</text>
+  </svg>`,
+  "time_in_period": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <line x1="15" y1="60" x2="185" y2="60" stroke="#7c3aed" stroke-width="2"/>
+    <circle cx="15" cy="60" r="5" fill="#7c3aed"/>
+    <circle cx="185" cy="60" r="5" fill="#22c55e"/>
+    <path d="M15 60 Q100 25 185 60" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="15" y="78" text-anchor="middle" font-size="9" fill="#6b7280" font-family="Arial">сейчас</text>
+    <text x="185" y="78" text-anchor="middle" font-size="9" fill="#15803d" font-family="Arial">потом</text>
+    <text x="100" y="40" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">через...</text>
+    <text x="100" y="92" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">IN + период = через</text>
+  </svg>`,
+  "across_river": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="200" height="100" fill="#bae6fd"/>
+    <rect x="0" y="0" width="35" height="100" fill="#d1fae5"/>
+    <rect x="165" y="0" width="35" height="100" fill="#d1fae5"/>
+    <text x="100" y="55" text-anchor="middle" font-size="13" font-family="Arial">🌊</text>
+    <ellipse cx="22" cy="55" rx="9" ry="12" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="22" cy="44" r="6" fill="#fb923c"/>
+    <path d="M33 55 L163 55" stroke="#22c55e" stroke-width="2.5" marker-end="url(#a9)"/>
+    <defs><marker id="a9" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22c55e"/></marker></defs>
+    <text x="100" y="90" text-anchor="middle" font-size="10" fill="#0369a1" font-family="Arial">поперёк</text>
+  </svg>`,
+  "behind": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="55" y="25" width="90" height="50" rx="8" fill="#bfdbfe" stroke="#378ADD" stroke-width="2"/>
+    <ellipse cx="30" cy="62" rx="15" ry="18" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="30" cy="46" r="9" fill="#fb923c" opacity="0.6"/>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">позади</text>
+  </svg>`,
+  "behind_building": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="50" y="15" width="100" height="75" rx="5" fill="#bfdbfe" stroke="#378ADD" stroke-width="2"/>
+    <rect x="75" y="55" width="25" height="35" rx="2" fill="#60a5fa"/>
+    <rect x="108" y="40" width="28" height="20" rx="2" fill="#93c5fd"/>
+    <rect x="108" y="40" width="28" height="20" rx="2" fill="#93c5fd" stroke="#378ADD" stroke-width="1"/>
+    <rect x="20" y="30" width="35" height="60" rx="4" fill="#d1fae5" stroke="#22c55e" stroke-width="1.5" opacity="0.7"/>
+    <text x="37" y="65" text-anchor="middle" font-size="9" fill="#15803d" font-family="Arial">🏥</text>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">позади</text>
+  </svg>`,
+  "time_birthday": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="30" y="10" width="140" height="75" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <text x="100" y="52" text-anchor="middle" font-size="32" font-family="Arial">🎂</text>
+    <text x="100" y="25" text-anchor="middle" font-size="10" fill="#7c3aed" font-weight="bold" font-family="Arial">день рождения</text>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">в день рождения</text>
+  </svg>`,
+  "time_new_year": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="10" width="180" height="75" rx="8" fill="#1e1b4b" stroke="#7c3aed" stroke-width="2"/>
+    <text x="100" y="52" text-anchor="middle" font-size="30" font-family="Arial">🎆</text>
+    <text x="100" y="25" text-anchor="middle" font-size="11" fill="#e0e7ff" font-weight="bold" font-family="Arial">НОВЫЙ ГОД</text>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#e0e7ff" font-family="Arial">на Новый год</text>
+  </svg>`,
+  "in_car": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="30" y="30" width="140" height="55" rx="12" fill="#bfdbfe" stroke="#378ADD" stroke-width="2"/>
+    <rect x="50" y="15" width="100" height="35" rx="8" fill="#93c5fd" stroke="#378ADD" stroke-width="1.5"/>
+    <circle cx="60" cy="88" r="12" fill="#1e40af" stroke="#fff" stroke-width="2"/>
+    <circle cx="140" cy="88" r="12" fill="#1e40af" stroke="#fff" stroke-width="2"/>
+    <ellipse cx="105" cy="47" rx="18" ry="20" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="105" cy="40" r="8" fill="#fb923c"/>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">внутри</text>
+  </svg>`,
+  "time_month": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="30" y="10" width="140" height="75" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <rect x="30" y="10" width="140" height="25" rx="8" fill="#7c3aed"/>
+    <text x="100" y="29" text-anchor="middle" font-size="12" fill="white" font-weight="bold" font-family="Arial">МАРТ</text>
+    <text x="48" y="52" font-size="8" fill="#6b7280" font-family="Arial">Mo Tu We Th Fr Sa Su</text>
+    <text x="48" y="63" font-size="8" fill="#374151" font-family="Arial"> 1   2   3   4   5   6   7</text>
+    <text x="48" y="74" font-size="8" fill="#374151" font-family="Arial"> 8   9  10  11  12  13  14</text>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">в марте</text>
+  </svg>`,
+  "out_of_car": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="20" y="30" width="120" height="55" rx="12" fill="#bfdbfe" stroke="#378ADD" stroke-width="2"/>
+    <rect x="40" y="15" width="80" height="35" rx="8" fill="#93c5fd" stroke="#378ADD" stroke-width="1.5"/>
+    <circle cx="50" cy="88" r="12" fill="#1e40af" stroke="#fff" stroke-width="2"/>
+    <circle cx="120" cy="88" r="12" fill="#1e40af" stroke="#fff" stroke-width="2"/>
+    <ellipse cx="168" cy="55" rx="10" ry="14" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="168" cy="42" r="7" fill="#fb923c"/>
+    <path d="M148 55 L160 55" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arr2)"/>
+    <defs><marker id="arr2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ef4444"/></marker></defs>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#b91c1c" font-family="Arial">движение наружу</text>
+  </svg>`,
+  "time_monday_morning": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="15" y="5" width="80" height="55" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+    <rect x="15" y="5" width="80" height="18" rx="6" fill="#7c3aed"/>
+    <text x="55" y="18" text-anchor="middle" font-size="9" fill="white" font-weight="bold" font-family="Arial">ПОНЕДЕЛЬНИК</text>
+    <circle cx="55" cy="42" r="8" fill="#7c3aed" opacity="0.2"/>
+    <text x="55" y="46" text-anchor="middle" font-size="9" fill="#7c3aed" font-weight="bold" font-family="Arial">Mo</text>
+    <rect x="110" y="5" width="75" height="55" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="147" y="35" text-anchor="middle" font-size="22" font-family="Arial">☀️</text>
+    <text x="147" y="52" text-anchor="middle" font-size="8" fill="#92400e" font-family="Arial">утро</text>
+    <text x="100" y="82" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">в понедельник утром</text>
+  </svg>`,
+  "through": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="20" width="200" height="60" fill="#9ca3af"/>
+    <rect x="70" y="20" width="60" height="60" fill="#1f2937"/>
+    <ellipse cx="70" cy="50" rx="25" ry="18" fill="#374151"/>
+    <ellipse cx="130" cy="50" rx="25" ry="18" fill="#374151"/>
+    <rect x="75" y="30" width="50" height="40" rx="3" fill="#111827"/>
+    <rect x="55" y="0" width="90" height="100" fill="none" stroke="none"/>
+    <ellipse cx="30" cy="50" rx="10" ry="14" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5" opacity="0.8"/>
+    <circle cx="30" cy="37" r="7" fill="#fb923c" opacity="0.8"/>
+    <path d="M42 50 L155 50" stroke="#22c55e" stroke-width="2.5" marker-end="url(#a6)"/>
+    <defs><marker id="a6" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22c55e"/></marker></defs>
+    <text x="100" y="92" text-anchor="middle" font-size="10" fill="#d1fae5" font-family="Arial">сквозь</text>
+  </svg>`,
+  "time_day_part": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="200" height="100" fill="#fef3c7"/>
+    <circle cx="100" cy="45" r="28" fill="#fbbf24" stroke="#f59e0b" stroke-width="2"/>
+    <line x1="100" y1="10" x2="100" y2="3" stroke="#f59e0b" stroke-width="2"/>
+    <line x1="130" y1="20" x2="134" y2="14" stroke="#f59e0b" stroke-width="2"/>
+    <line x1="145" y1="45" x2="152" y2="45" stroke="#f59e0b" stroke-width="2"/>
+    <line x1="70" y1="20" x2="66" y2="14" stroke="#f59e0b" stroke-width="2"/>
+    <line x1="55" y1="45" x2="48" y2="45" stroke="#f59e0b" stroke-width="2"/>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#92400e" font-family="Arial">утром</text>
+  </svg>`,
+  "into_pool": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="40" y="55" width="120" height="35" rx="6" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+    <text x="100" y="78" text-anchor="middle" font-size="13" font-family="Arial">🌊</text>
+    <ellipse cx="100" cy="50" rx="10" ry="14" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="100" cy="37" r="8" fill="#fb923c"/>
+    <path d="M100 65 L100 56" stroke="#22c55e" stroke-width="2.5" marker-end="url(#a3)"/>
+    <defs><marker id="a3" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22c55e"/></marker></defs>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#0369a1" font-family="Arial">движение внутрь</text>
+  </svg>`,
+  "into_pocket": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="60" y="30" width="80" height="60" rx="8" fill="#bfdbfe" stroke="#378ADD" stroke-width="2"/>
+    <path d="M60 55 Q100 48 140 55" fill="none" stroke="#378ADD" stroke-width="1.5"/>
+    <text x="40" y="35" font-size="16" font-family="Arial">📱</text>
+    <path d="M50 30 Q100 55 100 58" stroke="#22c55e" stroke-width="2.5" fill="none" marker-end="url(#a11)"/>
+    <defs><marker id="a11" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22c55e"/></marker></defs>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">движение внутрь</text>
+  </svg>`,
+  "out_of_taxi": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="20" y="30" width="120" height="50" rx="10" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+    <rect x="40" y="18" width="80" height="30" rx="6" fill="#fde047" stroke="#ca8a04" stroke-width="1.5"/>
+    <circle cx="50" cy="83" r="10" fill="#374151"/>
+    <circle cx="120" cy="83" r="10" fill="#374151"/>
+    <ellipse cx="165" cy="55" rx="10" ry="14" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="165" cy="42" r="7" fill="#fb923c"/>
+    <path d="M148 55 L157 55" stroke="#ef4444" stroke-width="2" marker-end="url(#a4)"/>
+    <defs><marker id="a4" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ef4444"/></marker></defs>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#b91c1c" font-family="Arial">наружу</text>
+  </svg>`,
+  "next_to": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="55" y="20" width="55" height="60" rx="6" fill="#bfdbfe" stroke="#378ADD" stroke-width="2"/>
+    <rect x="115" y="20" width="45" height="60" rx="6" fill="#d1fae5" stroke="#22c55e" stroke-width="2"/>
+    <text x="82" y="56" text-anchor="middle" font-size="9" fill="#1e40af" font-family="Arial">🏪</text>
+    <text x="137" y="56" text-anchor="middle" font-size="9" fill="#15803d" font-family="Arial">💊</text>
+    <text x="100" y="96" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">рядом с</text>
+  </svg>`,
+  "through_crowd": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <text x="25" y="60" font-size="18" font-family="Arial">👤</text>
+    <text x="50" y="45" font-size="18" font-family="Arial">👤</text>
+    <text x="75" y="65" font-size="18" font-family="Arial">👤</text>
+    <text x="100" y="40" font-size="18" font-family="Arial">👤</text>
+    <text x="125" y="60" font-size="18" font-family="Arial">👤</text>
+    <text x="150" y="45" font-size="18" font-family="Arial">👤</text>
+    <ellipse cx="15" cy="55" rx="8" ry="12" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="15" cy="44" r="6" fill="#fb923c"/>
+    <path d="M24 55 L172 55" stroke="#22c55e" stroke-width="2.5" marker-end="url(#a14)" stroke-dasharray="5,3"/>
+    <defs><marker id="a14" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22c55e"/></marker></defs>
+    <text x="100" y="92" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">сквозь толпу</text>
+  </svg>`,
+  "spider_ceiling": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="200" height="18" fill="#e5e7eb" stroke="#d1d5db" stroke-width="1"/>
+    <text x="100" y="14" text-anchor="middle" font-size="11" font-family="Arial">потолок</text>
+    <line x1="100" y1="18" x2="100" y2="35" stroke="#9ca3af" stroke-width="1.5"/>
+    <text x="100" y="48" text-anchor="middle" font-size="22" font-family="Arial">🕷️</text>
+    <text x="100" y="92" text-anchor="middle" font-size="10" fill="#374151" font-family="Arial">на поверхности потолка</text>
+  </svg>`,
+  "out_of_box": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="60" y="50" width="80" height="45" rx="4" fill="#fde68a" stroke="#ca8a04" stroke-width="2"/>
+    <rect x="55" y="45" width="90" height="12" rx="2" fill="#fbbf24" stroke="#ca8a04" stroke-width="1.5"/>
+    <text x="130" y="30" font-size="20" font-family="Arial">🐈</text>
+    <path d="M100 44 L100 25" stroke="#ef4444" stroke-width="2.5" marker-end="url(#a12)"/>
+    <defs><marker id="a12" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ef4444"/></marker></defs>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#b91c1c" font-family="Arial">наружу</text>
+  </svg>`,
+  "time_weekday": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="15" y="10" width="170" height="75" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <rect x="15" y="10" width="170" height="22" rx="8" fill="#7c3aed"/>
+    <text x="100" y="26" text-anchor="middle" font-size="11" fill="white" font-weight="bold" font-family="Arial">Mo Tu We Th Fr Sa Su</text>
+    <rect x="93" y="36" width="22" height="20" rx="3" fill="#7c3aed" opacity="0.25"/>
+    <text x="104" y="50" text-anchor="middle" font-size="11" fill="#7c3aed" font-weight="bold" font-family="Arial">Fr</text>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">в пятницу</text>
+  </svg>`,
+  "time_in_weeks": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <text x="100" y="42" text-anchor="middle" font-size="28" font-family="Arial">⏳</text>
+    <text x="100" y="68" text-anchor="middle" font-size="13" fill="#7c3aed" font-weight="bold" font-family="Arial">+ 2 недели</text>
+    <path d="M20 80 L180 80" stroke="#7c3aed" stroke-width="2"/>
+    <circle cx="20" cy="80" r="4" fill="#7c3aed"/>
+    <circle cx="180" cy="80" r="4" fill="#22c55e"/>
+    <text x="20" y="95" text-anchor="middle" font-size="8" fill="#6b7280" font-family="Arial">сейчас</text>
+    <text x="180" y="95" text-anchor="middle" font-size="8" fill="#15803d" font-family="Arial">через 2 нед.</text>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">через 2 недели</text>
+  </svg>`,
+  "time_spring": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="10" width="180" height="75" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+    <text x="100" y="55" text-anchor="middle" font-size="32" font-family="Arial">🌸</text>
+    <text x="100" y="30" text-anchor="middle" font-size="11" fill="#15803d" font-weight="bold" font-family="Arial">ВЕСНА</text>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">весной</text>
+  </svg>`,
+  "time_summer": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="10" width="180" height="75" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+    <text x="100" y="55" text-anchor="middle" font-size="32" font-family="Arial">☀️</text>
+    <text x="100" y="30" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold" font-family="Arial">ЛЕТО</text>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#92400e" font-family="Arial">летом</text>
+  </svg>`,
+  "over_lamp": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <line x1="100" y1="0" x2="100" y2="22" stroke="#9ca3af" stroke-width="2"/>
+    <polygon points="85,22 115,22 108,40 92,40" fill="#fef08a" stroke="#f59e0b" stroke-width="1.5"/>
+    <ellipse cx="100" cy="42" rx="14" ry="4" fill="#fef9c3" opacity="0.6"/>
+    <rect x="30" y="65" width="140" height="18" rx="4" fill="#d1fae5" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="100" y="96" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">над, без касания</text>
+  </svg>`,
+  "out_of_bag": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M55 35 Q55 25 70 25 L130 25 Q145 25 145 35 L150 82 Q150 90 140 90 L60 90 Q50 90 50 82 Z" fill="#bfdbfe" stroke="#378ADD" stroke-width="2"/>
+    <path d="M75 25 Q75 15 100 15 Q125 15 125 25" fill="none" stroke="#378ADD" stroke-width="2"/>
+    <text x="135" y="28" font-size="14" font-family="Arial">👓</text>
+    <path d="M125 45 L132 22" stroke="#ef4444" stroke-width="2" marker-end="url(#a13)"/>
+    <defs><marker id="a13" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ef4444"/></marker></defs>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#b91c1c" font-family="Arial">изнутри наружу</text>
+  </svg>`,
+  "time_date": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="30" y="10" width="140" height="75" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <rect x="30" y="10" width="140" height="25" rx="8" fill="#7c3aed"/>
+    <text x="100" y="29" text-anchor="middle" font-size="12" fill="white" font-weight="bold" font-family="Arial">АПРЕЛЬ</text>
+    <circle cx="100" cy="60" r="16" fill="#7c3aed" opacity="0.2"/>
+    <text x="100" y="65" text-anchor="middle" font-size="18" fill="#7c3aed" font-weight="bold" font-family="Arial">15</text>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#7c3aed" font-family="Arial">15-го числа</text>
+  </svg>`,
+  "across": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="40" width="200" height="25" fill="#d1d5db"/>
+    <line x1="100" y1="40" x2="100" y2="65" stroke="#fff" stroke-width="2" stroke-dasharray="4,4"/>
+    <ellipse cx="20" cy="52" rx="10" ry="14" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="20" cy="38" r="7" fill="#fb923c"/>
+    <path d="M32 52 L170 52" stroke="#22c55e" stroke-width="2.5" marker-end="url(#a5)"/>
+    <defs><marker id="a5" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22c55e"/></marker></defs>
+    <text x="100" y="90" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">поперёк</text>
+  </svg>`,
+  "time_season": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="10" width="180" height="75" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+    <text x="100" y="55" text-anchor="middle" font-size="32" font-family="Arial">❄️</text>
+    <text x="100" y="30" text-anchor="middle" font-size="11" fill="#15803d" font-weight="bold" font-family="Arial">ЗИМА</text>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">зимой</text>
+  </svg>`,
+  "time_noon": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="200" height="100" fill="#fef9c3"/>
+    <circle cx="100" cy="40" r="28" fill="#fbbf24" stroke="#f59e0b" stroke-width="2"/>
+    <text x="100" y="46" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold" font-family="Arial">12:00</text>
+    <text x="100" y="88" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold" font-family="Arial">полдень</text>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#92400e" font-family="Arial">в полдень</text>
+  </svg>`,
+  "over_city": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="65" width="200" height="35" fill="#d1fae5"/>
+    <rect x="20" y="40" width="25" height="28" fill="#6b7280"/>
+    <rect x="55" y="30" width="20" height="38" fill="#4b5563"/>
+    <rect x="85" y="45" width="30" height="23" fill="#6b7280"/>
+    <rect x="125" y="35" width="22" height="33" fill="#4b5563"/>
+    <rect x="157" y="48" width="20" height="20" fill="#6b7280"/>
+    <text x="100" y="22" text-anchor="middle" font-size="18" font-family="Arial">✈️</text>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">над городом</text>
+  </svg>`,
+  "into_car": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="60" y="30" width="120" height="55" rx="12" fill="#bfdbfe" stroke="#378ADD" stroke-width="2"/>
+    <rect x="80" y="15" width="80" height="35" rx="8" fill="#93c5fd" stroke="#378ADD" stroke-width="1.5"/>
+    <circle cx="90" cy="88" r="12" fill="#1e40af" stroke="#fff" stroke-width="2"/>
+    <circle cx="160" cy="88" r="12" fill="#1e40af" stroke="#fff" stroke-width="2"/>
+    <ellipse cx="30" cy="55" rx="10" ry="14" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="30" cy="42" r="7" fill="#fb923c"/>
+    <path d="M42 55 L62 55" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arr)"/>
+    <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22c55e"/></marker></defs>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">движение внутрь</text>
+  </svg>`,
+  "under": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="30" y="20" width="140" height="30" rx="6" fill="#d1fae5" stroke="#22c55e" stroke-width="2"/>
+    <rect x="60" y="50" width="10" height="20" fill="#6b7280"/>
+    <rect x="130" y="50" width="10" height="20" fill="#6b7280"/>
+    <ellipse cx="100" cy="78" rx="18" ry="12" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="100" cy="68" r="8" fill="#fb923c"/>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">под</text>
+  </svg>`,
+  "on_surface": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="20" y="55" width="160" height="15" rx="4" fill="#d1fae5" stroke="#22c55e" stroke-width="2"/>
+    <rect x="70" y="35" width="60" height="20" rx="3" fill="#93c5fd" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="100" y="49" text-anchor="middle" font-size="9" fill="#1e40af" font-family="Arial">📚</text>
+    <text x="100" y="90" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">на поверхности</text>
+  </svg>`,
+  "in_bag": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M55 30 Q55 20 70 20 L130 20 Q145 20 145 30 L150 80 Q150 88 140 88 L60 88 Q50 88 50 80 Z" fill="#bfdbfe" stroke="#378ADD" stroke-width="2"/>
+    <path d="M75 20 Q75 10 100 10 Q125 10 125 20" fill="none" stroke="#378ADD" stroke-width="2"/>
+    <text x="100" y="62" text-anchor="middle" font-size="16" font-family="Arial">🔑</text>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">внутри</text>
+  </svg>`,
+  "time_christmas": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="10" width="180" height="75" rx="8" fill="#f0fdf4" stroke="#15803d" stroke-width="2"/>
+    <text x="100" y="55" text-anchor="middle" font-size="32" font-family="Arial">🎄</text>
+    <text x="100" y="30" text-anchor="middle" font-size="11" fill="#15803d" font-weight="bold" font-family="Arial">РОЖДЕСТВО</text>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#15803d" font-family="Arial">на Рождество</text>
+  </svg>`,
+  "time_afternoon": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="55" width="200" height="45" fill="#fed7aa"/>
+    <rect x="0" y="0" width="200" height="55" fill="#bae6fd"/>
+    <circle cx="160" cy="40" r="22" fill="#fbbf24"/>
+    <text x="100" y="90" text-anchor="middle" font-size="10" fill="#92400e" font-family="Arial">после полудня</text>
+  </svg>`,
+  "in_front_of_school": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="60" y="10" width="110" height="75" rx="5" fill="#bfdbfe" stroke="#378ADD" stroke-width="2"/>
+    <text x="115" y="55" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">🏫 ШКОЛА</text>
+    <rect x="93" y="60" width="18" height="25" rx="2" fill="#60a5fa"/>
+    <rect x="30" y="50" width="28" height="12" rx="4" fill="#d1fae5" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="44" y="60" text-anchor="middle" font-size="8" fill="#15803d" font-family="Arial">🚌</text>
+    <text x="100" y="98" text-anchor="middle" font-size="10" fill="#1e40af" font-family="Arial">перед</text>
+  </svg>`,
+  "through_forest": `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="200" height="100" fill="#d1fae5"/>
+    <polygon points="20,75 35,30 50,75" fill="#15803d"/><polygon points="40,75 55,25 70,75" fill="#16a34a"/>
+    <polygon points="130,75 145,25 160,75" fill="#15803d"/><polygon points="150,75 165,30 180,75" fill="#16a34a"/>
+    <rect x="80" y="55" width="40" height="8" fill="#d97706" opacity="0.5"/>
+    <ellipse cx="25" cy="62" rx="9" ry="12" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="25" cy="51" r="7" fill="#fb923c"/>
+    <path d="M36 62 L162 62" stroke="#22c55e" stroke-width="2.5" marker-end="url(#a8)"/>
+    <defs><marker id="a8" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22c55e"/></marker></defs>
+    <text x="100" y="95" text-anchor="middle" font-size="10" fill="#14532d" font-family="Arial">сквозь лес</text>
+  </svg>`,
+};
+
+var S1_SVG = ["in_car", "into_car", "out_of_car", "under", "behind", "over_lamp", "in_front_of", "next_to", "into_pool", "out_of_taxi", "across", "through", "over_fence", "on_surface", "in_bag", "through_forest", "across_river", "out_of_envelope", "into_pocket", "out_of_box", "under_bed", "on_wall", "behind_building", "spider_ceiling", "out_of_bag", "through_crowd", "in_front_of_school", "under_bed2", "into_classroom", "over_city"];
+var S2_SVG = ["time_month", "time_clock", "time_weekday", "time_year", "time_season", "time_saturday", "time_night", "time_in_weeks", "time_date", "time_day_part", "time_spring", "time_date", "time_noon", "time_in_period", "time_saturday", "time_summer", "time_monday_morning", "time_christmas", "time_in_period", "time_clock", "time_month", "time_afternoon", "time_birthday", "time_evening", "time_new_year", "time_date", "time_in_period", "time_weekday", "time_clock", "time_in_period"];
+var S3_SVG = ["into_classroom", "time_month", "across_river", "time_clock", "on_surface", "time_weekday", "through", "time_in_period", "under", "time_night", "in_bag", "time_year", "into_pool", "time_spring", "over_city", "time_date", "across", "time_day_part", "out_of_bag", "time_weekday", "on_wall", "time_in_period", "under_bed2", "time_evening", "next_to", "time_monday_morning", "into_pocket", "time_christmas", "in_front_of_school", "out_of_envelope", "time_clock", "out_of_box", "through_forest", "time_date", "under", "time_in_period", "out_of_car", "time_summer", "time_weekday", "across_river", "over_lamp", "time_clock", "into_car", "time_new_year", "through_crowd", "in_bag", "time_night", "over_fence", "time_night", "under_bed"];
+
+var STAGE_CONFIG = [
+  {label:"Ступень 1: Место и Направление",icon:"📍",desc:"20 вопросов · база 30",qBank:Q_S1_ALL,n:20,key:"s1",svgKeys:S1_SVG},
+  {label:"Ступень 2: Время (at / in / on)",icon:"🕐",desc:"20 вопросов · база 30",qBank:Q_S2_ALL,n:20,key:"s2",svgKeys:S2_SVG},
+  {label:"Ступень 3: Смешанный тест",icon:"🎯",desc:"30 вопросов · база 50",qBank:Q_S3_ALL,n:30,key:"s3",svgKeys:S3_SVG}
+];
+var N=STAGE_CONFIG.length;
+var stageUnlocked,stageScores,stageDone;
+var currentStage=0,selectedStage=0;
+var questions=[],cur=0,score=0,total=0,xp=0,streak=0,hints=3,mistakes=[],results=[];
+var timerEnabled=false,timerInterval=null,timerSec=20,retryMode=false;
+var XP_PER_LEVEL=200;
+
+function loadProgress(){
+  try{var d=JSON.parse(localStorage.getItem('prep_v3')||'{}');stageUnlocked=d.u||[true,false,false];stageScores=d.s||[0,0,0];stageDone=d.d||[false,false,false];}
+  catch(e){stageUnlocked=[true,false,false];stageScores=[0,0,0];stageDone=[false,false,false];}
+}
+function saveProgress(){try{localStorage.setItem('prep_v3',JSON.stringify({u:stageUnlocked,s:stageScores,d:stageDone}));}catch(e){}}
+
+function goStart(){
+  loadProgress();retryMode=false;
+  document.getElementById('start-screen').style.display='';
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='none';
+  renderStageGrid();renderRecordBox();updateStartBtn();
+}
+
+function renderStageGrid(){
+  var g=document.getElementById('stage-grid');if(!g)return;
+  var html='';
+  STAGE_CONFIG.forEach(function(sc,i){
+    var locked=!stageUnlocked[i],done=stageDone[i];
+    var cls='stage-card'+(locked?' locked':done?' done':i===selectedStage?' active-stage':'');
+    var badge=locked?'<span class="stage-badge lock-badge">🔒 Закрыто</span>':done?'<span class="stage-badge done-badge">✅ Пройдено</span>':'<span class="stage-badge open-badge">▶ Открыто</span>';
+    var sc2=stageScores[i]?' · '+stageScores[i]+'/'+sc.n:'';
+    html+='<div class="'+cls+'" onclick="selectStage('+i+')">'
+      +'<span class="stage-icon">'+sc.icon+'</span>'
+      +'<div class="stage-title">Ступень '+(i+1)+'</div>'
+      +'<div class="stage-desc">'+sc.desc+sc2+'</div>'+badge+'</div>';
+  });
+  g.innerHTML=html;
+}
+function renderRecordBox(){
+  var b=document.getElementById('record-box');if(!b)return;
+  var parts=STAGE_CONFIG.map(function(sc,i){return 'С'+(i+1)+': '+(stageScores[i]||0)+'/'+sc.n;});
+  b.innerHTML='🏆 Рекорды: <b>'+parts.join(' &nbsp;|&nbsp; ')+'</b>';
+}
+function selectStage(i){if(!stageUnlocked[i])return;selectedStage=i;renderStageGrid();updateStartBtn();}
+function updateStartBtn(){var btn=document.getElementById('start-btn');if(!btn)return;btn.textContent='▶ Начать: '+STAGE_CONFIG[selectedStage].label;}
+function startSelected(){
+  var _ne=document.getElementById('inp-name'),_ge=document.getElementById('inp-group');
+  if(_ne&&!_ne.value.trim()){_ne.classList.add('err');_ne.focus();return;}
+  if(_ge&&!_ge.value.trim()){_ge.classList.add('err');_ge.focus();return;}
+  if(_ne)_ne.classList.remove('err');if(_ge)_ge.classList.remove('err');
+startStage(selectedStage,false);}
+
+function startStage(idx,isRetry){
+  currentStage=idx;retryMode=isRetry||false;
+  var sc=STAGE_CONFIG[idx];
+  var indexed=sc.qBank.map(function(q,i){return Object.assign({},q,{svgKey:sc.svgKeys[i]});});
+  questions=shuffle(indexed).slice(0,sc.n);
+  total=questions.length;cur=0;score=0;mistakes=[];results=[];
+  xp=0;streak=0;hints=3;
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='';
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('stage-chip').textContent=sc.label;
+  document.getElementById('counter-tot').textContent=total;
+  document.getElementById('hint-count').textContent=hints;
+  document.getElementById('hint-btn').disabled=false;
+  document.getElementById('timer-chip').style.display=timerEnabled?'':'none';
+  updateXpUI();updateStreakUI();showQuestion();
+}
+
+function showQuestion(){
+  var q=questions[cur];
+  document.getElementById('counter-cur').textContent=cur+1;
+  document.getElementById('score-live').textContent=score;
+  document.getElementById('progress-fill').style.width=((cur/total)*100)+'%';
+  document.getElementById('q-tag').textContent=q.tag;
+  document.getElementById('q-situation').textContent=q.sit;
+  var illDiv=document.getElementById('q-illustration');
+  var svgContent=q.svgKey&&SVG_MAP[q.svgKey]?SVG_MAP[q.svgKey]:'';
+  illDiv.innerHTML=svgContent;
+  illDiv.style.display=svgContent?'flex':'none';
+  document.getElementById('q-text').innerHTML=q.q.replace(/___/g,'<span class="blank">___</span>');
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('next-btn').style.display='none';
+  var opts=document.getElementById('options');opts.innerHTML='';
+  var order=shuffle([0,1,2]);
+  order.forEach(function(oi){
+    var b=document.createElement('button');
+    b.className='opt-btn';b.textContent=q.opts[oi];
+    b.onclick=function(){answer(oi,b,q);};
+    opts.appendChild(b);
+  });
+  if(timerEnabled)startTimer();
+}
+
+function answer(oi,btn,q){
+  stopTimer();
+  var btns=document.getElementById('options').querySelectorAll('.opt-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  var correct=(oi===q.ans);
+  showXpPopup(btn,correct);
+  if(correct){
+    btn.classList.add('correct');score++;
+    document.getElementById('score-live').textContent=score;
+    streak++;xp+=streak>=5?20:streak>=3?15:10;
+    updateXpUI();updateStreakUI();
+    document.getElementById('feedback').innerHTML='✅ Верно! '+q.exp;
+    document.getElementById('feedback').className='feedback ok';
+    if(streak>=3)launchConfetti();
+  }else{
+    btn.classList.add('wrong');streak=0;xp=Math.max(0,xp-3);
+    updateXpUI();updateStreakUI();
+    btns.forEach(function(b){if(b.textContent===q.opts[q.ans])b.classList.add('correct');});
+    mistakes.push({q:q.q,ans:q.opts[q.ans]});
+    document.getElementById('feedback').innerHTML='❌ Неверно. '+q.exp;
+    document.getElementById('feedback').className='feedback err';
+  }
+  results.push({ok:correct,q:q});
+  document.getElementById('next-btn').style.display='inline-block';
+}
+
+function nextQuestion(){cur++;if(cur>=total){finishStage();return;}showQuestion();}
+
+function startTimer(){
+  timerSec=20;
+  var chip=document.getElementById('timer-chip');
+  chip.textContent='⏱ '+timerSec;chip.className='timer-chip';
+  timerInterval=setInterval(function(){
+    timerSec--;chip.textContent='⏱ '+timerSec;
+    if(timerSec<=5)chip.className='timer-chip danger';
+    else if(timerSec<=10)chip.className='timer-chip warn';
+    if(timerSec<=0){
+      stopTimer();
+      var btns=document.getElementById('options').querySelectorAll('.opt-btn');
+      var q=questions[cur];
+      btns.forEach(function(b){b.disabled=true;if(b.textContent===q.opts[q.ans])b.classList.add('correct');});
+      streak=0;updateStreakUI();
+      mistakes.push({q:q.q,ans:q.opts[q.ans]});
+      results.push({ok:false,q:q});
+      document.getElementById('feedback').innerHTML='⏱ Время вышло! Правильный ответ: <b>'+q.opts[q.ans]+'</b>. '+q.exp;
+      document.getElementById('feedback').className='feedback err';
+      document.getElementById('next-btn').style.display='inline-block';
+    }
+  },1000);
+}
+function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
+
+function updateXpUI(){
+  var lvlXp=xp%XP_PER_LEVEL;
+  document.getElementById('xp-fill').style.width=(lvlXp/XP_PER_LEVEL*100)+'%';
+  document.getElementById('xp-val').textContent=xp+' XP';
+}
+function updateStreakUI(){
+  var b=document.getElementById('streak-badge');
+  b.textContent='🔥 '+streak+' подряд';
+  b.className='streak-badge'+(streak>=5?' fire':streak>=3?' hot':'');
+}
+function showXpPopup(el,ok){
+  var p=document.createElement('div');
+  p.className='xp-popup '+(ok?'ok':'err');
+  p.textContent=ok?(streak>=5?'+20 XP 🔥':streak>=3?'+15 XP ⚡':'+10 XP'):'-3 XP';
+  var r=el.getBoundingClientRect();
+  p.style.left=(r.left+r.width/2-30)+'px';
+  p.style.top=(r.top-20+window.scrollY)+'px';
+  document.body.appendChild(p);
+  setTimeout(function(){p.remove();},1100);
+}
+function useHint(){
+  if(hints<=0)return;hints--;
+  document.getElementById('hint-count').textContent=hints;
+  var q=questions[cur];
+  document.getElementById('feedback').innerHTML='💡 Подсказка: правильный ответ — <b>«'+q.opts[q.ans]+'»</b>. Попробуйте ещё раз!';
+  document.getElementById('feedback').className='feedback ok';
+  if(hints===0)document.getElementById('hint-btn').disabled=true;
+}
+function onTimerToggle(el){timerEnabled=el.checked;}
+
+function finishStage(){
+  testActive = false;
+  var _name=(document.getElementById('inp-name')?document.getElementById('inp-name').value.trim():'')||'Аноним';
+  var _group=(document.getElementById('inp-group')?document.getElementById('inp-group').value.trim():'')||'—';
+  sendToGoogleForms(_name,_group,'Предлоги — Тренировка',score+'/'+total,xp,(typeof timerEnabled !== 'undefined' ? timerEnabled : false));
+
+  var pct=score/total;
+  stageScores[currentStage]=Math.max(stageScores[currentStage]||0,score);
+  stageDone[currentStage]=true;
+  if(pct>=0.7){for(var k=0;k<=currentStage+1&&k<N;k++)stageUnlocked[k]=true;}
+  saveProgress();showFinalResult(pct);
+}
+
+function showFinalResult(pct){
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='block';
+  var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
+  var rank=pct>=0.9?{name:'Мастер',bg:'#ede9fe',color:'#6d28d9'}:
+           pct>=0.7?{name:'Знаток',bg:'#e4eef8',color:'#1A4A7A'}:
+           pct>=0.5?{name:'Ученик',bg:'#e4f0ea',color:'#2D5A3D'}:
+                   {name:'Новичок',bg:'#f0eaf8',color:'#6B2FA0'};
+  var emoji=pct===1?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
+  var unlockMsg='';if(pct>=0.7&&currentStage<N-1)unlockMsg=' 🔓 Ступень '+(currentStage+2)+' открыта!';
+  var msg=pct===1?'Отлично! Все ответы верны!'+unlockMsg:
+          pct>=0.8?'Очень хорошо! Разберите ошибки ниже.'+unlockMsg:
+          pct>=0.7?'Хороший результат!'+unlockMsg:
+          'Нужно набрать 70%+ для разблокировки следующей ступени. Попробуйте ещё раз!';
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-score').textContent=score+' / '+total;
+  document.getElementById('res-label').textContent='правильных ответов · '+STAGE_CONFIG[currentStage].label;
+  document.getElementById('res-xp').textContent='⭐ '+xp+' XP';
+  document.getElementById('res-msg').textContent=msg;
+  var sh='';for(var i=1;i<=3;i++)sh+='<span class="star'+(stars>=i?' lit':'')+'" style="animation-delay:'+((i-1)*.18)+'s">⭐</span>';
+  document.getElementById('stars-row').innerHTML=sh;
+  document.getElementById('rank-badge-wrap').innerHTML='<span class="rank-badge" style="background:'+rank.bg+';color:'+rank.color+'">🏅 '+rank.name+'</span>';
+  renderStageGrid();
+  if(pct>=0.9)launchBigConfetti();
+  var nextBtn=document.getElementById('next-stage-btn');
+  if(currentStage<N-1&&stageUnlocked[currentStage+1]){nextBtn.style.display='inline-block';nextBtn.textContent='▶ '+STAGE_CONFIG[currentStage+1].label+' →';}
+  else{nextBtn.style.display='none';}
+  var wrongCount=results.filter(function(r){return !r.ok;}).length;
+  var retryBtn=document.getElementById('retry-btn');
+  if(wrongCount>0&&!retryMode){retryBtn.style.display='inline-block';retryBtn.textContent='🔁 Работа над ошибками ('+wrongCount+')';}
+  else{retryBtn.style.display='none';}
+  var mBlock=document.getElementById('mistakes-block');
+  if(mistakes.length>0){
+    var html='<h3 style="font-size:14px;font-weight:600;color:#7aa8d4;margin-bottom:.75rem">Разбор ошибок:</h3>';
+    mistakes.forEach(function(m){html+='<div class="mistake-item"><div class="m-q">'+m.q+'</div><div class="m-a">✓ '+m.ans+'</div></div>';});
+    mBlock.innerHTML=html;
+  }else{mBlock.innerHTML='';}
+}
+
+function retryMistakes(){
+  var wrong=results.filter(function(r){return !r.ok;});if(!wrong.length)return;
+  retryMode=true;questions=wrong.map(function(r){return r.q;});
+  total=questions.length;cur=0;score=0;mistakes=[];results=[];
+  xp=0;streak=0;hints=3;
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='';
+  document.getElementById('counter-tot').textContent=total;
+  document.getElementById('hint-count').textContent=hints;
+  document.getElementById('hint-btn').disabled=false;
+  document.getElementById('timer-chip').style.display=timerEnabled?'':'none';
+  updateXpUI();updateStreakUI();showQuestion();
+}
+function goNextStage(){var next=currentStage+1;if(next<N&&stageUnlocked[next]){selectedStage=next;startStage(next,false);}}
+function toggleRef(){document.getElementById('ref-modal').classList.toggle('open');}
+document.addEventListener('click',function(e){var m=document.getElementById('ref-modal');if(m&&m.classList.contains('open')&&e.target===m)m.classList.remove('open');});
+function shuffle(arr){return arr.slice().sort(function(){return Math.random()-.5;});}
+
+var canvas=document.getElementById('confetti-canvas');
+var ctx=canvas.getContext('2d');
+var particles=[],animId=null;
+var COLORS=['#378ADD','#22c55e','#f59e0b','#ef4444','#a855f7','#ec4899','#14b8a6'];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+function createParticle(x,y,big){
+  var angle=Math.random()*Math.PI*2,speed=big?(Math.random()*10+5):(Math.random()*7+3);
+  return{x:x,y:y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-(big?8:4),color:COLORS[Math.floor(Math.random()*COLORS.length)],size:big?(Math.random()*10+5):(Math.random()*7+3),rotation:Math.random()*360,rotSpeed:(Math.random()-.5)*8,alpha:1,shape:Math.random()>.5?'rect':'circle'};
+}
+function spawnBurst(x,y,count,big){for(var i=0;i<count;i++)particles.push(createParticle(x,y,big));}
+function launchConfetti(){var rect=document.querySelector('.card').getBoundingClientRect();spawnBurst(rect.left+rect.width/2,rect.top+rect.height*.3,50,false);if(!animId)animate();}
+function launchBigConfetti(){var cx=window.innerWidth/2,cy=window.innerHeight/2;spawnBurst(cx,cy,130,true);setTimeout(function(){spawnBurst(cx-220,cy,70,true);},200);setTimeout(function(){spawnBurst(cx+220,cy,70,true);},400);if(!animId)animate();}
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.vx*=.99;p.rotation+=p.rotSpeed;p.alpha-=.016;ctx.save();ctx.globalAlpha=Math.max(0,p.alpha);ctx.translate(p.x,p.y);ctx.rotate(p.rotation*Math.PI/180);ctx.fillStyle=p.color;if(p.shape==='rect'){ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);}else{ctx.beginPath();ctx.arc(0,0,p.size/2,0,Math.PI*2);ctx.fill();}ctx.restore();});
+  particles=particles.filter(function(p){return p.alpha>0;});
+  if(particles.length>0){animId=requestAnimationFrame(animate);}else{animId=null;ctx.clearRect(0,0,canvas.width,canvas.height);}
+}
+
+goStart();
+
+function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
+  var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdfme_aKvoexXRSz7LTn5dxgY_7P2lBJsokU3puqehRxZVslw/formResponse';
+  var body = new FormData();
+  body.append('entry.1795360459', name);
+  body.append('entry.1572037373', group);
+  body.append('entry.1562414669', testName);
+  body.append('entry.994594767', result + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ') + (violations > 0 ? ' | ⚠️ Покидал: ' + violations + ' раз' : ' | ✅ Не покидал'));
+  body.append('entry.1290836239', xpEarned);
+  fetch(formUrl, {method:'POST', body:body, mode:'no-cors'})
+  .then(function(){
+    var el=document.getElementById('send-status');
+    if(el){el.textContent='✅ Результат отправлен преподавателю'; el.className='send-status ok';}
+    var tel=document.getElementById('timer-status');
+    if(tel){tel.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен'; tel.className=timerOn?'timer-on':'timer-off';}
+  }).catch(function(){
+    var el=document.getElementById('send-status');
+    if(el){el.textContent='⚠️ Нет соединения — результат не отправлен'; el.className='send-status err';}
+    var tel=document.getElementById('timer-status');
+    if(tel){tel.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен'; tel.className=timerOn?'timer-on':'timer-off';}
+  });
+}
+
+
+var violations = 0;
+var testActive = false;
+var MAX_VIOLATIONS = 2;
+
+document.addEventListener('visibilitychange', function(){
+  if(!testActive) return;
+  if(document.hidden){
+    violations++;
+    showWarning();
+  }
+});
+
+function showWarning(){
+  var overlay = document.getElementById('warn-overlay');
+  var icon = document.getElementById('warn-icon');
+  var title = document.getElementById('warn-title');
+  var text = document.getElementById('warn-text');
+  var count = document.getElementById('warn-count');
+  var btn = document.getElementById('warn-btn');
+  if(violations >= MAX_VIOLATIONS){
+    icon.textContent = '🚫';
+    title.textContent = 'Тест сброшен!';
+    text.textContent = 'Вы покидали страницу ' + violations + ' раза. Тест начат заново.';
+    count.textContent = 'Нарушений: ' + violations;
+    btn.textContent = 'Начать сначала';
+    btn.className = 'warn-btn danger';
+    btn.onclick = function(){ closeWarning(); violations=0; testActive=false;
+      document.getElementById('start-screen').style.display='';
+      document.getElementById('quiz-screen').style.display='none';
+      if(document.getElementById('result-screen')) document.getElementById('result-screen').style.display='none';
+    };
+  } else {
+    icon.textContent = '⚠️';
+    title.textContent = 'Вы покинули страницу!';
+    text.textContent = 'Во время теста нельзя открывать другие вкладки. Следующее нарушение — тест сбросится!';
+    count.textContent = 'Нарушение ' + violations + ' из ' + MAX_VIOLATIONS;
+    btn.textContent = 'Продолжить тест';
+    btn.className = 'warn-btn';
+    btn.onclick = closeWarning;
+  }
+  overlay.classList.add('open');
+}
+
+function closeWarning(){
+  document.getElementById('warn-overlay').classList.remove('open');
+}
+
+</script>
+
+<div class="warn-overlay" id="warn-overlay">
+  <div class="warn-box">
+    <div class="warn-icon" id="warn-icon">⚠️</div>
+    <div class="warn-title" id="warn-title">Вы покинули страницу!</div>
+    <div class="warn-text" id="warn-text">Во время теста нельзя открывать другие вкладки.</div>
+    <div class="warn-count" id="warn-count"></div>
+    <button class="warn-btn" id="warn-btn" onclick="closeWarning()">Продолжить тест</button>
+  </div>
+</div>
+
+</body>
+</html>
