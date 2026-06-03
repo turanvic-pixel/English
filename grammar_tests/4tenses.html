@@ -280,6 +280,13 @@ main { max-width: 680px; margin: 0 auto; padding: 0 1.5rem 4rem; }
   .warn-count { font-size:13px; font-weight:700; color:#b91c1c; background:#fee2e2; border-radius:8px; padding:6px 14px; display:inline-block; margin-bottom:1.2rem; }
   .warn-btn { padding:10px 28px; border-radius:10px; border:none; background:#378ADD; color:#fff; font-size:14px; font-weight:700; cursor:pointer; font-family:Arial,sans-serif; }
   .warn-btn.danger { background:#ef4444; }
+
+  .result-grade { font-size: 1.5rem; font-weight: 800; margin: .3rem 0 .5rem; padding: .3rem 1.2rem; border-radius: 12px; display: inline-block; }
+  .grade-5 { background: #d1fae5; color: #065f46; }
+  .grade-4 { background: #dbeafe; color: #1e40af; }
+  .grade-3 { background: #fef3c7; color: #92400e; }
+  .grade-2 { background: #fee2e2; color: #b91c1c; }
+  .grade-1 { background: #f3f4f6; color: #6b7280; }
 </style>
 </head>
 <body>
@@ -2372,6 +2379,12 @@ function retryErrors(){
 }
 
 function showScore(){
+  var _pct_disp = Math.round(score / (TOTAL||1) * 100);
+  var _gr = _pct_disp>=90?'5 (Отлично)':_pct_disp>=75?'4 (Хорошо)':_pct_disp>=50?'3 (Удовл.)':_pct_disp>=10?'2 (Неудовл.)':'1 (Не зачтено)';
+  var _grClass = _pct_disp>=90?'grade-5':_pct_disp>=75?'grade-4':_pct_disp>=50?'grade-3':_pct_disp>=10?'grade-2':'grade-1';
+  var _grEl = document.getElementById('res-grade');
+  if(_grEl){ _grEl.textContent = 'Оценка: ' + _gr; _grEl.className = 'result-grade ' + _grClass; }
+
   testActive = false;
   // Send to Google Forms
   var _name = (document.getElementById('inp-name-4t') ? document.getElementById('inp-name-4t').value.trim() : '') || 'Аноним';
@@ -2440,6 +2453,7 @@ function showScore(){
 
   document.getElementById('main').innerHTML=`
     <div class="card score-screen">
+      <div id="res-grade" class="result-grade"></div>
       <div id="send-status" class="send-status"></div>
       <div id="timer-status"></div>
       <div class="score-circle"><div class="score-big">${score}</div><div class="score-of">из ${TOTAL}</div></div>
