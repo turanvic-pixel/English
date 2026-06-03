@@ -159,6 +159,13 @@ h1 { text-align: center; font-size: 20px; font-weight: 700; color: #185FA5; marg
 #timer-status { min-height: 18px; }
 #timer-status.timer-on  { color: #b45309; }
 #timer-status.timer-off { color: #6b7280; }
+
+  .result-grade { font-size: 1.5rem; font-weight: 800; margin: .3rem 0 .5rem; padding: .3rem 1.2rem; border-radius: 12px; display: inline-block; }
+  .grade-5 { background: #d1fae5; color: #065f46; }
+  .grade-4 { background: #dbeafe; color: #1e40af; }
+  .grade-3 { background: #fef3c7; color: #92400e; }
+  .grade-2 { background: #fee2e2; color: #b91c1c; }
+  .grade-1 { background: #f3f4f6; color: #6b7280; }
 </style>
 </head>
 <body>
@@ -754,7 +761,13 @@ function finishStage(){
   var msg=pct===1?'Отлично! Все верно!'+unlockMsg:pct>=0.8?'Очень хорошо!'+unlockMsg:pct>=0.7?'Хороший результат!'+unlockMsg:'Нужна практика. Изучите справочник и попробуйте снова.';
 
   document.getElementById('res-emoji').textContent=emoji;
-  document.getElementById('res-score').textContent=score+' / '+total;
+  document.getElementById('res-score').textContent=score+' / '+total
+  var _pct_disp = Math.round(score / (total||1) * 100);
+  var _gr = _pct_disp>=90?'5 (Отлично)':_pct_disp>=75?'4 (Хорошо)':_pct_disp>=50?'3 (Удовл.)':_pct_disp>=10?'2 (Неудовл.)':'1 (Не зачтено)';
+  var _grClass = _pct_disp>=90?'grade-5':_pct_disp>=75?'grade-4':_pct_disp>=50?'grade-3':_pct_disp>=10?'grade-2':'grade-1';
+  var _grEl = document.getElementById('res-grade');
+  if(_grEl){ _grEl.textContent = 'Оценка: ' + _gr; _grEl.className = 'result-grade ' + _grClass; }
+;
   document.getElementById('res-xp').textContent='⭐ '+xp+' XP';
   document.getElementById('res-msg').textContent=msg;
   document.getElementById('res-label').textContent='правильных ответов · '+studentName+', гр. '+studentGroup;
