@@ -449,7 +449,7 @@ function showResult() {
   var _group = (document.getElementById('inp-group') ? document.getElementById('inp-group').value.trim() : '') || '—';
   var _result = score + '/' + TOTAL;
   var _xp = 0;
-  sendToGoogleForms(_name, _group, 'Зачёт-10', _result, _xp, false);
+  sendToGoogleForms(_name, _group, 'Зачёт-10', _result, _xp, timerEnabled);
 
   document.getElementById('quiz-screen').style.display = 'none';
   document.getElementById('result-screen').style.display = 'block';
