@@ -824,7 +824,7 @@ function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
 }
 
 
-var violations = 0, testActive = false, MAX_VIOLATIONS = 2;
+var violations = 0, testActive = false, MAX_VIOLATIONS = 1;
 document.addEventListener('visibilitychange', function(){
   if(!testActive) return;
   if(document.hidden){ violations++; showWarning(); }
@@ -833,21 +833,28 @@ function showWarning(){
   var o=document.getElementById('warn-overlay'),icon=document.getElementById('warn-icon'),
       title=document.getElementById('warn-title'),text=document.getElementById('warn-text'),
       count=document.getElementById('warn-count'),btn=document.getElementById('warn-btn');
-  if(violations>=MAX_VIOLATIONS){
+  if(violations > MAX_VIOLATIONS){
+    // Immediate reset - no button, auto-reset after 3 seconds
     icon.textContent='🚫'; title.textContent='Тест сброшен!';
-    text.textContent='Вы покидали страницу '+violations+' раза. Тест начат заново.';
+    text.textContent='Вы повторно покинули страницу. Тест сброшен автоматически.';
     count.textContent='Нарушений: '+violations; btn.textContent='Начать сначала';
     btn.className='warn-btn danger';
-    btn.onclick=function(){ closeWarning(); violations=0; testActive=false;
-      var ss=document.getElementById('start-screen'),qs=document.getElementById('quiz-screen'),rs=document.getElementById('result-screen');
-      if(ss)ss.style.display=''; if(qs)qs.style.display='none'; if(rs)rs.style.display='none'; };
+    btn.onclick=function(){ doReset(); };
+    o.classList.add('open');
+    setTimeout(function(){ doReset(); }, 3000);
   } else {
-    icon.textContent='⚠️'; title.textContent='Вы покинули страницу!';
-    text.textContent='Во время теста нельзя открывать другие вкладки. Следующее нарушение — тест сбросится!';
-    count.textContent='Нарушение '+violations+' из '+MAX_VIOLATIONS;
+    icon.textContent='⚠️'; title.textContent='Предупреждение!';
+    text.textContent='Вы покинули страницу. Следующее нарушение — тест сбросится автоматически!';
+    count.textContent='Нарушение 1 из 1 допустимого';
     btn.textContent='Продолжить тест'; btn.className='warn-btn'; btn.onclick=closeWarning;
+    o.classList.add('open');
   }
-  o.classList.add('open');
+}
+function doReset(){
+  document.getElementById('warn-overlay').classList.remove('open');
+  violations=0; testActive=false;
+  var ss=document.getElementById('start-screen'),qs=document.getElementById('quiz-screen'),rs=document.getElementById('result-screen');
+  if(ss)ss.style.display=''; if(qs)qs.style.display='none'; if(rs)rs.style.display='none';
 }
 function closeWarning(){ document.getElementById('warn-overlay').classList.remove('open'); }
 
