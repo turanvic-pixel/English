@@ -813,7 +813,12 @@ function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
   body.append('entry.1795360459', name);
   body.append('entry.1572037373', group);
   body.append('entry.1562414669', testName);
-  body.append('entry.994594767', result + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ') + (violations > 0 ? ' | ⚠️ Покидал: ' + violations + ' раз' : ' | ✅ Не покидал'));
+  var _pct = Math.round(_result.split('/')[0] / (_result.split('/')[1]||1) * 100);
+  var _grade = getGrade(_pct);
+  var _attempt = getAttemptNum('attempt_prit_mest_train');
+  var _hintsUsed = (3 - hints);
+  var _resultFull = _result + ' (' + _pct + '%) | Оценка: ' + _grade + ' | Попытка: ' + _attempt + (' | Подсказок: ' + _hintsUsed + '/3' + '') + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ') + (violations > 0 ? ' | ⚠️ Покидал: ' + violations + ' раз' : ' | ✅ Не покидал');
+  body.append('entry.994594767', _resultFull);
   body.append('entry.1290836239', xpEarned);
   fetch(formUrl, {method:'POST', body:body, mode:'no-cors'})
   .then(function(){
@@ -856,6 +861,22 @@ function showWarning(){
   o.classList.add('open');
 }
 function closeWarning(){ document.getElementById('warn-overlay').classList.remove('open'); }
+
+
+function getGrade(pct){
+  if(pct >= 90) return '5 (Отлично)';
+  if(pct >= 75) return '4 (Хорошо)';
+  if(pct >= 50) return '3 (Удовл.)';
+  if(pct >= 10) return '2 (Неудовл.)';
+  return '1 (Не зачтено)';
+}
+function getAttemptNum(storageKey){
+  try {
+    var n = parseInt(localStorage.getItem(storageKey) || '0') + 1;
+    localStorage.setItem(storageKey, n);
+    return n;
+  } catch(e){ return 1; }
+}
 
 </script>
 <div class="warn-overlay" id="warn-overlay">
