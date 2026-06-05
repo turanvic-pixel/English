@@ -347,7 +347,7 @@
         <div class="result-msg" id="adv-msg"></div>
         <div id="adv-send-status" class="send-status"></div>
         <div id="adv-timer-tag" class="timer-tag"></div>
-        <br><button class="restart-btn" onclick="restartAdv()">🔄 Попробовать снова</button>
+
       </div>
     </div>
   </div>
@@ -773,8 +773,9 @@ function submitAdv(){
     document.getElementById('adv-quiz').style.display='none';
     document.getElementById('adv-result').style.display='';
     var grade,gradeClass,emoji,msg;
-    if(advScore>=5){grade='Оценка «5»';gradeClass='grade-5';emoji='🏆';msg='Отлично! Повышенный уровень выполнен.';}
-    else{grade='Оценка «4»';gradeClass='grade-3';emoji='⭐';msg='4 балла и менее — оценка «4».';};
+    if(advScore===6){grade='Оценка «5»';gradeClass='grade-5';emoji='🏆';msg='Отлично! Все предложения составлены верно.';}
+    else if(advScore>=4){grade='Оценка «4»';gradeClass='grade-3';emoji='⭐';msg='Хорошо! 4–5 баллов — оценка «4».';}
+    else{grade='Оценка «3»';gradeClass='grade-2';emoji='📖';msg='Менее 4 баллов — оценка «3».';};
     var advName=document.getElementById('adv-inp-name').value.trim()||'—';
     var advGroup=document.getElementById('adv-inp-group').value.trim()||'—';
     var advResult=advScore+'/6 | '+grade;
