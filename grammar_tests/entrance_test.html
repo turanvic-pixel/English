@@ -198,6 +198,21 @@
   .xp-popup.bonus { background: #fef3c7; color: #92400e; }
   @keyframes floatUp { 0%{opacity:1;transform:translateY(0)} 80%{opacity:1} 100%{opacity:0;transform:translateY(-55px)} }
 
+
+  /* ── ПОЛЯ СТУДЕНТА ── */
+  .name-input {
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 9px;
+    font-size: 14px; font-family: Arial, sans-serif; color: #1a2e4a;
+    background: var(--gray-light); margin-bottom: 10px; outline: none; transition: border-color .15s;
+  }
+  .name-input:focus { border-color: var(--blue2); background: #eef5ff; }
+  .send-status { margin-top: .7rem; font-size: 13px; font-weight: 600; min-height: 18px; }
+  .send-status.ok  { color: #15803d; }
+  .send-status.err { color: #b91c1c; }
+  .timer-tag { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 99px; font-weight: 600; margin-top: 4px; }
+  .timer-on  { background: #fff3dc; color: #b45309; }
+  .timer-off { background: var(--blue-light); color: var(--blue); }
+
   #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
 
   @media (max-width: 600px) {
@@ -244,6 +259,10 @@
           <span class="toggle-slider"></span>
         </label>
       </div>
+      <div style="margin:0 auto 1rem;max-width:340px;text-align:left;">
+        <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
+        <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+      </div>
       <button class="start-btn" onclick="startBasic()">▶ Начать тест</button>
     </div>
 
@@ -278,7 +297,9 @@
         <div class="result-label">из 18 баллов · Базовый уровень</div>
         <div class="grade-big" id="b-grade-big"></div>
         <div class="result-msg" id="b-msg"></div>
-        <button class="restart-btn" onclick="restartBasic()">🔄 Пройти снова</button>
+        <div id="b-send-status" class="send-status"></div>
+        <div id="b-timer-tag" class="timer-tag"></div>
+        <br><button class="restart-btn" onclick="restartBasic()">🔄 Пройти снова</button>
         <div class="mistakes-list" id="b-mistakes"></div>
       </div>
     </div>
@@ -320,7 +341,9 @@
         <div class="result-label">из 6 баллов · Повышенный уровень</div>
         <div class="grade-big" id="adv-grade-big"></div>
         <div class="result-msg" id="adv-msg"></div>
-        <button class="restart-btn" onclick="restartAdv()">🔄 Попробовать снова</button>
+        <div id="adv-send-status" class="send-status"></div>
+        <div id="adv-timer-tag" class="timer-tag"></div>
+        <br><button class="restart-btn" onclick="restartAdv()">🔄 Попробовать снова</button>
       </div>
     </div>
   </div>
@@ -356,6 +379,31 @@ var bXp=0, bStreak=0, bHints=3;
 var MAX_XP=180;
 var bTimerEnabled=false, bTimerInterval=null, bTimerSec=0, bQStartTime=0;
 
+
+// ══ ДАННЫЕ СТУДЕНТА ══
+var studentName = '', studentGroup = '';
+
+// ══ GOOGLE FORMS ══
+var FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdfme_aKvoexXRSz7LTn5dxgY_7P2lBJsokU3puqehRxZVslw/formResponse';
+function sendToForms(name, group, testName, result, statusId, timerTagId, timerOn) {
+  var body = new FormData();
+  body.append('entry.1795360459', name);
+  body.append('entry.1572037373', group);
+  body.append('entry.1562414669', testName);
+  body.append('entry.994594767', result + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ'));
+  body.append('entry.1290836239', '0');
+  fetch(FORM_URL, {method:'POST', body:body, mode:'no-cors'})
+  .then(function(){
+    var el=document.getElementById(statusId);
+    if(el){el.textContent='✅ Результат отправлен преподавателю';el.className='send-status ok';}
+    var tt=document.getElementById(timerTagId);
+    if(tt){tt.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен';tt.className='timer-tag '+(timerOn?'timer-on':'timer-off');}
+  }).catch(function(){
+    var el=document.getElementById(statusId);
+    if(el){el.textContent='⚠️ Нет соединения — результат не отправлен';el.className='send-status err';}
+  });
+}
+
 function switchTab(tab) {
   document.getElementById('tab-basic').className='tab-btn'+(tab==='basic'?' active':'');
   document.getElementById('tab-advanced').className='tab-btn'+(tab==='advanced'?' active':'');
@@ -364,6 +412,8 @@ function switchTab(tab) {
 }
 
 function startBasic() {
+  studentName=document.getElementById('inp-name').value.trim()||'—';
+  studentGroup=document.getElementById('inp-group').value.trim()||'—';
   bCur=0; bScore=0; bMistakes=[]; bResults=[]; bXp=0; bStreak=0; bHints=3;
   document.getElementById('basic-start').style.display='none';
   document.getElementById('basic-result').style.display='none';
@@ -503,6 +553,8 @@ function showBasicResult(){
   if(bScore>=10){grade='Оценка «3»';gradeClass='grade-3';msg='Базовый уровень пройден. Переходите к повышенному уровню.';}
   else{grade='Оценка «2»';gradeClass='grade-2';msg='Менее 10 баллов — оценка «2». Повторите материал.';}
   if(bScore===total){emoji='🏆';msg='Отлично! Все задания выполнены верно!';}
+  var bResult=bScore+'/'+BASIC_Q.length+' ('+Math.round(bScore/BASIC_Q.length*100)+'%) | Оценка: '+grade;
+  sendToForms(studentName,studentGroup,'Входной контроль — Базовый',bResult,'b-send-status','b-timer-tag',bTimerEnabled);
   document.getElementById('b-emoji').textContent=emoji;
   document.getElementById('b-score-big').textContent=bScore;
   document.getElementById('b-grade-big').textContent=grade;
@@ -613,7 +665,11 @@ function submitAdv(){
     document.getElementById('adv-result').style.display='';
     var grade,gradeClass,emoji,msg;
     if(advScore>=5){grade='Оценка «5»';gradeClass='grade-5';emoji='🏆';msg='Отлично! Повышенный уровень выполнен.';}
-    else{grade='Оценка «4»';gradeClass='grade-3';emoji='⭐';msg='4 балла и менее — оценка «4».';}
+    else{grade='Оценка «4»';gradeClass='grade-3';emoji='⭐';msg='4 балла и менее — оценка «4».';};
+    var advName=document.getElementById('inp-name').value.trim()||studentName||'—';
+    var advGroup=document.getElementById('inp-group').value.trim()||studentGroup||'—';
+    var advResult=advScore+'/6 | '+grade;
+    sendToForms(advName,advGroup,'Входной контроль — Повышенный',advResult,'adv-send-status','adv-timer-tag',false);
     document.getElementById('adv-emoji').textContent=emoji;
     document.getElementById('adv-score-big').textContent=advScore;
     document.getElementById('adv-grade-big').textContent=grade;
