@@ -384,17 +384,40 @@ var MAX_XP=180;
 var bTimerEnabled=false, bTimerInterval=null, bTimerSec=0, bQStartTime=0;
 
 
+
+// ══ НАРУШЕНИЯ И ПОПЫТКИ ══
+var violations = 0;
+var warnShown = false;
+
+function getAttemptNum(key) {
+  var n = parseInt(localStorage.getItem(key) || '0') + 1;
+  localStorage.setItem(key, n);
+  return n;
+}
+
+// Контроль покидания страницы
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    violations++;
+    if (!warnShown) {
+      warnShown = true;
+    }
+  }
+});
+
 // ══ ДАННЫЕ СТУДЕНТА ══
 var studentName = '', studentGroup = '';
 
 // ══ GOOGLE FORMS ══
 var FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdfme_aKvoexXRSz7LTn5dxgY_7P2lBJsokU3puqehRxZVslw/formResponse';
-function sendToForms(name, group, testName, result, statusId, timerTagId, timerOn) {
+function sendToForms(name, group, testName, result, statusId, timerTagId, timerOn, attempt, viols) {
+  var violsText = viols > 0 ? ' | ⚠️ Покидал: ' + viols + ' раз' : ' | ✅ Не покидал';
+  var attemptText = ' | Попытка: ' + attempt;
   var body = new FormData();
   body.append('entry.1795360459', name);
   body.append('entry.1572037373', group);
   body.append('entry.1562414669', testName);
-  body.append('entry.994594767', result + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ'));
+  body.append('entry.994594767', result + (timerOn ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ') + attemptText + violsText);
   body.append('entry.1290836239', '0');
   fetch(FORM_URL, {method:'POST', body:body, mode:'no-cors'})
   .then(function(){
@@ -416,6 +439,7 @@ function switchTab(tab) {
 }
 
 function startBasic() {
+  violations=0; warnShown=false;
   studentName=document.getElementById('inp-name').value.trim()||'—';
   studentGroup=document.getElementById('inp-group').value.trim()||'—';
   bCur=0; bScore=0; bMistakes=[]; bResults=[]; bXp=0; bStreak=0; bHints=3;
@@ -558,7 +582,8 @@ function showBasicResult(){
   else{grade='Оценка «2»';gradeClass='grade-2';msg='Менее 10 баллов — оценка «2». Повторите материал.';}
   if(bScore===total){emoji='🏆';msg='Отлично! Все задания выполнены верно!';}
   var bResult=bScore+'/'+BASIC_Q.length+' ('+Math.round(bScore/BASIC_Q.length*100)+'%) | Оценка: '+grade;
-  sendToForms(studentName,studentGroup,'Входной контроль — Базовый',bResult,'b-send-status','b-timer-tag',bTimerEnabled);
+  var bAttempt=getAttemptNum('attempt_entrance_basic');
+  sendToForms(studentName,studentGroup,'Входной контроль — Базовый',bResult,'b-send-status','b-timer-tag',bTimerEnabled,bAttempt,violations);
   document.getElementById('b-emoji').textContent=emoji;
   document.getElementById('b-score-big').textContent=bScore;
   document.getElementById('b-grade-big').textContent=grade;
@@ -633,7 +658,7 @@ function bTimeOut(){
 // ══ ПОВЫШЕННЫЙ ══
 var advSubmitted=false;
 function startAdv(){
-  advSubmitted=false;
+  violations=0; warnShown=false; advSubmitted=false;
   document.getElementById('adv-start').style.display='none';
   document.getElementById('adv-result').style.display='none';
   document.getElementById('adv-quiz').style.display='';
@@ -675,7 +700,8 @@ function submitAdv(){
     var advName=document.getElementById('adv-inp-name').value.trim()||'—';
     var advGroup=document.getElementById('adv-inp-group').value.trim()||'—';
     var advResult=advScore+'/6 | '+grade;
-    sendToForms(advName,advGroup,'Входной контроль — Повышенный',advResult,'adv-send-status','adv-timer-tag',false);
+    var advAttempt=getAttemptNum('attempt_entrance_adv');
+    sendToForms(advName,advGroup,'Входной контроль — Повышенный',advResult,'adv-send-status','adv-timer-tag',false,advAttempt,violations);
     document.getElementById('adv-emoji').textContent=emoji;
     document.getElementById('adv-score-big').textContent=advScore;
     document.getElementById('adv-grade-big').textContent=grade;
