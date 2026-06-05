@@ -5,436 +5,281 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Входной контроль — Английский язык</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Source+Sans+3:wght@400;600;700&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --blue: #1A4E8C;
-    --blue2: #2B6CB0;
-    --blue-light: #EBF4FF;
-    --blue-mid: #BEE3F8;
-    --gold: #B7791F;
-    --gold-light: #FEFCE8;
-    --green: #276749;
-    --green-light: #D4EDDA;
-    --red: #9B2335;
-    --red-light: #FDECEA;
+    --blue: #185FA5;
+    --blue2: #378ADD;
+    --blue-light: #e0eeff;
+    --blue-bg: #dbeafe;
+    --green: #14532d;
+    --green-light: #d1fadf;
+    --red: #7f1d1d;
+    --red-light: #fee2e2;
     --gray: #4A5568;
-    --gray-light: #F7FAFC;
-    --border: #CBD5E0;
-    --shadow: 0 2px 12px rgba(26,78,140,0.10);
+    --gray-light: #f5f9ff;
+    --border: #c8dff7;
+    --shadow: 0 4px 24px rgba(55,138,221,0.10);
   }
   body {
-    font-family: 'Source Sans 3', sans-serif;
-    background: #F0F4F8;
+    font-family: Arial, sans-serif;
     min-height: 100vh;
-    padding: 1.5rem 1rem 4rem;
+    background-color: #fff;
+    background-image: linear-gradient(#b3d1f7 1px, transparent 1px), linear-gradient(90deg, #b3d1f7 1px, transparent 1px);
+    background-size: 28px 28px;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 2rem 1rem 3rem;
   }
-  .page-header {
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  .page-header h1 {
-    font-family: 'Merriweather', serif;
-    font-size: 22px;
-    font-weight: 900;
-    color: var(--blue);
-    margin-bottom: 4px;
-  }
-  .page-header .subtitle {
-    font-size: 13px;
-    color: var(--gray);
-    margin-bottom: 8px;
-  }
-  .page-header .instruction {
-    display: inline-block;
-    background: var(--gold-light);
-    border: 1px solid #F6E05E;
-    border-radius: 8px;
-    padding: 7px 18px;
-    font-size: 12px;
-    color: var(--gold);
-    font-weight: 600;
+  .card {
+    background: rgba(255,255,255,0.97);
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+    padding: 0;
+    max-width: 700px; width: 100%;
+    box-shadow: var(--shadow);
+    overflow: hidden;
   }
 
-  /* ── ВКЛАДКИ ── */
-  .tabs {
-    display: flex;
-    max-width: 720px;
-    margin: 0 auto 0;
-    border-radius: 12px 12px 0 0;
-    overflow: hidden;
-    border: 1.5px solid var(--border);
-    border-bottom: none;
+  /* ── ШАПКА ── */
+  .card-header {
+    background: var(--blue);
+    color: #fff;
+    text-align: center;
+    padding: 1.2rem 1.5rem 1rem;
   }
+  .card-header h1 { font-size: 17px; font-weight: 700; margin-bottom: 3px; }
+  .card-header .instr { font-size: 12px; opacity: .85; line-height: 1.5; }
+
+  /* ── ВКЛАДКИ ── */
+  .tabs { display: flex; border-bottom: 2px solid var(--border); }
   .tab-btn {
-    flex: 1;
-    padding: 13px 10px;
-    font-family: 'Merriweather', serif;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    border: none;
-    background: #E2ECF8;
-    color: #7094C0;
-    transition: background .2s, color .2s;
-    border-right: 1.5px solid var(--border);
+    flex: 1; padding: 12px 10px; border: none; background: #EBF4FF;
+    color: #7094C0; font-size: 13px; font-weight: 700; cursor: pointer;
+    border-right: 1.5px solid var(--border); transition: background .2s, color .2s;
+    font-family: Arial, sans-serif;
   }
   .tab-btn:last-child { border-right: none; }
   .tab-btn.active { background: #fff; color: var(--blue); }
-  .tab-btn .tab-note { font-size: 11px; font-weight: 400; font-family: 'Source Sans 3', sans-serif; display: block; margin-top: 2px; opacity: .8; }
+  .tab-btn .tab-note { font-size: 11px; font-weight: 400; display: block; margin-top: 2px; opacity: .8; }
 
-  /* ── КАРТОЧКА ── */
-  .card {
-    background: #fff;
-    border-radius: 0 0 16px 16px;
-    border: 1.5px solid var(--border);
-    border-top: none;
-    padding: 2rem 2rem 2.5rem;
-    max-width: 720px;
-    margin: 0 auto;
-    box-shadow: var(--shadow);
-  }
-
-  .tab-panel { display: none; }
+  .tab-panel { display: none; padding: 1.8rem 2rem 2rem; }
   .tab-panel.active { display: block; }
 
   /* ── СТАРТ ── */
-  .start-screen { text-align: center; padding: 1rem 0; }
+  .start-screen { text-align: center; }
   .start-info {
-    background: var(--blue-light);
-    border: 1px solid var(--blue-mid);
-    border-radius: 10px;
-    padding: 14px 18px;
-    font-size: 13px;
-    color: #2D5A8E;
-    margin-bottom: 1.2rem;
-    line-height: 1.8;
-    text-align: left;
+    background: var(--gray-light); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 13px 16px; font-size: 13px; color: #5b8dc7; margin-bottom: 1.2rem;
+    line-height: 1.8; text-align: left;
   }
   .start-info b { color: var(--blue); }
-  .start-btn {
-    padding: 13px 40px;
-    border-radius: 10px;
-    border: none;
-    background: var(--blue);
-    color: #fff;
-    font-family: 'Merriweather', serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background .15s, transform .1s;
-    box-shadow: 0 2px 8px rgba(26,78,140,0.18);
+  .toggle-row {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--gray-light); border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 10px 14px; margin-bottom: 1rem; text-align: left;
   }
-  .start-btn:hover { background: var(--blue2); transform: translateY(-1px); }
+  .toggle-label { flex: 1; font-size: 13px; color: #1a2e4a; font-weight: 700; }
+  .toggle-sub { font-size: 11px; color: #7aa8d4; font-weight: 400; display: block; margin-top: 1px; }
+  .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 99px; cursor: pointer; transition: background .25s; }
+  .toggle-slider:before { content:''; position:absolute; width:18px; height:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform .25s; box-shadow:0 1px 4px rgba(0,0,0,.15); }
+  .toggle-switch input:checked + .toggle-slider { background: var(--blue2); }
+  .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
+  .start-btn {
+    padding: 12px 36px; border-radius: 10px; border: 1.5px solid var(--blue);
+    background: var(--blue); color: #fff; font-size: 15px; font-weight: 700;
+    cursor: pointer; font-family: Arial, sans-serif; transition: background .15s;
+  }
+  .start-btn:hover { background: #1a6bc4; }
+
+  /* ── HUD ── */
+  .hud { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; margin-bottom: .7rem; }
+  .hud-chip { font-size: 12px; background: var(--blue-light); color: var(--blue); border-radius: 99px; padding: 4px 12px; font-weight: 600; }
+  .streak-badge { font-size: 12px; font-weight: 700; background: var(--blue-light); color: var(--blue); border-radius: 99px; padding: 4px 12px; transition: all .3s; }
+  .streak-badge.hot  { background: #fff3dc; color: #b45309; }
+  .streak-badge.fire { background: linear-gradient(135deg,#fef3c7,#fde68a); color: #92400e; }
+  .timer-chip { font-size: 12px; font-weight: 700; background: var(--blue-light); color: var(--blue); border-radius: 99px; padding: 4px 12px; margin-left: auto; display: none; transition: background .3s, color .3s; }
+  .timer-chip.warn   { background: #fff3dc; color: #b45309; }
+  .timer-chip.danger { background: var(--red-light); color: #b91c1c; }
 
   /* ── ПРОГРЕСС ── */
-  .progress-wrap { margin-bottom: 1.2rem; }
-  .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--gray); margin-bottom: 5px; }
-  .progress-bar { height: 6px; background: var(--blue-mid); border-radius: 99px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--blue); border-radius: 99px; transition: width .4s ease; }
+  .progress-bar { height: 7px; background: var(--blue-bg); border-radius: 99px; margin-bottom: 1rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--blue2); border-radius: 99px; transition: width .4s ease; }
+
+  /* ── XP ── */
+  .xp-row { display: flex; align-items: center; gap: 8px; margin-bottom: .6rem; }
+  .xp-label { font-size: 11px; color: #7aa8d4; font-weight: 600; white-space: nowrap; }
+  .xp-track { flex: 1; height: 5px; background: var(--blue-bg); border-radius: 4px; overflow: hidden; }
+  .xp-fill  { height: 100%; background: linear-gradient(90deg, var(--blue2), #a855f7); border-radius: 4px; transition: width .5s ease; }
+  .xp-val   { font-size: 12px; font-weight: 700; color: #a855f7; min-width: 38px; text-align: right; }
 
   /* ── ВОПРОС ── */
-  .q-number { display: inline-block; font-size: 11px; font-weight: 700; background: var(--blue); color: #fff; padding: 2px 10px; border-radius: 99px; margin-bottom: 10px; }
-  .q-text {
-    font-family: 'Merriweather', serif;
-    font-size: 17px;
-    font-weight: 700;
-    color: #1a2e4a;
-    margin-bottom: 1.2rem;
-    line-height: 1.6;
-  }
-  .q-sub { font-size: 13px; color: var(--gray); font-family: 'Source Sans 3', sans-serif; font-weight: 400; display: block; margin-bottom: 4px; }
-  .q-text .blank { background: var(--blue-light); color: var(--blue); padding: 2px 8px; border-radius: 5px; font-family: 'Merriweather', serif; }
+  .q-tag { display: inline-block; font-size: 11px; background: var(--blue-light); color: var(--blue); padding: 2px 9px; border-radius: 99px; font-weight: 600; margin-bottom: 8px; }
+  .q-text { font-size: 17px; font-weight: 600; color: #1a2e4a; margin-bottom: 1.2rem; line-height: 1.6; }
+  .q-sub  { font-size: 13px; color: var(--gray); font-weight: 400; display: block; margin-bottom: 4px; }
+  .q-text code { font-family: Arial, sans-serif; background: var(--blue-light); color: var(--blue); padding: 1px 7px; border-radius: 5px; font-weight: 700; font-size: 17px; }
 
   /* ── ВАРИАНТЫ ── */
-  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: .6rem; }
-  .options.single-col { grid-template-columns: 1fr; }
+  .options { display: flex; flex-direction: column; gap: 9px; }
   .opt-btn {
-    padding: 10px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 9px;
-    background: var(--gray-light);
-    color: #1a2e4a;
-    font-size: 14px;
-    font-family: 'Source Sans 3', sans-serif;
-    cursor: pointer;
-    text-align: left;
-    transition: background .13s, border-color .13s, transform .1s;
+    padding: 11px 16px; border: 1.5px solid var(--border); border-radius: 10px;
+    background: var(--gray-light); color: #1a2e4a; font-size: 15px; cursor: pointer;
+    text-align: left; transition: background .13s, border-color .13s, transform .1s;
+    font-family: Arial, sans-serif;
   }
-  .opt-btn:hover:not(:disabled) { background: var(--blue-light); border-color: var(--blue2); transform: translateX(2px); }
-  .opt-btn.correct { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight: 600; }
-  .opt-btn.wrong   { background: var(--red-light); border-color: var(--red); color: var(--red); }
+  .opt-btn:hover:not(:disabled) { background: var(--blue-bg); border-color: var(--blue2); transform: translateX(3px); }
+  .opt-btn.correct { background: var(--green-light); border-color: #22c55e; color: var(--green); font-weight: 600; }
+  .opt-btn.wrong   { background: var(--red-light); border-color: #ef4444; color: var(--red); }
   .opt-btn:disabled { cursor: default; transform: none; }
 
-  /* ── ОТКРЫТЫЕ ВОПРОСЫ ── */
+  /* ── ОТКРЫТЫЙ ВОПРОС ── */
   .open-input {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 9px;
-    font-size: 15px;
-    font-family: 'Source Sans 3', sans-serif;
-    color: #1a2e4a;
-    background: var(--gray-light);
-    margin-bottom: 8px;
-    transition: border-color .15s;
-    outline: none;
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 9px;
+    font-size: 15px; font-family: Arial, sans-serif; color: #1a2e4a;
+    background: var(--gray-light); margin-bottom: 8px; outline: none; transition: border-color .15s;
   }
-  .open-input:focus { border-color: var(--blue2); background: var(--blue-light); }
-  .open-input.correct { border-color: var(--green); background: var(--green-light); }
-  .open-input.wrong   { border-color: var(--red); background: var(--red-light); }
-
+  .open-input:focus { border-color: var(--blue2); background: #eef5ff; }
+  .open-input.correct { border-color: #22c55e; background: var(--green-light); }
+  .open-input.wrong   { border-color: #ef4444; background: var(--red-light); }
   .check-btn {
-    padding: 9px 22px;
-    border-radius: 9px;
-    border: 1.5px solid var(--blue2);
-    background: var(--blue);
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Source Sans 3', sans-serif;
-    transition: background .15s;
+    padding: 9px 22px; border-radius: 9px; border: 1.5px solid var(--blue2);
+    background: var(--blue); color: #fff; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: Arial, sans-serif; transition: background .15s;
   }
   .check-btn:hover { background: var(--blue2); }
   .check-btn:disabled { opacity: .4; cursor: default; }
 
-  .feedback { margin-top: .6rem; font-size: 13px; min-height: 18px; line-height: 1.6; font-weight: 500; }
-  .feedback.ok  { color: var(--green); }
-  .feedback.err { color: var(--red); }
+  .feedback { margin-top: .8rem; font-size: 14px; min-height: 20px; line-height: 1.6; }
+  .feedback.ok  { color: #15803d; font-weight: 500; }
+  .feedback.err { color: #b91c1c; }
+
+  .hint-btn { font-size: 12px; font-weight: 600; background: var(--gray-light); border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 13px; cursor: pointer; color: #7aa8d4; font-family: Arial, sans-serif; transition: background .12s; }
+  .hint-btn:hover:not(:disabled) { background: var(--blue-bg); }
+  .hint-btn:disabled { opacity: .35; cursor: default; }
 
   .next-btn {
-    margin-top: 1rem;
-    padding: 10px 26px;
-    border-radius: 9px;
-    border: none;
-    background: var(--blue);
-    color: #fff;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    display: none;
-    font-family: 'Source Sans 3', sans-serif;
-    transition: background .15s;
+    margin-top: 1.1rem; padding: 10px 26px; border-radius: 10px;
+    border: 1.5px solid var(--blue); background: var(--blue); color: #fff;
+    font-size: 14px; font-weight: 600; cursor: pointer; display: none;
+    font-family: Arial, sans-serif; transition: background .15s;
   }
-  .next-btn:hover { background: var(--blue2); }
+  .next-btn:hover { background: #1a6bc4; }
 
   /* ── ИТОГ ── */
-  .result-screen { text-align: center; padding: 1rem 0 .5rem; }
-  .result-emoji { font-size: 52px; margin-bottom: .6rem; }
-  .result-score-big { font-family: 'Merriweather', serif; font-size: 48px; font-weight: 900; color: var(--blue); }
-  .result-of { font-size: 14px; color: var(--gray); margin: 4px 0 6px; }
-  .grade-badge {
-    display: inline-block;
-    padding: 5px 22px;
-    border-radius: 99px;
-    font-size: 15px;
-    font-weight: 700;
-    font-family: 'Merriweather', serif;
-    margin-bottom: 14px;
-  }
-  .grade-5 { background: #C6F6D5; color: #22543D; }
-  .grade-3 { background: var(--blue-light); color: var(--blue); }
-  .grade-2 { background: var(--red-light); color: var(--red); }
-  .result-msg { font-size: 14px; color: var(--gray); margin-bottom: 1.5rem; line-height: 1.7; }
-  .restart-btn {
-    padding: 11px 32px;
-    border-radius: 10px;
-    border: none;
-    background: var(--blue);
-    color: #fff;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Source Sans 3', sans-serif;
-    transition: background .15s;
-  }
-  .restart-btn:hover { background: var(--blue2); }
-  .mistakes-block { text-align: left; border-top: 1px solid var(--border); padding-top: 1.2rem; margin-top: 1.4rem; }
-  .mistakes-block h3 { font-size: 14px; font-weight: 700; color: var(--gray); margin-bottom: .6rem; }
-  .mistake-item { font-size: 13px; padding: 8px 12px; background: var(--gray-light); border-radius: 8px; margin-bottom: 6px; border-left: 3px solid var(--green); }
-  .mistake-item .m-q { color: var(--gray); font-size: 12px; margin-bottom: 2px; }
-  .mistake-item .m-a { color: var(--green); font-weight: 600; }
+  .result-screen { text-align: center; padding: 1.5rem .5rem .5rem; }
+  .result-emoji { font-size: 52px; margin-bottom: .8rem; }
+  .stars-row { display: flex; justify-content: center; gap: 6px; font-size: 2rem; margin: .4rem 0 .5rem; }
+  .star { filter: grayscale(1) opacity(.3); display: inline-block; }
+  .star.lit { filter: none; animation: starPop .4s ease; }
+  @keyframes starPop { 0%{transform:scale(.5) rotate(-20deg)} 70%{transform:scale(1.3) rotate(5deg)} 100%{transform:scale(1) rotate(0)} }
+  .rank-badge { display: inline-block; padding: 3px 16px; border-radius: 99px; font-size: 12px; font-weight: 700; letter-spacing: .05em; margin-bottom: .4rem; }
+  .result-score { font-size: 40px; font-weight: 700; color: var(--blue); }
+  .result-label { font-size: 14px; color: #7aa8d4; margin: .3rem 0 .3rem; }
+  .grade-big { font-size: 22px; font-weight: 700; margin-bottom: .3rem; }
+  .grade-5 { color: #15803d; }
+  .grade-3 { color: var(--blue); }
+  .grade-2 { color: #b91c1c; }
+  .result-msg { font-size: 15px; color: #1a2e4a; margin-bottom: 1.5rem; line-height: 1.7; }
+  .restart-btn { padding: 11px 32px; border-radius: 10px; border: 1.5px solid var(--blue); background: var(--blue); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; font-family: Arial, sans-serif; transition: background .15s; }
+  .restart-btn:hover { background: #1a6bc4; }
+  .mistakes-list { text-align: left; border-top: 1px solid var(--blue-bg); padding-top: 1.2rem; margin-top: 1.2rem; }
+  .mistakes-list h3 { font-size: 14px; font-weight: 600; color: #7aa8d4; margin-bottom: .75rem; }
+  .mistake-item { font-size: 13px; color: #1a2e4a; padding: 9px 13px; background: var(--gray-light); border-radius: 8px; margin-bottom: 7px; border-left: 3px solid #22c55e; }
+  .mistake-item .m-q { color: #7aa8d4; margin-bottom: 3px; font-size: 12px; }
+  .mistake-item .m-a { color: #15803d; font-weight: 600; }
 
-  /* ── ТАБЛИЦА РЕЗУЛЬТАТОВ ── */
-  .results-table-section {
-    max-width: 720px;
-    margin: 1.5rem auto 0;
-    background: #fff;
-    border-radius: 12px;
-    border: 1.5px solid var(--border);
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
-  }
-  .results-table-section h2 {
-    font-family: 'Merriweather', serif;
-    font-size: 16px;
-    color: var(--blue);
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .rtable { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .rtable th {
-    background: var(--blue);
-    color: #fff;
-    padding: 9px 12px;
-    text-align: left;
-    font-weight: 700;
-    font-family: 'Source Sans 3', sans-serif;
-  }
-  .rtable th:first-child { border-radius: 6px 0 0 0; }
-  .rtable th:last-child  { border-radius: 0 6px 0 0; }
-  .rtable td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: #1a2e4a; vertical-align: middle; }
-  .rtable tr:last-child td { border-bottom: none; }
-  .rtable tr:hover td { background: var(--blue-light); }
-  .rtable .grade-cell { font-weight: 700; padding: 2px 10px; border-radius: 99px; display: inline-block; font-size: 12px; }
-  .empty-row td { text-align: center; color: var(--gray); font-style: italic; }
-  .clear-btn {
-    margin-top: .8rem;
-    padding: 7px 18px;
-    border-radius: 8px;
-    border: 1.5px solid var(--border);
-    background: #fff;
-    color: var(--gray);
-    font-size: 12px;
-    cursor: pointer;
-    font-family: 'Source Sans 3', sans-serif;
-  }
-  .clear-btn:hover { background: var(--red-light); border-color: var(--red); color: var(--red); }
+  /* ── ПОВЫШЕННЫЙ ── */
+  .adv-label { font-size: 13px; font-weight: 700; color: var(--gray); display: block; margin-bottom: 5px; margin-top: 10px; }
+  .adv-label:first-of-type { margin-top: 0; }
 
-  /* ── QR / ССЫЛКА ── */
-  .share-section {
-    max-width: 720px;
-    margin: 1.2rem auto 0;
-    background: #fff;
-    border-radius: 12px;
-    border: 1.5px solid var(--border);
-    padding: 1.4rem 1.5rem;
-    box-shadow: var(--shadow);
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-  .qr-wrap { flex-shrink: 0; }
-  .qr-wrap canvas { border-radius: 8px; border: 1px solid var(--border); }
-  .share-info { flex: 1; min-width: 200px; }
-  .share-info h3 { font-family: 'Merriweather', serif; font-size: 14px; color: var(--blue); margin-bottom: 6px; }
-  .share-url {
-    display: block;
-    font-size: 12px;
-    color: var(--blue2);
-    word-break: break-all;
-    background: var(--blue-light);
-    padding: 7px 10px;
-    border-radius: 7px;
-    margin-bottom: 8px;
-    text-decoration: none;
-    font-weight: 600;
-  }
-  .copy-btn {
-    padding: 6px 18px;
-    border-radius: 8px;
-    border: 1.5px solid var(--blue2);
-    background: var(--blue-light);
-    color: var(--blue);
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Source Sans 3', sans-serif;
-    transition: background .15s;
-  }
-  .copy-btn:hover { background: var(--blue-mid); }
+  /* ── XP POPUP ── */
+  .xp-popup { position: fixed; pointer-events: none; font-weight: 700; font-size: .95rem; border-radius: 10px; padding: 3px 13px; z-index: 9999; animation: floatUp 1s ease forwards; }
+  .xp-popup.ok    { background: var(--green-light); color: var(--green); }
+  .xp-popup.bonus { background: #fef3c7; color: #92400e; }
+  @keyframes floatUp { 0%{opacity:1;transform:translateY(0)} 80%{opacity:1} 100%{opacity:0;transform:translateY(-55px)} }
 
-  /* ── ПОВЫШЕННЫЙ: ввод текста ── */
-  .essay-area {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 9px;
-    font-size: 14px;
-    font-family: 'Source Sans 3', sans-serif;
-    color: #1a2e4a;
-    background: var(--gray-light);
-    resize: vertical;
-    min-height: 80px;
-    outline: none;
-    transition: border-color .15s;
-  }
-  .essay-area:focus { border-color: var(--blue2); background: var(--blue-light); }
+  #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
 
   @media (max-width: 600px) {
-    .options { grid-template-columns: 1fr; }
-    .card { padding: 1.2rem 1rem 1.8rem; }
-    .share-section { flex-direction: column; }
+    .tab-panel { padding: 1.2rem 1rem 1.5rem; }
   }
 </style>
 </head>
 <body>
-
-<div class="page-header">
-  <h1>Входной контроль по иностранному языку</h1>
-  <p class="subtitle">для студентов 1 курса · Английский язык</p>
-  <div class="instruction">⚠ Повышенный уровень выполняется только после полного выполнения базового</div>
-</div>
-
-<!-- ВКЛАДКИ -->
-<div class="tabs" style="max-width:720px;margin:0 auto;">
-  <button class="tab-btn active" onclick="switchTab('basic')" id="tab-basic">
-    Базовый уровень
-    <span class="tab-note">Задания 1–18 · 18 баллов</span>
-  </button>
-  <button class="tab-btn" onclick="switchTab('advanced')" id="tab-advanced">
-    Повышенный уровень
-    <span class="tab-note">Задание 19 · 6 баллов</span>
-  </button>
-</div>
+<canvas id="confetti-canvas"></canvas>
 
 <div class="card">
+  <div class="card-header">
+    <h1>Входной контроль по иностранному языку</h1>
+    <div class="instr">для студентов 1 курса · Английский язык<br>⚠ Повышенный уровень выполняется только после полного выполнения базового</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('basic')" id="tab-basic">
+      Базовый уровень
+      <span class="tab-note">Задания 1–18 · 18 баллов</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('advanced')" id="tab-advanced">
+      Повышенный уровень
+      <span class="tab-note">Задание 19 · 6 баллов</span>
+    </button>
+  </div>
 
   <!-- ══ БАЗОВЫЙ ══ -->
   <div class="tab-panel active" id="panel-basic">
 
-    <!-- СТАРТ -->
     <div id="basic-start" class="start-screen">
       <div class="start-info">
         <b>Базовый уровень (Задания 1–18)</b><br>
         Выберите правильный вариант ответа.<br>
-        За каждый верный ответ — <b>1 балл</b>. Всего <b>18 баллов</b>.<br>
-        <br>
+        За каждый верный ответ — <b>1 балл</b>. Всего <b>18 баллов</b>.<br><br>
         Оценка: <b>10–18 баллов → «3»</b> &nbsp;|&nbsp; <b>менее 9 баллов → «2»</b>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label">⏱ Таймер
+          <span class="toggle-sub">15 секунд на вопрос · бонус XP за быстрый ответ</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="b-timer-toggle" onchange="bTimerEnabled=this.checked">
+          <span class="toggle-slider"></span>
+        </label>
       </div>
       <button class="start-btn" onclick="startBasic()">▶ Начать тест</button>
     </div>
 
-    <!-- ТЕСТ -->
     <div id="basic-quiz" style="display:none">
-      <div class="progress-wrap">
-        <div class="progress-meta">
-          <span id="b-counter">Вопрос 1 из 18</span>
-          <span id="b-score-live">✓ 0 &nbsp; ✗ 0</span>
-        </div>
-        <div class="progress-bar"><div class="progress-fill" id="b-progress" style="width:0%"></div></div>
+      <div class="xp-row">
+        <span class="xp-label">XP</span>
+        <div class="xp-track"><div class="xp-fill" id="b-xp-fill" style="width:0%"></div></div>
+        <span class="xp-val" id="b-xp-val">0</span>
       </div>
-      <div id="b-qnum" class="q-number">Вопрос 1</div>
+      <div class="hud">
+        <span class="hud-chip">🇬🇧 Базовый</span>
+        <span class="hud-chip"><span id="b-counter-cur">1</span> / <span id="b-counter-tot">18</span></span>
+        <span class="hud-chip">✓ <span id="b-hud-ok">0</span> &nbsp; ✗ <span id="b-hud-err">0</span></span>
+        <span class="streak-badge" id="b-streak-badge">🔥 <span id="b-streak-val">0</span></span>
+        <button class="hint-btn" id="b-hint-btn" onclick="useHintBasic()">💡 Подсказка (3)</button>
+        <span class="timer-chip" id="b-timer-chip">⏱ <b id="b-timer-val">15</b></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="b-progress" style="width:0%"></div></div>
+      <div class="q-tag" id="b-qtag"></div>
       <div class="q-text" id="b-qtext"></div>
       <div id="b-answer-area"></div>
       <div class="feedback" id="b-feedback"></div>
       <button class="next-btn" id="b-next" onclick="nextBasic()">Следующий →</button>
     </div>
 
-    <!-- ИТОГ -->
     <div id="basic-result" style="display:none">
       <div class="result-screen">
         <div class="result-emoji" id="b-emoji">📝</div>
-        <div class="result-score-big" id="b-score-big">0</div>
-        <div class="result-of">из 18 баллов · Базовый уровень</div>
-        <div class="grade-badge" id="b-grade"></div>
+        <div class="stars-row" id="b-stars"></div>
+        <div id="b-rank-wrap"></div>
+        <div class="result-score" id="b-score-big">0</div>
+        <div class="result-label">из 18 баллов · Базовый уровень</div>
+        <div class="grade-big" id="b-grade-big"></div>
         <div class="result-msg" id="b-msg"></div>
         <button class="restart-btn" onclick="restartBasic()">🔄 Пройти снова</button>
-        <div class="mistakes-block" id="b-mistakes"></div>
+        <div class="mistakes-list" id="b-mistakes"></div>
       </div>
     </div>
   </div>
@@ -444,26 +289,23 @@
     <div id="adv-start" class="start-screen">
       <div class="start-info">
         <b>Повышенный уровень (Задание 19)</b><br>
-        Расскажите о себе на английском языке — <b>3 предложения</b>.<br>
-        За каждое правильное предложение — <b>2 балла</b>. Всего <b>6 баллов</b>.<br>
-        <br>
+        Tell about yourself in 3 sentences.<br>
+        За каждое правильное предложение — <b>2 балла</b>. Всего <b>6 баллов</b>.<br><br>
         Оценка: <b>5–6 баллов → «5»</b> &nbsp;|&nbsp; <b>4 балла и менее → «4»</b>
       </div>
       <button class="start-btn" onclick="startAdv()">▶ Начать задание</button>
     </div>
 
     <div id="adv-quiz" style="display:none">
-      <div id="adv-q-num" class="q-number">Задание 19</div>
-      <div class="q-text">Tell about yourself in 3 sentences.</div>
-      <p style="font-size:13px;color:var(--gray);margin-bottom:14px;">Напишите 3 предложения о себе на английском языке. Каждое предложение — на отдельной строке.</p>
-
-      <label style="font-size:13px;font-weight:600;color:var(--gray);display:block;margin-bottom:5px;">Предложение 1:</label>
-      <input type="text" class="open-input" id="adv-s1" placeholder="My name is …" />
-      <label style="font-size:13px;font-weight:600;color:var(--gray);display:block;margin-bottom:5px;margin-top:10px;">Предложение 2:</label>
+      <div class="q-tag">Задание 19</div>
+      <div class="q-text" style="margin-top:8px;">Tell about yourself in 3 sentences.</div>
+      <p style="font-size:13px;color:var(--gray);margin-bottom:14px;">Напишите 3 предложения о себе на английском языке.</p>
+      <span class="adv-label">Предложение 1:</span>
+      <input type="text" class="open-input adv-label" id="adv-s1" placeholder="My name is …" style="margin-top:0"/>
+      <span class="adv-label">Предложение 2:</span>
       <input type="text" class="open-input" id="adv-s2" placeholder="I am … years old …" />
-      <label style="font-size:13px;font-weight:600;color:var(--gray);display:block;margin-bottom:5px;margin-top:10px;">Предложение 3:</label>
+      <span class="adv-label">Предложение 3:</span>
       <input type="text" class="open-input" id="adv-s3" placeholder="I like …" />
-
       <div style="margin-top:14px;">
         <button class="check-btn" onclick="submitAdv()">✓ Отправить</button>
       </div>
@@ -473,9 +315,10 @@
     <div id="adv-result" style="display:none">
       <div class="result-screen">
         <div class="result-emoji" id="adv-emoji">⭐</div>
-        <div class="result-score-big" id="adv-score-big">0</div>
-        <div class="result-of">из 6 баллов · Повышенный уровень</div>
-        <div class="grade-badge" id="adv-grade"></div>
+        <div class="stars-row" id="adv-stars"></div>
+        <div class="result-score" id="adv-score-big">0</div>
+        <div class="result-label">из 6 баллов · Повышенный уровень</div>
+        <div class="grade-big" id="adv-grade-big"></div>
         <div class="result-msg" id="adv-msg"></div>
         <button class="restart-btn" onclick="restartAdv()">🔄 Попробовать снова</button>
       </div>
@@ -484,459 +327,325 @@
 
 </div><!-- /card -->
 
-<!-- ══ ТАБЛИЦА РЕЗУЛЬТАТОВ ══ -->
-<div class="results-table-section">
-  <h2>📊 Журнал результатов</h2>
-  <table class="rtable" id="results-table">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Время</th>
-        <th>Уровень</th>
-        <th>Баллы</th>
-        <th>Оценка</th>
-      </tr>
-    </thead>
-    <tbody id="results-tbody">
-      <tr class="empty-row"><td colspan="5">Результаты появятся после прохождения теста</td></tr>
-    </tbody>
-  </table>
-  <button class="clear-btn" onclick="clearResults()">🗑 Очистить таблицу</button>
-</div>
-
-<!-- ══ QR-КОД И ССЫЛКА ══ -->
-<div class="share-section">
-  <div class="qr-wrap">
-    <canvas id="qr-canvas" width="110" height="110"></canvas>
-  </div>
-  <div class="share-info">
-    <h3>📎 Ссылка на тест</h3>
-    <a class="share-url" id="share-url" href="#" target="_blank">https://turanvic-pixel.github.io/English/grammar_tests/entrance_test.html</a>
-    <button class="copy-btn" onclick="copyLink()">📋 Скопировать ссылку</button>
-  </div>
-</div>
-
-<!-- QR library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
 <script>
-// ══ ВОПРОСЫ БАЗОВОГО УРОВНЯ ══
+// ══ ВОПРОСЫ ══
 var BASIC_Q = [
-  // 1-8: выбор варианта
-  {
-    q: "He has many friends.",
-    sub: "Выберите правильный перевод:",
-    opts: ["У неё много друзей.", "У него много друзей.", "Он имеет много денег.", "У его друзей много денег."],
-    ans: 1, type: "mc"
-  },
-  {
-    q: "В комнате есть стулья.",
-    sub: "Выберите правильный перевод на английский:",
-    opts: ["There is a chair in the room.", "There are chairs in the room.", "There is a table in the room.", "There are tables in the room."],
-    ans: 1, type: "mc"
-  },
-  {
-    q: "New Year is celebrated ___ winter.",
-    sub: "Выберите правильный предлог:",
-    opts: ["in", "on", "–", "at"],
-    ans: 0, type: "mc"
-  },
-  {
-    q: "What is ___ name?",
-    sub: "Выберите правильное слово:",
-    opts: ["you", "your", "yourself", "yourselves"],
-    ans: 1, type: "mc"
-  },
-  {
-    q: "There ___ twelve people in the room.",
-    sub: "Выберите правильную форму глагола:",
-    opts: ["are", "is", "am", "–"],
-    ans: 0, type: "mc"
-  },
-  {
-    q: "This book is ___.",
-    sub: "Выберите правильное притяжательное слово:",
-    opts: ["mine", "my", "my friend", "my friend's"],
-    ans: 0, type: "mc"
-  },
-  {
-    q: "Your test is good, but mine is ___.",
-    sub: "Выберите правильную степень сравнения:",
-    opts: ["better", "badder", "gooder", "well"],
-    ans: 0, type: "mc"
-  },
-  {
-    q: "Russia is ___ country in the world.",
-    sub: "Выберите правильную степень сравнения:",
-    opts: ["large", "the most large", "the largest", "larger"],
-    ans: 2, type: "mc"
-  },
-  {
-    q: "Football is ___ sport in the world.",
-    sub: "Выберите правильную степень сравнения:",
-    opts: ["interesting", "the most interesting", "interestinger", "more interesting"],
-    ans: 1, type: "mc"
-  },
-  {
-    q: "There are many ___ in the room.",
-    sub: "Выберите правильную форму существительного:",
-    opts: ["man", "men", "mens", "mans"],
-    ans: 1, type: "mc"
-  },
-  {
-    q: "Where are you from? – I am from ___ Russia.",
-    sub: "Выберите правильный артикль:",
-    opts: ["a", "the", "–", "an"],
-    ans: 2, type: "mc"
-  },
-  {
-    q: "I ___ to college every day.",
-    sub: "Выберите правильную форму глагола:",
-    opts: ["will go", "goes", "going", "go"],
-    ans: 1, type: "mc"
-  },
-  {
-    q: "The students ___ the museum yesterday.",
-    sub: "Выберите правильную форму глагола:",
-    opts: ["visited", "visit", "was visiting", "visits"],
-    ans: 0, type: "mc"
-  },
-  {
-    q: "My parents and I ___ next summer.",
-    sub: "Выберите правильную форму глагола:",
-    opts: ["are travelling", "travel", "will travel", "travels"],
-    ans: 2, type: "mc"
-  },
-  {
-    q: "Mike ___ football now.",
-    sub: "Выберите правильную форму глагола:",
-    opts: ["are playing", "play", "plays", "is playing"],
-    ans: 3, type: "mc"
-  },
-  // 16: открытый вопрос
-  {
-    q: "Напишите числительное на английском языке:",
-    sub: "Пятьдесят восемь",
-    opts: null, type: "open",
-    answers: ["fifty-eight", "fifty eight"],
-    placeholder: "Напишите ответ..."
-  },
-  // 17: открытый вопрос
-  {
-    q: "Напишите фразу на английском языке:",
-    sub: "Тридцать первое декабря",
-    opts: null, type: "open",
-    answers: ["the thirty-first of december", "the 31st of december", "december 31st", "december the thirty-first", "thirty-first of december", "31st of december"],
-    placeholder: "Напишите дату..."
-  },
-  // 18: порядок слов
-  {
-    q: "Поставьте слова в правильном порядке:",
-    sub: "have, week, we, English, every",
-    opts: null, type: "open",
-    answers: ["we have english every week", "we have english class every week"],
-    placeholder: "Составьте предложение..."
-  }
+  {tag:"Перевод", q:"He has many friends.", sub:"Выберите правильный перевод:", opts:["У неё много друзей.","У него много друзей.","Он имеет много денег.","У его друзей много денег."], ans:1, type:"mc"},
+  {tag:"Перевод", q:"В комнате есть стулья.", sub:"Выберите правильный перевод:", opts:["There is a chair in the room.","There are chairs in the room.","There is a table in the room.","There are tables in the room."], ans:1, type:"mc"},
+  {tag:"Предлоги", q:"New Year is celebrated <code>___</code> winter.", sub:"Выберите правильный предлог:", opts:["in","on","–","at"], ans:0, type:"mc"},
+  {tag:"Местоимения", q:"What is <code>___</code> name?", sub:"Выберите правильное слово:", opts:["you","your","yourself","yourselves"], ans:1, type:"mc"},
+  {tag:"Грамматика", q:"There <code>___</code> twelve people in the room.", sub:"Выберите правильную форму глагола:", opts:["are","is","am","–"], ans:0, type:"mc"},
+  {tag:"Местоимения", q:"This book is <code>___</code>.", sub:"Выберите правильное притяжательное:", opts:["mine","my","my friend","my friend's"], ans:0, type:"mc"},
+  {tag:"Степени", q:"Your test is good, but mine is <code>___</code>.", sub:"Выберите правильную степень сравнения:", opts:["better","badder","gooder","well"], ans:0, type:"mc"},
+  {tag:"Степени", q:"Russia is <code>___</code> country in the world.", sub:"Выберите правильную степень сравнения:", opts:["large","the most large","the largest","larger"], ans:2, type:"mc"},
+  {tag:"Степени", q:"Football is <code>___</code> sport in the world.", sub:"Выберите правильную степень сравнения:", opts:["interesting","the most interesting","interestinger","more interesting"], ans:1, type:"mc"},
+  {tag:"Существительные", q:"There are many <code>___</code> in the room.", sub:"Выберите правильную форму мн. числа:", opts:["man","men","mens","mans"], ans:1, type:"mc"},
+  {tag:"Артикли", q:"Where are you from? – I am from <code>___</code> Russia.", sub:"Выберите правильный артикль:", opts:["a","the","–","an"], ans:2, type:"mc"},
+  {tag:"Времена", q:"I <code>___</code> to college every day.", sub:"Выберите правильную форму глагола:", opts:["will go","goes","going","go"], ans:1, type:"mc"},
+  {tag:"Времена", q:"The students <code>___</code> the museum yesterday.", sub:"Выберите правильную форму глагола:", opts:["visited","visit","was visiting","visits"], ans:0, type:"mc"},
+  {tag:"Времена", q:"My parents and I <code>___</code> next summer.", sub:"Выберите правильную форму глагола:", opts:["are travelling","travel","will travel","travels"], ans:2, type:"mc"},
+  {tag:"Времена", q:"Mike <code>___</code> football now.", sub:"Выберите правильную форму глагола:", opts:["are playing","play","plays","is playing"], ans:3, type:"mc"},
+  {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Пятьдесят восемь", opts:null, type:"open", answers:["fifty-eight","fifty eight"], placeholder:"Напишите ответ..."},
+  {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Тридцать первое декабря", opts:null, type:"open", answers:["the thirty-first of december","thirty-first of december","december the thirty-first","the 31st of december","31st of december","december 31st"], placeholder:"Напишите дату..."},
+  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"have, week, we, English, every", opts:null, type:"open", answers:["we have english every week","we have english class every week"], placeholder:"Составьте предложение..."}
 ];
 
-// ══ СОСТОЯНИЕ ══
-var bCur = 0, bScore = 0, bMistakes = [], bResults = [];
-var resultsLog = JSON.parse(localStorage.getItem('entrance_results') || '[]');
+// ══ СОСТОЯНИЕ БАЗОВОГО ══
+var bCur=0, bScore=0, bMistakes=[], bResults=[];
+var bXp=0, bStreak=0, bHints=3;
+var MAX_XP=180;
+var bTimerEnabled=false, bTimerInterval=null, bTimerSec=0, bQStartTime=0;
 
 function switchTab(tab) {
-  document.getElementById('tab-basic').className = 'tab-btn' + (tab==='basic'?' active':'');
-  document.getElementById('tab-advanced').className = 'tab-btn' + (tab==='advanced'?' active':'');
-  document.getElementById('panel-basic').className = 'tab-panel' + (tab==='basic'?' active':'');
-  document.getElementById('panel-advanced').className = 'tab-panel' + (tab==='advanced'?' active':'');
+  document.getElementById('tab-basic').className='tab-btn'+(tab==='basic'?' active':'');
+  document.getElementById('tab-advanced').className='tab-btn'+(tab==='advanced'?' active':'');
+  document.getElementById('panel-basic').className='tab-panel'+(tab==='basic'?' active':'');
+  document.getElementById('panel-advanced').className='tab-panel'+(tab==='advanced'?' active':'');
 }
 
-// ══ БАЗОВЫЙ ТЕСТ ══
 function startBasic() {
-  bCur = 0; bScore = 0; bMistakes = []; bResults = [];
-  document.getElementById('basic-start').style.display = 'none';
-  document.getElementById('basic-result').style.display = 'none';
-  document.getElementById('basic-quiz').style.display = '';
+  bCur=0; bScore=0; bMistakes=[]; bResults=[]; bXp=0; bStreak=0; bHints=3;
+  document.getElementById('basic-start').style.display='none';
+  document.getElementById('basic-result').style.display='none';
+  document.getElementById('basic-quiz').style.display='';
+  document.getElementById('b-counter-tot').textContent=BASIC_Q.length;
+  document.getElementById('b-timer-chip').style.display=bTimerEnabled?'':'none';
+  updateBXp(); updateBStreak();
   showBasicQ();
 }
 function restartBasic() {
-  document.getElementById('basic-result').style.display = 'none';
-  document.getElementById('basic-start').style.display = '';
+  stopBTimer();
+  document.getElementById('basic-result').style.display='none';
+  document.getElementById('basic-start').style.display='';
 }
 
 function showBasicQ() {
-  var total = BASIC_Q.length;
-  if (bCur >= total) { showBasicResult(); return; }
-  var q = BASIC_Q[bCur];
-  document.getElementById('b-progress').style.width = (bCur/total*100) + '%';
-  document.getElementById('b-counter').textContent = 'Вопрос ' + (bCur+1) + ' из ' + total;
-  document.getElementById('b-score-live').textContent = '✓ ' + bScore + ' \u00a0 ✗ ' + bResults.filter(function(r){return !r.ok;}).length;
-  document.getElementById('b-qnum').textContent = 'Вопрос ' + (bCur+1);
-  document.getElementById('b-qtext').innerHTML = '<span class="q-sub">' + (q.sub||'') + '</span>' + q.q.replace(/___/g, '<span class="blank">___</span>');
-  document.getElementById('b-feedback').textContent = '';
-  document.getElementById('b-feedback').className = 'feedback';
-  document.getElementById('b-next').style.display = 'none';
-  var area = document.getElementById('b-answer-area');
-  area.innerHTML = '';
-
-  if (q.type === 'mc') {
-    var div = document.createElement('div');
-    div.className = 'options';
-    q.opts.forEach(function(opt, i) {
-      var btn = document.createElement('button');
-      btn.className = 'opt-btn';
-      btn.dataset.idx = i;
-      btn.textContent = (i+1) + ')  ' + opt;
-      btn.onclick = (function(idx){ return function(){ selectBasic(idx); }; })(i);
+  var total=BASIC_Q.length;
+  if(bCur>=total){showBasicResult();return;}
+  var q=BASIC_Q[bCur];
+  document.getElementById('b-progress').style.width=(bCur/total*100)+'%';
+  document.getElementById('b-counter-cur').textContent=bCur+1;
+  document.getElementById('b-hud-ok').textContent=bScore;
+  document.getElementById('b-hud-err').textContent=bResults.filter(function(r){return !r.ok;}).length;
+  document.getElementById('b-hint-btn').textContent='💡 Подсказка ('+bHints+')';
+  document.getElementById('b-hint-btn').disabled=(bHints<=0||q.type==='open');
+  document.getElementById('b-qtag').textContent=q.tag;
+  document.getElementById('b-qtext').innerHTML='<span class="q-sub">'+(q.sub||'')+'</span>'+q.q;
+  document.getElementById('b-feedback').textContent='';
+  document.getElementById('b-feedback').className='feedback';
+  document.getElementById('b-next').style.display='none';
+  var area=document.getElementById('b-answer-area');
+  area.innerHTML='';
+  if(q.type==='mc'){
+    var div=document.createElement('div');
+    div.className='options';
+    q.opts.forEach(function(opt,i){
+      var btn=document.createElement('button');
+      btn.className='opt-btn'; btn.dataset.idx=i;
+      btn.innerHTML=(i+1)+')  '+opt;
+      btn.onclick=(function(idx){return function(){selectBasic(idx);};})(i);
       div.appendChild(btn);
     });
     area.appendChild(div);
   } else {
-    var inp = document.createElement('input');
-    inp.type = 'text';
-    inp.className = 'open-input';
-    inp.placeholder = q.placeholder || 'Введите ответ...';
-    inp.id = 'b-open-inp';
-    inp.addEventListener('keydown', function(e){ if(e.key==='Enter') checkOpenBasic(); });
+    var inp=document.createElement('input');
+    inp.type='text'; inp.className='open-input';
+    inp.placeholder=q.placeholder||'Введите ответ...'; inp.id='b-open-inp';
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter')checkOpenBasic();});
     area.appendChild(inp);
-    var chk = document.createElement('button');
-    chk.className = 'check-btn';
-    chk.textContent = '✓ Проверить';
-    chk.onclick = checkOpenBasic;
-    chk.id = 'b-chk-btn';
+    var chk=document.createElement('button');
+    chk.className='check-btn'; chk.textContent='✓ Проверить';
+    chk.onclick=checkOpenBasic; chk.id='b-chk-btn';
     area.appendChild(chk);
-    setTimeout(function(){ inp.focus(); }, 50);
+    setTimeout(function(){inp.focus();},50);
   }
+  if(bTimerEnabled) startBTimer(15); else resetBTimerUI();
+  bQStartTime=Date.now();
 }
 
-function selectBasic(idx) {
-  var q = BASIC_Q[bCur];
-  var btns = document.querySelectorAll('#basic-quiz .opt-btn');
-  btns.forEach(function(b){ b.disabled = true; });
-  var ok = (idx === q.ans);
-  btns[idx].classList.add(ok ? 'correct' : 'wrong');
-  if (!ok) btns[q.ans].classList.add('correct');
-  var fb = document.getElementById('b-feedback');
-  if (ok) {
-    fb.textContent = '✓ Верно!'; fb.className = 'feedback ok'; bScore++;
+function selectBasic(idx){
+  stopBTimer();
+  var q=BASIC_Q[bCur];
+  var btns=document.querySelectorAll('#basic-quiz .opt-btn');
+  btns.forEach(function(b){b.disabled=true;});
+  var elapsed=(Date.now()-bQStartTime)/1000;
+  var ok=(idx===q.ans);
+  btns[idx].classList.add(ok?'correct':'wrong');
+  if(!ok) btns[q.ans].classList.add('correct');
+  var fb=document.getElementById('b-feedback');
+  if(ok){
+    bStreak++; bScore++;
+    var fast=bTimerEnabled&&elapsed<5;
+    var sb=bStreak>=3?3:0;
+    var gained=10+(fast?5:0)+sb;
+    fb.textContent='✓ Правильно!'+(fast?' ⚡':'')+(sb?' 🔥':'');
+    fb.className='feedback ok';
+    addBXP(gained,(fast||sb)?'bonus':'ok'); launchConfetti();
   } else {
-    fb.textContent = '✗ Неверно. Правильный ответ: ' + q.opts[q.ans]; fb.className = 'feedback err';
-    bMistakes.push({ q: q.q, a: q.opts[q.ans] });
+    bStreak=0;
+    fb.textContent='✗ Неверно. Правильный ответ: '+q.opts[q.ans];
+    fb.className='feedback err';
+    bMistakes.push({q:q.q.replace(/<[^>]+>/g,''), a:q.opts[q.ans]});
   }
-  bResults.push({ok:ok});
+  updateBStreak(); bResults.push({ok:ok});
   showBNext();
 }
 
-function checkOpenBasic() {
-  var q = BASIC_Q[bCur];
-  var inp = document.getElementById('b-open-inp');
-  var chk = document.getElementById('b-chk-btn');
-  var val = inp.value.trim().toLowerCase();
-  var ok = q.answers.some(function(a){ return val === a.toLowerCase(); });
-  inp.disabled = true;
-  if (chk) chk.disabled = true;
-  inp.className = 'open-input ' + (ok ? 'correct' : 'wrong');
-  var fb = document.getElementById('b-feedback');
-  if (ok) {
-    fb.textContent = '✓ Верно!'; fb.className = 'feedback ok'; bScore++;
+function checkOpenBasic(){
+  var q=BASIC_Q[bCur];
+  var inp=document.getElementById('b-open-inp');
+  var chk=document.getElementById('b-chk-btn');
+  var val=inp.value.trim().toLowerCase();
+  var ok=q.answers.some(function(a){return val===a.toLowerCase();});
+  inp.disabled=true; if(chk) chk.disabled=true;
+  inp.className='open-input '+(ok?'correct':'wrong');
+  var fb=document.getElementById('b-feedback');
+  if(ok){
+    bStreak++; bScore++; addBXP(10,'ok'); launchConfetti();
+    fb.textContent='✓ Правильно!'; fb.className='feedback ok';
   } else {
-    fb.textContent = '✗ Неверно. Правильный ответ: ' + q.answers[0]; fb.className = 'feedback err';
-    bMistakes.push({ q: q.q + ' ' + (q.sub||''), a: q.answers[0] });
+    bStreak=0;
+    fb.textContent='✗ Неверно. Правильный ответ: '+q.answers[0]; fb.className='feedback err';
+    bMistakes.push({q:q.q+' '+q.sub, a:q.answers[0]});
   }
-  bResults.push({ok:ok});
+  updateBStreak(); bResults.push({ok:ok});
   showBNext();
 }
 
-function showBNext() {
-  var nb = document.getElementById('b-next');
-  nb.style.display = 'inline-block';
-  nb.textContent = bCur < BASIC_Q.length - 1 ? 'Следующий →' : 'Посмотреть результат →';
+function showBNext(){
+  var nb=document.getElementById('b-next');
+  nb.style.display='inline-block';
+  nb.textContent=bCur<BASIC_Q.length-1?'Следующий →':'Посмотреть результат →';
+}
+function nextBasic(){bCur++;if(bCur<BASIC_Q.length)showBasicQ();else showBasicResult();}
+
+function useHintBasic(){
+  if(bHints<=0)return;
+  var q=BASIC_Q[bCur]; if(q.type!=='mc')return;
+  bHints--;
+  var btns=Array.from(document.querySelectorAll('#basic-quiz .opt-btn:not(:disabled)'));
+  var wrongs=btns.filter(function(b){return parseInt(b.dataset.idx)!==q.ans;});
+  if(wrongs.length){var pick=wrongs[Math.floor(Math.random()*wrongs.length)];pick.disabled=true;pick.style.opacity='.2';}
+  document.getElementById('b-hint-btn').textContent='💡 Подсказка ('+bHints+')';
+  if(bHints<=0)document.getElementById('b-hint-btn').disabled=true;
 }
 
-function nextBasic() {
-  bCur++;
-  if (bCur < BASIC_Q.length) showBasicQ(); else showBasicResult();
+function showBasicResult(){
+  stopBTimer();
+  document.getElementById('b-progress').style.width='100%';
+  document.getElementById('basic-quiz').style.display='none';
+  document.getElementById('basic-result').style.display='';
+  var total=BASIC_Q.length;
+  var pct=bScore/total;
+  var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
+  var emoji=bScore===total?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
+  var grade,gradeClass,msg;
+  if(bScore>=10){grade='Оценка «3»';gradeClass='grade-3';msg='Базовый уровень пройден. Переходите к повышенному уровню.';}
+  else{grade='Оценка «2»';gradeClass='grade-2';msg='Менее 10 баллов — оценка «2». Повторите материал.';}
+  if(bScore===total){emoji='🏆';msg='Отлично! Все задания выполнены верно!';}
+  document.getElementById('b-emoji').textContent=emoji;
+  document.getElementById('b-score-big').textContent=bScore;
+  document.getElementById('b-grade-big').textContent=grade;
+  document.getElementById('b-grade-big').className='grade-big '+gradeClass;
+  document.getElementById('b-msg').textContent=msg;
+  var sHTML=''; for(var i=1;i<=3;i++) sHTML+='<span class="star'+(stars>=i?' lit':'')+'" style="animation-delay:'+((i-1)*.18)+'s">⭐</span>';
+  document.getElementById('b-stars').innerHTML=sHTML;
+  var rank=pct>=0.9?{n:'Мастер',bg:'#ede9fe',c:'#6d28d9'}:pct>=0.7?{n:'Знаток',bg:'#e0eeff',c:'#185FA5'}:pct>=0.5?{n:'Ученик',bg:'#e4f0ea',c:'#2D5A3D'}:{n:'Новичок',bg:'#f0eaf8',c:'#6B2FA0'};
+  document.getElementById('b-rank-wrap').innerHTML='<span class="rank-badge" style="background:'+rank.bg+';color:'+rank.c+'">🏅 '+rank.n+'</span>';
+  if(pct>=0.9) launchBigConfetti();
+  var mBlock=document.getElementById('b-mistakes');
+  if(bMistakes.length){
+    var html='<h3>Разбор ошибок:</h3>';
+    bMistakes.forEach(function(m){html+='<div class="mistake-item"><div class="m-q">'+m.q+'</div><div class="m-a">✓ '+m.a+'</div></div>';});
+    mBlock.innerHTML=html;
+  } else mBlock.innerHTML='';
 }
 
-function showBasicResult() {
-  document.getElementById('basic-quiz').style.display = 'none';
-  document.getElementById('basic-result').style.display = '';
-  document.getElementById('b-progress').style.width = '100%';
+// ── XP / STREAK (базовый) ──
+function addBXP(amount,type){
+  bXp=Math.min(bXp+amount,MAX_XP); updateBXp();
+  var fb=document.getElementById('b-feedback'); if(!fb)return;
+  var rect=fb.getBoundingClientRect();
+  var pop=document.createElement('div');
+  pop.className='xp-popup '+type; pop.textContent='+'+amount+' XP';
+  pop.style.left=(rect.left+rect.width/2-30)+'px';
+  pop.style.top=(rect.top+window.scrollY-8)+'px';
+  document.body.appendChild(pop); setTimeout(function(){pop.remove();},1100);
+}
+function updateBXp(){
+  document.getElementById('b-xp-fill').style.width=Math.min(100,bXp/MAX_XP*100)+'%';
+  document.getElementById('b-xp-val').textContent=bXp;
+}
+function updateBStreak(){
+  var b=document.getElementById('b-streak-badge');
+  document.getElementById('b-streak-val').textContent=bStreak;
+  b.className='streak-badge'+(bStreak>=5?' fire':bStreak>=3?' hot':'');
+}
 
-  var total = BASIC_Q.length;
-  var pct = bScore / total;
-  var grade, gradeClass, emoji, msg;
-  if (bScore >= 10) {
-    grade = 'Оценка: 3'; gradeClass = 'grade-3'; emoji = '👍';
-    msg = 'Базовый уровень пройден. Вы можете приступить к повышенному уровню.';
-  } else {
-    grade = 'Оценка: 2'; gradeClass = 'grade-2'; emoji = '📖';
-    msg = 'Базовый уровень не пройден. Менее 10 баллов — оценка «2».';
-  }
-  if (bScore === total) { emoji = '🏆'; msg = 'Отлично! Все задания выполнены верно!'; }
-  else if (bScore >= 15) { emoji = '⭐'; }
-
-  document.getElementById('b-emoji').textContent = emoji;
-  document.getElementById('b-score-big').textContent = bScore;
-  document.getElementById('b-grade').textContent = grade;
-  document.getElementById('b-grade').className = 'grade-badge ' + gradeClass;
-  document.getElementById('b-msg').textContent = msg;
-
-  // ошибки
-  var mBlock = document.getElementById('b-mistakes');
-  if (bMistakes.length > 0) {
-    var html = '<h3>Разбор ошибок:</h3>';
-    bMistakes.forEach(function(m){
-      html += '<div class="mistake-item"><div class="m-q">' + m.q + '</div><div class="m-a">✓ ' + m.a + '</div></div>';
-    });
-    mBlock.innerHTML = html;
-  } else {
-    mBlock.innerHTML = '';
-  }
-
-  // лог
-  addToLog('Базовый', bScore + ' / ' + total, grade.replace('Оценка: ',''), gradeClass);
+// ── ТАЙМЕР (базовый) ──
+function startBTimer(sec){
+  stopBTimer(); bTimerSec=sec; updateBTimerUI();
+  bTimerInterval=setInterval(function(){
+    bTimerSec--; updateBTimerUI();
+    if(bTimerSec<=0){clearInterval(bTimerInterval);bTimerInterval=null;bTimeOut();}
+  },1000);
+}
+function stopBTimer(){if(bTimerInterval){clearInterval(bTimerInterval);bTimerInterval=null;}}
+function resetBTimerUI(){
+  var c=document.getElementById('b-timer-chip');
+  if(c){c.className='timer-chip';document.getElementById('b-timer-val').textContent='15';}
+}
+function updateBTimerUI(){
+  document.getElementById('b-timer-val').textContent=bTimerSec;
+  var c=document.getElementById('b-timer-chip');
+  if(c) c.className='timer-chip'+(bTimerSec<=5?' danger':bTimerSec<=9?' warn':'');
+}
+function bTimeOut(){
+  var q=BASIC_Q[bCur];
+  var fb=document.getElementById('b-feedback');
+  fb.textContent='⏰ Время вышло!'; fb.className='feedback err';
+  bStreak=0; updateBStreak();
+  document.querySelectorAll('#basic-quiz .opt-btn').forEach(function(b){
+    b.disabled=true;
+    if(parseInt(b.dataset.idx)===q.ans) b.classList.add('correct');
+  });
+  bMistakes.push({q:q.q.replace(/<[^>]+>/g,''), a:q.opts[q.ans]});
+  bResults.push({ok:false});
+  showBNext();
 }
 
 // ══ ПОВЫШЕННЫЙ ══
-var advSubmitted = false;
-function startAdv() {
-  advSubmitted = false;
-  document.getElementById('adv-start').style.display = 'none';
-  document.getElementById('adv-result').style.display = 'none';
-  document.getElementById('adv-quiz').style.display = '';
+var advSubmitted=false;
+function startAdv(){
+  advSubmitted=false;
+  document.getElementById('adv-start').style.display='none';
+  document.getElementById('adv-result').style.display='none';
+  document.getElementById('adv-quiz').style.display='';
   ['adv-s1','adv-s2','adv-s3'].forEach(function(id){
-    var el = document.getElementById(id);
-    el.value = ''; el.disabled = false; el.className = 'open-input';
+    var el=document.getElementById(id);
+    el.value=''; el.disabled=false; el.className='open-input';
   });
-  document.getElementById('adv-feedback').textContent = '';
+  document.getElementById('adv-feedback').textContent='';
 }
-function restartAdv() {
-  document.getElementById('adv-result').style.display = 'none';
-  document.getElementById('adv-start').style.display = '';
+function restartAdv(){
+  document.getElementById('adv-result').style.display='none';
+  document.getElementById('adv-start').style.display='';
 }
-
-function submitAdv() {
-  if (advSubmitted) return;
-  var s1 = document.getElementById('adv-s1').value.trim();
-  var s2 = document.getElementById('adv-s2').value.trim();
-  var s3 = document.getElementById('adv-s3').value.trim();
-  if (!s1 || !s2 || !s3) {
-    document.getElementById('adv-feedback').textContent = '⚠ Пожалуйста, заполните все три предложения.';
-    document.getElementById('adv-feedback').className = 'feedback err';
-    return;
+function submitAdv(){
+  if(advSubmitted)return;
+  var s1=document.getElementById('adv-s1').value.trim();
+  var s2=document.getElementById('adv-s2').value.trim();
+  var s3=document.getElementById('adv-s3').value.trim();
+  if(!s1||!s2||!s3){
+    document.getElementById('adv-feedback').textContent='⚠ Заполните все три предложения.';
+    document.getElementById('adv-feedback').className='feedback err'; return;
   }
-  advSubmitted = true;
-  ['adv-s1','adv-s2','adv-s3'].forEach(function(id){ document.getElementById(id).disabled = true; });
-
-  // Простая проверка: предложение должно начинаться с заглавной, заканчиваться точкой/! и содержать хотя бы 3 слова
-  function checkSentence(s) {
-    var trimmed = s.trim();
-    var words = trimmed.split(/\s+/).length;
-    var endsOk = /[.!?]$/.test(trimmed);
-    var startsOk = /^[A-Za-z]/.test(trimmed);
-    return words >= 3 && startsOk;
-  }
-
-  var ok1 = checkSentence(s1);
-  var ok2 = checkSentence(s2);
-  var ok3 = checkSentence(s3);
-  var advScore = (ok1?2:0) + (ok2?2:0) + (ok3?2:0);
-
-  document.getElementById('adv-s1').className = 'open-input ' + (ok1?'correct':'wrong');
-  document.getElementById('adv-s2').className = 'open-input ' + (ok2?'correct':'wrong');
-  document.getElementById('adv-s3').className = 'open-input ' + (ok3?'correct':'wrong');
-
+  advSubmitted=true;
+  ['adv-s1','adv-s2','adv-s3'].forEach(function(id){document.getElementById(id).disabled=true;});
+  function chk(s){return s.trim().split(/\s+/).length>=3&&/^[A-Za-z]/.test(s.trim());}
+  var ok1=chk(s1),ok2=chk(s2),ok3=chk(s3);
+  var advScore=(ok1?2:0)+(ok2?2:0)+(ok3?2:0);
+  document.getElementById('adv-s1').className='open-input '+(ok1?'correct':'wrong');
+  document.getElementById('adv-s2').className='open-input '+(ok2?'correct':'wrong');
+  document.getElementById('adv-s3').className='open-input '+(ok3?'correct':'wrong');
   setTimeout(function(){
-    document.getElementById('adv-quiz').style.display = 'none';
-    document.getElementById('adv-result').style.display = '';
-
-    var grade, gradeClass, emoji, msg;
-    if (advScore >= 5) {
-      grade = 'Оценка: 5'; gradeClass = 'grade-5'; emoji = '🏆'; msg = 'Отлично! Повышенный уровень выполнен.';
-    } else {
-      grade = 'Оценка: 4'; gradeClass = 'grade-3'; emoji = '⭐'; msg = 'Хорошо! 4 балла и менее — оценка «4».';
-    }
-    document.getElementById('adv-emoji').textContent = emoji;
-    document.getElementById('adv-score-big').textContent = advScore;
-    document.getElementById('adv-grade').textContent = grade;
-    document.getElementById('adv-grade').className = 'grade-badge ' + gradeClass;
-    document.getElementById('adv-msg').textContent = msg;
-    addToLog('Повышенный', advScore + ' / 6', grade.replace('Оценка: ',''), gradeClass);
-  }, 600);
+    document.getElementById('adv-quiz').style.display='none';
+    document.getElementById('adv-result').style.display='';
+    var grade,gradeClass,emoji,msg;
+    if(advScore>=5){grade='Оценка «5»';gradeClass='grade-5';emoji='🏆';msg='Отлично! Повышенный уровень выполнен.';}
+    else{grade='Оценка «4»';gradeClass='grade-3';emoji='⭐';msg='4 балла и менее — оценка «4».';}
+    document.getElementById('adv-emoji').textContent=emoji;
+    document.getElementById('adv-score-big').textContent=advScore;
+    document.getElementById('adv-grade-big').textContent=grade;
+    document.getElementById('adv-grade-big').className='grade-big '+gradeClass;
+    document.getElementById('adv-msg').textContent=msg;
+    var stars=advScore>=5?3:advScore>=3?2:advScore>=2?1:0;
+    var sHTML=''; for(var i=1;i<=3;i++) sHTML+='<span class="star'+(stars>=i?' lit':'')+'" style="animation-delay:'+((i-1)*.18)+'s">⭐</span>';
+    document.getElementById('adv-stars').innerHTML=sHTML;
+    if(advScore>=5) launchBigConfetti();
+  },600);
 }
 
-// ══ ЖУРНАЛ РЕЗУЛЬТАТОВ ══
-function addToLog(level, score, grade, gradeClass) {
-  var now = new Date();
-  var time = now.toLocaleString('ru-RU', {hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'});
-  resultsLog.push({ time: time, level: level, score: score, grade: grade, gradeClass: gradeClass });
-  try { localStorage.setItem('entrance_results', JSON.stringify(resultsLog)); } catch(e){}
-  renderLog();
+// ══ КОНФЕТТИ ══
+var canvas=document.getElementById('confetti-canvas');
+var ctx=canvas.getContext('2d');
+var particles=[],animId=null;
+var COLORS=['#378ADD','#22c55e','#f59e0b','#ef4444','#a855f7','#ec4899','#14b8a6'];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize(); window.addEventListener('resize',resize);
+function createParticle(x,y,big){
+  var angle=Math.random()*Math.PI*2,speed=big?(Math.random()*10+5):(Math.random()*7+3);
+  return{x:x,y:y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-(big?8:4),color:COLORS[Math.floor(Math.random()*COLORS.length)],size:big?(Math.random()*10+5):(Math.random()*7+3),rotation:Math.random()*360,rotSpeed:(Math.random()-.5)*8,alpha:1,shape:Math.random()>.5?'rect':'circle'};
 }
-function clearResults() {
-  if (confirm('Очистить всю таблицу результатов?')) {
-    resultsLog = [];
-    try { localStorage.removeItem('entrance_results'); } catch(e){}
-    renderLog();
-  }
+function spawnBurst(x,y,count,big){for(var i=0;i<count;i++)particles.push(createParticle(x,y,big));}
+function launchConfetti(){var rect=document.querySelector('.card').getBoundingClientRect();spawnBurst(rect.left+rect.width/2,rect.top+rect.height*.3,40,false);if(!animId)animate();}
+function launchBigConfetti(){var cx=window.innerWidth/2,cy=window.innerHeight/2;spawnBurst(cx,cy,130,true);setTimeout(function(){spawnBurst(cx-220,cy,70,true);},200);setTimeout(function(){spawnBurst(cx+220,cy,70,true);},400);if(!animId)animate();}
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.vx*=.99;p.rotation+=p.rotSpeed;p.alpha-=.016;ctx.save();ctx.globalAlpha=Math.max(0,p.alpha);ctx.translate(p.x,p.y);ctx.rotate(p.rotation*Math.PI/180);ctx.fillStyle=p.color;if(p.shape==='rect'){ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);}else{ctx.beginPath();ctx.arc(0,0,p.size/2,0,Math.PI*2);ctx.fill();}ctx.restore();});
+  particles=particles.filter(function(p){return p.alpha>0;});
+  if(particles.length>0){animId=requestAnimationFrame(animate);}else{animId=null;ctx.clearRect(0,0,canvas.width,canvas.height);}
 }
-function renderLog() {
-  var tbody = document.getElementById('results-tbody');
-  if (!resultsLog.length) {
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Результаты появятся после прохождения теста</td></tr>';
-    return;
-  }
-  var html = '';
-  resultsLog.forEach(function(r, i) {
-    var gColor = r.gradeClass==='grade-5'?'#22543D;background:#C6F6D5':
-                 r.gradeClass==='grade-3'?'#1A4E8C;background:#EBF4FF':
-                 '#9B2335;background:#FDECEA';
-    html += '<tr><td>' + (i+1) + '</td><td>' + r.time + '</td><td>' + r.level + '</td><td>' + r.score + '</td>' +
-      '<td><span class="grade-cell" style="color:' + gColor + '">' + r.grade + '</span></td></tr>';
-  });
-  tbody.innerHTML = html;
-}
-renderLog();
-
-// ══ ССЫЛКА И QR ══
-var PAGE_URL = 'https://turanvic-pixel.github.io/English/grammar_tests/entrance_test.html';
-document.getElementById('share-url').href = PAGE_URL;
-document.getElementById('share-url').textContent = PAGE_URL;
-
-function copyLink() {
-  navigator.clipboard.writeText(PAGE_URL).then(function(){
-    var btn = document.querySelector('.copy-btn');
-    btn.textContent = '✅ Скопировано!';
-    setTimeout(function(){ btn.textContent = '📋 Скопировать ссылку'; }, 2000);
-  }).catch(function(){
-    prompt('Скопируйте ссылку:', PAGE_URL);
-  });
-}
-
-// QR-код
-function drawQR() {
-  var canvas = document.getElementById('qr-canvas');
-  // Простая реализация QR без библиотеки — использует qrcodejs если загрузился
-  if (typeof QRCode !== 'undefined') {
-    canvas.style.display = 'none';
-    var div = document.createElement('div');
-    div.id = 'qr-div';
-    canvas.parentNode.insertBefore(div, canvas);
-    new QRCode(div, {
-      text: PAGE_URL,
-      width: 110,
-      height: 110,
-      colorDark: '#1A4E8C',
-      colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.M
-    });
-  }
-}
-
-// Попытка нарисовать QR, если скрипт не загрузился — показываем ссылку
-window.addEventListener('load', function(){
-  setTimeout(drawQR, 300);
-});
 </script>
 </body>
 </html>
