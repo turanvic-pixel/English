@@ -476,6 +476,17 @@ document.addEventListener('visibilitychange', function() {
     if (!warnShown) {
       warnShown = true;
     }
+  } else {
+    // Студент вернулся — показываем предупреждение
+    if (violations > 0) {
+      var quizVisible = document.getElementById('basic-quiz').style.display !== 'none' ||
+                        document.getElementById('adv-quiz').style.display !== 'none';
+      if (quizVisible) {
+        setTimeout(function() {
+          alert('⚠️ Внимание! Вы покидали страницу ' + violations + ' раз(а). Это фиксируется в результатах.');
+        }, 100);
+      }
+    }
   }
 });
 
