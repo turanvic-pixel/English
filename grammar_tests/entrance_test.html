@@ -357,27 +357,99 @@
 <script>
 // ══ ВОПРОСЫ ══
 var BASIC_Q = [
+  // ── 1. ПЕРЕВОД (He has / В комнате) ──
   {tag:"Перевод", q:"He has many friends.", sub:"Выберите правильный перевод:", opts:["У неё много друзей.","У него много друзей.","Он имеет много денег.","У его друзей много денег."], ans:1, type:"mc"},
+  {tag:"Перевод", q:"She has a cat.", sub:"Выберите правильный перевод:", opts:["У него есть кошка.","У неё есть кот.","У неё много кошек.","Она имеет кота."], ans:1, type:"mc"},
+  {tag:"Перевод", q:"They have two children.", sub:"Выберите правильный перевод:", opts:["У него двое детей.","У неё двое детей.","У них двое детей.","У них много детей."], ans:2, type:"mc"},
+
+  // ── 2. ПЕРЕВОД (There is/are) ──
   {tag:"Перевод", q:"В комнате есть стулья.", sub:"Выберите правильный перевод:", opts:["There is a chair in the room.","There are chairs in the room.","There is a table in the room.","There are tables in the room."], ans:1, type:"mc"},
+  {tag:"Перевод", q:"На столе есть книга.", sub:"Выберите правильный перевод:", opts:["There are books on the table.","There is a book on the table.","There is books on the table.","There are a book on the table."], ans:1, type:"mc"},
+  {tag:"Перевод", q:"В классе есть студенты.", sub:"Выберите правильный перевод:", opts:["There is a student in the class.","There is students in the class.","There are students in the class.","There are a student in the class."], ans:2, type:"mc"},
+
+  // ── 3. ПРЕДЛОГИ (времена года/праздники) ──
   {tag:"Предлоги", q:"New Year is celebrated <code>___</code> winter.", sub:"Выберите правильный предлог:", opts:["in","on","–","at"], ans:0, type:"mc"},
+  {tag:"Предлоги", q:"His birthday is <code>___</code> Monday.", sub:"Выберите правильный предлог:", opts:["in","on","at","–"], ans:1, type:"mc"},
+  {tag:"Предлоги", q:"We have classes <code>___</code> the morning.", sub:"Выберите правильный предлог:", opts:["on","at","in","–"], ans:2, type:"mc"},
+
+  // ── 4. МЕСТОИМЕНИЯ (What is your name) ──
   {tag:"Местоимения", q:"What is <code>___</code> name?", sub:"Выберите правильное слово:", opts:["you","your","yourself","yourselves"], ans:1, type:"mc"},
+  {tag:"Местоимения", q:"Is this <code>___</code> bag?", sub:"Выберите правильное слово:", opts:["she","her","hers","herself"], ans:1, type:"mc"},
+  {tag:"Местоимения", q:"We did it <code>___</code>.", sub:"Выберите правильное слово:", opts:["us","our","ourselves","ours"], ans:2, type:"mc"},
+
+  // ── 5. ГРАММАТИКА (There is/are) ──
   {tag:"Грамматика", q:"There <code>___</code> twelve people in the room.", sub:"Выберите правильную форму глагола:", opts:["are","is","am","–"], ans:0, type:"mc"},
+  {tag:"Грамматика", q:"There <code>___</code> a dog in the garden.", sub:"Выберите правильную форму глагола:", opts:["are","is","am","be"], ans:1, type:"mc"},
+  {tag:"Грамматика", q:"There <code>___</code> no milk in the fridge.", sub:"Выберите правильную форму глагола:", opts:["are","am","is","be"], ans:2, type:"mc"},
+
+  // ── 6. ПРИТЯЖАТЕЛЬНЫЕ МЕСТОИМЕНИЯ ──
   {tag:"Местоимения", q:"This book is <code>___</code>.", sub:"Выберите правильное притяжательное:", opts:["mine","my","my friend","my friend's"], ans:0, type:"mc"},
+  {tag:"Местоимения", q:"Is this pen <code>___</code>?", sub:"Выберите правильное притяжательное:", opts:["your","yours","you","yourself"], ans:1, type:"mc"},
+  {tag:"Местоимения", q:"The red car is <code>___</code>.", sub:"Выберите правильное притяжательное:", opts:["him","his","he","himself"], ans:1, type:"mc"},
+
+  // ── 7. СТЕПЕНИ СРАВНЕНИЯ (better) ──
   {tag:"Степени", q:"Your test is good, but mine is <code>___</code>.", sub:"Выберите правильную степень сравнения:", opts:["better","badder","gooder","well"], ans:0, type:"mc"},
+  {tag:"Степени", q:"This road is bad, but that one is <code>___</code>.", sub:"Выберите правильную степень сравнения:", opts:["more bad","badder","worse","worst"], ans:2, type:"mc"},
+  {tag:"Степени", q:"Today is <code>___</code> day of the year.", sub:"Выберите правильную степень сравнения:", opts:["the most good","the better","the best","more good"], ans:2, type:"mc"},
+
+  // ── 8. СТЕПЕНИ (the largest) ──
   {tag:"Степени", q:"Russia is <code>___</code> country in the world.", sub:"Выберите правильную степень сравнения:", opts:["large","the most large","the largest","larger"], ans:2, type:"mc"},
+  {tag:"Степени", q:"The Amazon is <code>___</code> river in the world.", sub:"Выберите правильную степень сравнения:", opts:["long","the most long","the longest","more long"], ans:2, type:"mc"},
+  {tag:"Степени", q:"This building is <code>___</code> than that one.", sub:"Выберите правильную степень сравнения:", opts:["tall","the tallest","more tall","taller"], ans:3, type:"mc"},
+
+  // ── 9. СТЕПЕНИ (the most interesting) ──
   {tag:"Степени", q:"Football is <code>___</code> sport in the world.", sub:"Выберите правильную степень сравнения:", opts:["interesting","the most interesting","interestinger","more interesting"], ans:1, type:"mc"},
+  {tag:"Степени", q:"English is <code>___</code> subject for me.", sub:"Выберите правильную степень сравнения:", opts:["the most important","the importantest","more important","importanter"], ans:0, type:"mc"},
+  {tag:"Степени", q:"This film is <code>___</code> than the book.", sub:"Выберите правильную степень сравнения:", opts:["more exciting","the most exciting","excitinger","most exciting"], ans:0, type:"mc"},
+
+  // ── 10. СУЩЕСТВИТЕЛЬНЫЕ мн. число ──
   {tag:"Существительные", q:"There are many <code>___</code> in the room.", sub:"Выберите правильную форму мн. числа:", opts:["man","men","mens","mans"], ans:1, type:"mc"},
+  {tag:"Существительные", q:"The <code>___</code> are playing in the park.", sub:"Выберите правильную форму мн. числа:", opts:["childs","childrens","children","child"], ans:2, type:"mc"},
+  {tag:"Существительные", q:"She has two <code>___</code>.", sub:"Выберите правильную форму мн. числа:", opts:["foots","feet","feets","foot"], ans:1, type:"mc"},
+
+  // ── 11. АРТИКЛИ ──
   {tag:"Артикли", q:"Where are you from? – I am from <code>___</code> Russia.", sub:"Выберите правильный артикль:", opts:["a","the","–","an"], ans:2, type:"mc"},
-  {tag:"Времена", q:"I <code>___</code> to college every day.", sub:"Выберите правильную форму глагола:", opts:["will go","goes","going","go"], ans:1, type:"mc"},
+  {tag:"Артикли", q:"She is <code>___</code> engineer.", sub:"Выберите правильный артикль:", opts:["–","the","a","an"], ans:3, type:"mc"},
+  {tag:"Артикли", q:"<code>___</code> Sun rises in the east.", sub:"Выберите правильный артикль:", opts:["A","An","The","–"], ans:2, type:"mc"},
+
+  // ── 12. ВРЕМЕНА (Present Simple) ──
+  {tag:"Времена", q:"I <code>___</code> to college every day.", sub:"Выберите правильную форму глагола:", opts:["will go","goes","going","go"], ans:3, type:"mc"},
+  {tag:"Времена", q:"She <code>___</code> English every evening.", sub:"Выберите правильную форму глагола:", opts:["study","studies","is studying","will study"], ans:1, type:"mc"},
+  {tag:"Времена", q:"They <code>___</code> football on Sundays.", sub:"Выберите правильную форму глагола:", opts:["plays","is playing","play","will play"], ans:2, type:"mc"},
+
+  // ── 13. ВРЕМЕНА (Past Simple) ──
   {tag:"Времена", q:"The students <code>___</code> the museum yesterday.", sub:"Выберите правильную форму глагола:", opts:["visited","visit","was visiting","visits"], ans:0, type:"mc"},
+  {tag:"Времена", q:"She <code>___</code> a letter last night.", sub:"Выберите правильную форму глагола:", opts:["writes","write","is writing","wrote"], ans:3, type:"mc"},
+  {tag:"Времена", q:"We <code>___</code> to London two years ago.", sub:"Выберите правильную форму глагола:", opts:["go","goes","went","have gone"], ans:2, type:"mc"},
+
+  // ── 14. ВРЕМЕНА (Future Simple) ──
   {tag:"Времена", q:"My parents and I <code>___</code> next summer.", sub:"Выберите правильную форму глагола:", opts:["are travelling","travel","will travel","travels"], ans:2, type:"mc"},
+  {tag:"Времена", q:"He <code>___</code> us tomorrow.", sub:"Выберите правильную форму глагола:", opts:["visit","visits","visited","will visit"], ans:3, type:"mc"},
+  {tag:"Времена", q:"They <code>___</code> the exam next week.", sub:"Выберите правильную форму глагола:", opts:["pass","passed","are pass","will pass"], ans:3, type:"mc"},
+
+  // ── 15. ВРЕМЕНА (Present Continuous) ──
   {tag:"Времена", q:"Mike <code>___</code> football now.", sub:"Выберите правильную форму глагола:", opts:["are playing","play","plays","is playing"], ans:3, type:"mc"},
+  {tag:"Времена", q:"Look! The children <code>___</code> in the yard.", sub:"Выберите правильную форму глагола:", opts:["run","runs","are running","were running"], ans:2, type:"mc"},
+  {tag:"Времена", q:"She <code>___</code> a book at the moment.", sub:"Выберите правильную форму глагола:", opts:["reads","read","is reading","was reading"], ans:2, type:"mc"},
+
+  // ── 16. ЧИСЛИТЕЛЬНЫЕ (написать) ──
   {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Пятьдесят восемь", opts:null, type:"open", answers:["fifty-eight","fifty eight"], placeholder:"Напишите ответ..."},
+  {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Семьдесят два", opts:null, type:"open", answers:["seventy-two","seventy two"], placeholder:"Напишите ответ..."},
+  {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Сорок пять", opts:null, type:"open", answers:["forty-five","forty five"], placeholder:"Напишите ответ..."},
+
+  // ── 17. ЧИСЛИТЕЛЬНЫЕ (дата) ──
   {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Тридцать первое декабря", opts:null, type:"open", answers:["the thirty-first of december","thirty-first of december","december the thirty-first","the 31st of december","31st of december","december 31st"], placeholder:"Напишите дату..."},
-  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"have, week, we, English, every", opts:null, type:"open", answers:["we have english every week","we have english class every week"], placeholder:"Составьте предложение..."}
+  {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Первое сентября", opts:null, type:"open", answers:["the first of september","first of september","september the first","the 1st of september","1st of september","september 1st"], placeholder:"Напишите дату..."},
+  {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Восьмое марта", opts:null, type:"open", answers:["the eighth of march","eighth of march","march the eighth","the 8th of march","8th of march","march 8th"], placeholder:"Напишите дату..."},
+
+  // ── 18. ПОРЯДОК СЛОВ ──
+  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"have, week, we, English, every", opts:null, type:"open", answers:["we have english every week","we have english class every week"], placeholder:"Составьте предложение..."},
+  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"like, I, music, listening, to", opts:null, type:"open", answers:["i like listening to music"], placeholder:"Составьте предложение..."},
+  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"school, go, they, to, every, day", opts:null, type:"open", answers:["they go to school every day"], placeholder:"Составьте предложение..."}
 ];
 
 // ══ СОСТОЯНИЕ БАЗОВОГО ══
+var bQuestions=[];
 var bCur=0, bScore=0, bMistakes=[], bResults=[];
 var bXp=0, bStreak=0, bHints=3;
 var MAX_XP=180;
@@ -442,11 +514,14 @@ function startBasic() {
   violations=0; warnShown=false;
   studentName=document.getElementById('inp-name').value.trim()||'—';
   studentGroup=document.getElementById('inp-group').value.trim()||'—';
+  // Выбираем 18 случайных вопросов из 54
+  var shuffled=BASIC_Q.slice().sort(function(){return Math.random()-.5;});
+  bQuestions=shuffled.slice(0,18);
   bCur=0; bScore=0; bMistakes=[]; bResults=[]; bXp=0; bStreak=0; bHints=3;
   document.getElementById('basic-start').style.display='none';
   document.getElementById('basic-result').style.display='none';
   document.getElementById('basic-quiz').style.display='';
-  document.getElementById('b-counter-tot').textContent=BASIC_Q.length;
+  document.getElementById('b-counter-tot').textContent=18;
   document.getElementById('b-timer-chip').style.display=bTimerEnabled?'':'none';
   updateBXp(); updateBStreak();
   showBasicQ();
@@ -458,9 +533,9 @@ function restartBasic() {
 }
 
 function showBasicQ() {
-  var total=BASIC_Q.length;
+  var total=bQuestions.length;
   if(bCur>=total){showBasicResult();return;}
-  var q=BASIC_Q[bCur];
+  var q=bQuestions[bCur];
   document.getElementById('b-progress').style.width=(bCur/total*100)+'%';
   document.getElementById('b-counter-cur').textContent=bCur+1;
   document.getElementById('b-hud-ok').textContent=bScore;
@@ -503,7 +578,7 @@ function showBasicQ() {
 
 function selectBasic(idx){
   stopBTimer();
-  var q=BASIC_Q[bCur];
+  var q=bQuestions[bCur];
   var btns=document.querySelectorAll('#basic-quiz .opt-btn');
   btns.forEach(function(b){b.disabled=true;});
   var elapsed=(Date.now()-bQStartTime)/1000;
@@ -530,7 +605,7 @@ function selectBasic(idx){
 }
 
 function checkOpenBasic(){
-  var q=BASIC_Q[bCur];
+  var q=bQuestions[bCur];
   var inp=document.getElementById('b-open-inp');
   var chk=document.getElementById('b-chk-btn');
   var val=inp.value.trim().toLowerCase();
@@ -553,13 +628,13 @@ function checkOpenBasic(){
 function showBNext(){
   var nb=document.getElementById('b-next');
   nb.style.display='inline-block';
-  nb.textContent=bCur<BASIC_Q.length-1?'Следующий →':'Посмотреть результат →';
+  nb.textContent=bCur<bQuestions.length-1?'Следующий →':'Посмотреть результат →';
 }
 function nextBasic(){bCur++;if(bCur<BASIC_Q.length)showBasicQ();else showBasicResult();}
 
 function useHintBasic(){
   if(bHints<=0)return;
-  var q=BASIC_Q[bCur]; if(q.type!=='mc')return;
+  var q=bQuestions[bCur]; if(q.type!=='mc')return;
   bHints--;
   var btns=Array.from(document.querySelectorAll('#basic-quiz .opt-btn:not(:disabled)'));
   var wrongs=btns.filter(function(b){return parseInt(b.dataset.idx)!==q.ans;});
@@ -573,7 +648,7 @@ function showBasicResult(){
   document.getElementById('b-progress').style.width='100%';
   document.getElementById('basic-quiz').style.display='none';
   document.getElementById('basic-result').style.display='';
-  var total=BASIC_Q.length;
+  var total=bQuestions.length;
   var pct=bScore/total;
   var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
   var emoji=bScore===total?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
@@ -581,7 +656,7 @@ function showBasicResult(){
   if(bScore>=10){grade='Оценка «3»';gradeClass='grade-3';msg='Базовый уровень пройден. Переходите к повышенному уровню.';}
   else{grade='Оценка «2»';gradeClass='grade-2';msg='Менее 10 баллов — оценка «2». Повторите материал.';}
   if(bScore===total){emoji='🏆';msg='Отлично! Все задания выполнены верно!';}
-  var bResult=bScore+'/'+BASIC_Q.length+' ('+Math.round(bScore/BASIC_Q.length*100)+'%) | Оценка: '+grade;
+  var bResult=bScore+'/'+bQuestions.length+' ('+Math.round(bScore/BASIC_Q.length*100)+'%) | Оценка: '+grade;
   var bAttempt=getAttemptNum('attempt_entrance_basic');
   sendToForms(studentName,studentGroup,'Входной контроль — Базовый',bResult,'b-send-status','b-timer-tag',bTimerEnabled,bAttempt,violations);
   document.getElementById('b-emoji').textContent=emoji;
@@ -642,7 +717,7 @@ function updateBTimerUI(){
   if(c) c.className='timer-chip'+(bTimerSec<=5?' danger':bTimerSec<=9?' warn':'');
 }
 function bTimeOut(){
-  var q=BASIC_Q[bCur];
+  var q=bQuestions[bCur];
   var fb=document.getElementById('b-feedback');
   fb.textContent='⏰ Время вышло!'; fb.className='feedback err';
   bStreak=0; updateBStreak();
