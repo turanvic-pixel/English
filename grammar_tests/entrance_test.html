@@ -59,6 +59,7 @@
   }
   .tab-btn:last-child { border-right: none; }
   .tab-btn.active { background: #fff; color: var(--blue); }
+  .tab-btn.locked { opacity: .45; cursor: not-allowed; }
   .tab-btn .tab-note { font-size: 11px; font-weight: 400; display: block; margin-top: 2px; opacity: .8; }
 
   .tab-panel { display: none; padding: 1.8rem 2rem 2rem; }
@@ -234,7 +235,7 @@
       Базовый уровень
       <span class="tab-note">Задания 1–18 · 18 баллов</span>
     </button>
-    <button class="tab-btn" onclick="switchTab('advanced')" id="tab-advanced">
+    <button class="tab-btn locked" onclick="tryAdvTab()" id="tab-advanced">
       Повышенный уровень
       <span class="tab-note">Задание 19 · 6 баллов</span>
     </button>
@@ -449,6 +450,7 @@ var BASIC_Q = [
 ];
 
 // ══ СОСТОЯНИЕ БАЗОВОГО ══
+var basicPassed = false; // разблокировка повышенного
 var bQuestions=[];
 var bCur=0, bScore=0, bMistakes=[], bResults=[];
 var bXp=0, bStreak=0, bHints=3;
@@ -504,10 +506,17 @@ function sendToForms(name, group, testName, result, statusId, timerTagId, timerO
 }
 
 function switchTab(tab) {
-  document.getElementById('tab-basic').className='tab-btn'+(tab==='basic'?' active':'');
-  document.getElementById('tab-advanced').className='tab-btn'+(tab==='advanced'?' active':'');
+  document.getElementById('tab-basic').className='tab-btn'+(tab==='basic'?' active':'')+(tab!=='basic'&&!basicPassed?' locked':'');
+  document.getElementById('tab-advanced').className='tab-btn'+(tab==='advanced'?' active':'')+(tab!=='advanced'&&!basicPassed?' locked':'');
   document.getElementById('panel-basic').className='tab-panel'+(tab==='basic'?' active':'');
   document.getElementById('panel-advanced').className='tab-panel'+(tab==='advanced'?' active':'');
+}
+function tryAdvTab() {
+  if (!basicPassed) {
+    alert('⚠️ Сначала выполните базовый уровень на оценку «3» или выше.');
+    return;
+  }
+  switchTab('advanced');
 }
 
 function startBasic() {
