@@ -514,9 +514,12 @@ function startBasic() {
   violations=0; warnShown=false;
   studentName=document.getElementById('inp-name').value.trim()||'—';
   studentGroup=document.getElementById('inp-group').value.trim()||'—';
-  // Выбираем 18 случайных вопросов из 54
-  var shuffled=BASIC_Q.slice().sort(function(){return Math.random()-.5;});
-  bQuestions=shuffled.slice(0,18);
+  // Из каждой тройки выбираем 1 случайный вопрос
+  bQuestions=[];
+  for(var i=0;i<BASIC_Q.length;i+=3){
+    var trio=BASIC_Q.slice(i,i+3);
+    bQuestions.push(trio[Math.floor(Math.random()*trio.length)]);
+  }
   bCur=0; bScore=0; bMistakes=[]; bResults=[]; bXp=0; bStreak=0; bHints=3;
   document.getElementById('basic-start').style.display='none';
   document.getElementById('basic-result').style.display='none';
