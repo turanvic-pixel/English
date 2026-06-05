@@ -314,6 +314,10 @@
         За каждое правильное предложение — <b>2 балла</b>. Всего <b>6 баллов</b>.<br><br>
         Оценка: <b>5–6 баллов → «5»</b> &nbsp;|&nbsp; <b>4 балла и менее → «4»</b>
       </div>
+      <div style="margin:0 auto 1rem;max-width:340px;text-align:left;">
+        <input class="name-input" id="adv-inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
+        <input class="name-input" id="adv-inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+      </div>
       <button class="start-btn" onclick="startAdv()">▶ Начать задание</button>
     </div>
 
@@ -642,6 +646,8 @@ function startAdv(){
 function restartAdv(){
   document.getElementById('adv-result').style.display='none';
   document.getElementById('adv-start').style.display='';
+  document.getElementById('adv-inp-name').value='';
+  document.getElementById('adv-inp-group').value='';
 }
 function submitAdv(){
   if(advSubmitted)return;
@@ -666,8 +672,8 @@ function submitAdv(){
     var grade,gradeClass,emoji,msg;
     if(advScore>=5){grade='Оценка «5»';gradeClass='grade-5';emoji='🏆';msg='Отлично! Повышенный уровень выполнен.';}
     else{grade='Оценка «4»';gradeClass='grade-3';emoji='⭐';msg='4 балла и менее — оценка «4».';};
-    var advName=document.getElementById('inp-name').value.trim()||studentName||'—';
-    var advGroup=document.getElementById('inp-group').value.trim()||studentGroup||'—';
+    var advName=document.getElementById('adv-inp-name').value.trim()||'—';
+    var advGroup=document.getElementById('adv-inp-group').value.trim()||'—';
     var advResult=advScore+'/6 | '+grade;
     sendToForms(advName,advGroup,'Входной контроль — Повышенный',advResult,'adv-send-status','adv-timer-tag',false);
     document.getElementById('adv-emoji').textContent=emoji;
