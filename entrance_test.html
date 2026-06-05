@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Входной контроль — Английский язык</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Source+Sans+3:wght@400;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #1A4E8C;
+    --blue2: #2B6CB0;
+    --blue-light: #EBF4FF;
+    --blue-mid: #BEE3F8;
+    --gold: #B7791F;
+    --gold-light: #FEFCE8;
+    --green: #276749;
+    --green-light: #D4EDDA;
+    --red: #9B2335;
+    --red-light: #FDECEA;
+    --gray: #4A5568;
+    --gray-light: #F7FAFC;
+    --border: #CBD5E0;
+    --shadow: 0 2px 12px rgba(26,78,140,0.10);
+  }
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: #F0F4F8;
+    min-height: 100vh;
+    padding: 1.5rem 1rem 4rem;
+  }
+  .page-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .page-header h1 {
+    font-family: 'Merriweather', serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--blue);
+    margin-bottom: 4px;
+  }
+  .page-header .subtitle {
+    font-size: 13px;
+    color: var(--gray);
+    margin-bottom: 8px;
+  }
+  .page-header .instruction {
+    display: inline-block;
+    background: var(--gold-light);
+    border: 1px solid #F6E05E;
+    border-radius: 8px;
+    padding: 7px 18px;
+    font-size: 12px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ── ВКЛАДКИ ── */
+  .tabs {
+    display: flex;
+    max-width: 720px;
+    margin: 0 auto 0;
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+    border-bottom: none;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 13px 10px;
+    font-family: 'Merriweather', serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    background: #E2ECF8;
+    color: #7094C0;
+    transition: background .2s, color .2s;
+    border-right: 1.5px solid var(--border);
+  }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn.active { background: #fff; color: var(--blue); }
+  .tab-btn .tab-note { font-size: 11px; font-weight: 400; font-family: 'Source Sans 3', sans-serif; display: block; margin-top: 2px; opacity: .8; }
+
+  /* ── КАРТОЧКА ── */
+  .card {
+    background: #fff;
+    border-radius: 0 0 16px 16px;
+    border: 1.5px solid var(--border);
+    border-top: none;
+    padding: 2rem 2rem 2.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+    box-shadow: var(--shadow);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── СТАРТ ── */
+  .start-screen { text-align: center; padding: 1rem 0; }
+  .start-info {
+    background: var(--blue-light);
+    border: 1px solid var(--blue-mid);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #2D5A8E;
+    margin-bottom: 1.2rem;
+    line-height: 1.8;
+    text-align: left;
+  }
+  .start-info b { color: var(--blue); }
+  .start-btn {
+    padding: 13px 40px;
+    border-radius: 10px;
+    border: none;
+    background: var(--blue);
+    color: #fff;
+    font-family: 'Merriweather', serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+    box-shadow: 0 2px 8px rgba(26,78,140,0.18);
+  }
+  .start-btn:hover { background: var(--blue2); transform: translateY(-1px); }
+
+  /* ── ПРОГРЕСС ── */
+  .progress-wrap { margin-bottom: 1.2rem; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--gray); margin-bottom: 5px; }
+  .progress-bar { height: 6px; background: var(--blue-mid); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--blue); border-radius: 99px; transition: width .4s ease; }
+
+  /* ── ВОПРОС ── */
+  .q-number { display: inline-block; font-size: 11px; font-weight: 700; background: var(--blue); color: #fff; padding: 2px 10px; border-radius: 99px; margin-bottom: 10px; }
+  .q-text {
+    font-family: 'Merriweather', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a2e4a;
+    margin-bottom: 1.2rem;
+    line-height: 1.6;
+  }
+  .q-sub { font-size: 13px; color: var(--gray); font-family: 'Source Sans 3', sans-serif; font-weight: 400; display: block; margin-bottom: 4px; }
+  .q-text .blank { background: var(--blue-light); color: var(--blue); padding: 2px 8px; border-radius: 5px; font-family: 'Merriweather', serif; }
+
+  /* ── ВАРИАНТЫ ── */
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: .6rem; }
+  .options.single-col { grid-template-columns: 1fr; }
+  .opt-btn {
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    background: var(--gray-light);
+    color: #1a2e4a;
+    font-size: 14px;
+    font-family: 'Source Sans 3', sans-serif;
+    cursor: pointer;
+    text-align: left;
+    transition: background .13s, border-color .13s, transform .1s;
+  }
+  .opt-btn:hover:not(:disabled) { background: var(--blue-light); border-color: var(--blue2); transform: translateX(2px); }
+  .opt-btn.correct { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight: 600; }
+  .opt-btn.wrong   { background: var(--red-light); border-color: var(--red); color: var(--red); }
+  .opt-btn:disabled { cursor: default; transform: none; }
+
+  /* ── ОТКРЫТЫЕ ВОПРОСЫ ── */
+  .open-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    font-size: 15px;
+    font-family: 'Source Sans 3', sans-serif;
+    color: #1a2e4a;
+    background: var(--gray-light);
+    margin-bottom: 8px;
+    transition: border-color .15s;
+    outline: none;
+  }
+  .open-input:focus { border-color: var(--blue2); background: var(--blue-light); }
+  .open-input.correct { border-color: var(--green); background: var(--green-light); }
+  .open-input.wrong   { border-color: var(--red); background: var(--red-light); }
+
+  .check-btn {
+    padding: 9px 22px;
+    border-radius: 9px;
+    border: 1.5px solid var(--blue2);
+    background: var(--blue);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    transition: background .15s;
+  }
+  .check-btn:hover { background: var(--blue2); }
+  .check-btn:disabled { opacity: .4; cursor: default; }
+
+  .feedback { margin-top: .6rem; font-size: 13px; min-height: 18px; line-height: 1.6; font-weight: 500; }
+  .feedback.ok  { color: var(--green); }
+  .feedback.err { color: var(--red); }
+
+  .next-btn {
+    margin-top: 1rem;
+    padding: 10px 26px;
+    border-radius: 9px;
+    border: none;
+    background: var(--blue);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: none;
+    font-family: 'Source Sans 3', sans-serif;
+    transition: background .15s;
+  }
+  .next-btn:hover { background: var(--blue2); }
+
+  /* ── ИТОГ ── */
+  .result-screen { text-align: center; padding: 1rem 0 .5rem; }
+  .result-emoji { font-size: 52px; margin-bottom: .6rem; }
+  .result-score-big { font-family: 'Merriweather', serif; font-size: 48px; font-weight: 900; color: var(--blue); }
+  .result-of { font-size: 14px; color: var(--gray); margin: 4px 0 6px; }
+  .grade-badge {
+    display: inline-block;
+    padding: 5px 22px;
+    border-radius: 99px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Merriweather', serif;
+    margin-bottom: 14px;
+  }
+  .grade-5 { background: #C6F6D5; color: #22543D; }
+  .grade-3 { background: var(--blue-light); color: var(--blue); }
+  .grade-2 { background: var(--red-light); color: var(--red); }
+  .result-msg { font-size: 14px; color: var(--gray); margin-bottom: 1.5rem; line-height: 1.7; }
+  .restart-btn {
+    padding: 11px 32px;
+    border-radius: 10px;
+    border: none;
+    background: var(--blue);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    transition: background .15s;
+  }
+  .restart-btn:hover { background: var(--blue2); }
+  .mistakes-block { text-align: left; border-top: 1px solid var(--border); padding-top: 1.2rem; margin-top: 1.4rem; }
+  .mistakes-block h3 { font-size: 14px; font-weight: 700; color: var(--gray); margin-bottom: .6rem; }
+  .mistake-item { font-size: 13px; padding: 8px 12px; background: var(--gray-light); border-radius: 8px; margin-bottom: 6px; border-left: 3px solid var(--green); }
+  .mistake-item .m-q { color: var(--gray); font-size: 12px; margin-bottom: 2px; }
+  .mistake-item .m-a { color: var(--green); font-weight: 600; }
+
+  /* ── ТАБЛИЦА РЕЗУЛЬТАТОВ ── */
+  .results-table-section {
+    max-width: 720px;
+    margin: 1.5rem auto 0;
+    background: #fff;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .results-table-section h2 {
+    font-family: 'Merriweather', serif;
+    font-size: 16px;
+    color: var(--blue);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rtable { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .rtable th {
+    background: var(--blue);
+    color: #fff;
+    padding: 9px 12px;
+    text-align: left;
+    font-weight: 700;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  .rtable th:first-child { border-radius: 6px 0 0 0; }
+  .rtable th:last-child  { border-radius: 0 6px 0 0; }
+  .rtable td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: #1a2e4a; vertical-align: middle; }
+  .rtable tr:last-child td { border-bottom: none; }
+  .rtable tr:hover td { background: var(--blue-light); }
+  .rtable .grade-cell { font-weight: 700; padding: 2px 10px; border-radius: 99px; display: inline-block; font-size: 12px; }
+  .empty-row td { text-align: center; color: var(--gray); font-style: italic; }
+  .clear-btn {
+    margin-top: .8rem;
+    padding: 7px 18px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    color: var(--gray);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  .clear-btn:hover { background: var(--red-light); border-color: var(--red); color: var(--red); }
+
+  /* ── QR / ССЫЛКА ── */
+  .share-section {
+    max-width: 720px;
+    margin: 1.2rem auto 0;
+    background: #fff;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    padding: 1.4rem 1.5rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .qr-wrap { flex-shrink: 0; }
+  .qr-wrap canvas { border-radius: 8px; border: 1px solid var(--border); }
+  .share-info { flex: 1; min-width: 200px; }
+  .share-info h3 { font-family: 'Merriweather', serif; font-size: 14px; color: var(--blue); margin-bottom: 6px; }
+  .share-url {
+    display: block;
+    font-size: 12px;
+    color: var(--blue2);
+    word-break: break-all;
+    background: var(--blue-light);
+    padding: 7px 10px;
+    border-radius: 7px;
+    margin-bottom: 8px;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .copy-btn {
+    padding: 6px 18px;
+    border-radius: 8px;
+    border: 1.5px solid var(--blue2);
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Source Sans 3', sans-serif;
+    transition: background .15s;
+  }
+  .copy-btn:hover { background: var(--blue-mid); }
+
+  /* ── ПОВЫШЕННЫЙ: ввод текста ── */
+  .essay-area {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    font-size: 14px;
+    font-family: 'Source Sans 3', sans-serif;
+    color: #1a2e4a;
+    background: var(--gray-light);
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .essay-area:focus { border-color: var(--blue2); background: var(--blue-light); }
+
+  @media (max-width: 600px) {
+    .options { grid-template-columns: 1fr; }
+    .card { padding: 1.2rem 1rem 1.8rem; }
+    .share-section { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Входной контроль по иностранному языку</h1>
+  <p class="subtitle">для студентов 1 курса · Английский язык</p>
+  <div class="instruction">⚠ Повышенный уровень выполняется только после полного выполнения базового</div>
+</div>
+
+<!-- ВКЛАДКИ -->
+<div class="tabs" style="max-width:720px;margin:0 auto;">
+  <button class="tab-btn active" onclick="switchTab('basic')" id="tab-basic">
+    Базовый уровень
+    <span class="tab-note">Задания 1–18 · 18 баллов</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('advanced')" id="tab-advanced">
+    Повышенный уровень
+    <span class="tab-note">Задание 19 · 6 баллов</span>
+  </button>
+</div>
+
+<div class="card">
+
+  <!-- ══ БАЗОВЫЙ ══ -->
+  <div class="tab-panel active" id="panel-basic">
+
+    <!-- СТАРТ -->
+    <div id="basic-start" class="start-screen">
+      <div class="start-info">
+        <b>Базовый уровень (Задания 1–18)</b><br>
+        Выберите правильный вариант ответа.<br>
+        За каждый верный ответ — <b>1 балл</b>. Всего <b>18 баллов</b>.<br>
+        <br>
+        Оценка: <b>10–18 баллов → «3»</b> &nbsp;|&nbsp; <b>менее 9 баллов → «2»</b>
+      </div>
+      <button class="start-btn" onclick="startBasic()">▶ Начать тест</button>
+    </div>
+
+    <!-- ТЕСТ -->
+    <div id="basic-quiz" style="display:none">
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="b-counter">Вопрос 1 из 18</span>
+          <span id="b-score-live">✓ 0 &nbsp; ✗ 0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="b-progress" style="width:0%"></div></div>
+      </div>
+      <div id="b-qnum" class="q-number">Вопрос 1</div>
+      <div class="q-text" id="b-qtext"></div>
+      <div id="b-answer-area"></div>
+      <div class="feedback" id="b-feedback"></div>
+      <button class="next-btn" id="b-next" onclick="nextBasic()">Следующий →</button>
+    </div>
+
+    <!-- ИТОГ -->
+    <div id="basic-result" style="display:none">
+      <div class="result-screen">
+        <div class="result-emoji" id="b-emoji">📝</div>
+        <div class="result-score-big" id="b-score-big">0</div>
+        <div class="result-of">из 18 баллов · Базовый уровень</div>
+        <div class="grade-badge" id="b-grade"></div>
+        <div class="result-msg" id="b-msg"></div>
+        <button class="restart-btn" onclick="restartBasic()">🔄 Пройти снова</button>
+        <div class="mistakes-block" id="b-mistakes"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ПОВЫШЕННЫЙ ══ -->
+  <div class="tab-panel" id="panel-advanced">
+    <div id="adv-start" class="start-screen">
+      <div class="start-info">
+        <b>Повышенный уровень (Задание 19)</b><br>
+        Расскажите о себе на английском языке — <b>3 предложения</b>.<br>
+        За каждое правильное предложение — <b>2 балла</b>. Всего <b>6 баллов</b>.<br>
+        <br>
+        Оценка: <b>5–6 баллов → «5»</b> &nbsp;|&nbsp; <b>4 балла и менее → «4»</b>
+      </div>
+      <button class="start-btn" onclick="startAdv()">▶ Начать задание</button>
+    </div>
+
+    <div id="adv-quiz" style="display:none">
+      <div id="adv-q-num" class="q-number">Задание 19</div>
+      <div class="q-text">Tell about yourself in 3 sentences.</div>
+      <p style="font-size:13px;color:var(--gray);margin-bottom:14px;">Напишите 3 предложения о себе на английском языке. Каждое предложение — на отдельной строке.</p>
+
+      <label style="font-size:13px;font-weight:600;color:var(--gray);display:block;margin-bottom:5px;">Предложение 1:</label>
+      <input type="text" class="open-input" id="adv-s1" placeholder="My name is …" />
+      <label style="font-size:13px;font-weight:600;color:var(--gray);display:block;margin-bottom:5px;margin-top:10px;">Предложение 2:</label>
+      <input type="text" class="open-input" id="adv-s2" placeholder="I am … years old …" />
+      <label style="font-size:13px;font-weight:600;color:var(--gray);display:block;margin-bottom:5px;margin-top:10px;">Предложение 3:</label>
+      <input type="text" class="open-input" id="adv-s3" placeholder="I like …" />
+
+      <div style="margin-top:14px;">
+        <button class="check-btn" onclick="submitAdv()">✓ Отправить</button>
+      </div>
+      <div class="feedback" id="adv-feedback" style="margin-top:.8rem;"></div>
+    </div>
+
+    <div id="adv-result" style="display:none">
+      <div class="result-screen">
+        <div class="result-emoji" id="adv-emoji">⭐</div>
+        <div class="result-score-big" id="adv-score-big">0</div>
+        <div class="result-of">из 6 баллов · Повышенный уровень</div>
+        <div class="grade-badge" id="adv-grade"></div>
+        <div class="result-msg" id="adv-msg"></div>
+        <button class="restart-btn" onclick="restartAdv()">🔄 Попробовать снова</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /card -->
+
+<!-- ══ ТАБЛИЦА РЕЗУЛЬТАТОВ ══ -->
+<div class="results-table-section">
+  <h2>📊 Журнал результатов</h2>
+  <table class="rtable" id="results-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Время</th>
+        <th>Уровень</th>
+        <th>Баллы</th>
+        <th>Оценка</th>
+      </tr>
+    </thead>
+    <tbody id="results-tbody">
+      <tr class="empty-row"><td colspan="5">Результаты появятся после прохождения теста</td></tr>
+    </tbody>
+  </table>
+  <button class="clear-btn" onclick="clearResults()">🗑 Очистить таблицу</button>
+</div>
+
+<!-- ══ QR-КОД И ССЫЛКА ══ -->
+<div class="share-section">
+  <div class="qr-wrap">
+    <canvas id="qr-canvas" width="110" height="110"></canvas>
+  </div>
+  <div class="share-info">
+    <h3>📎 Ссылка на тест</h3>
+    <a class="share-url" id="share-url" href="#" target="_blank">https://turanvic-pixel.github.io/English/grammar_tests/entrance_test.html</a>
+    <button class="copy-btn" onclick="copyLink()">📋 Скопировать ссылку</button>
+  </div>
+</div>
+
+<!-- QR library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+// ══ ВОПРОСЫ БАЗОВОГО УРОВНЯ ══
+var BASIC_Q = [
+  // 1-8: выбор варианта
+  {
+    q: "He has many friends.",
+    sub: "Выберите правильный перевод:",
+    opts: ["У неё много друзей.", "У него много друзей.", "Он имеет много денег.", "У его друзей много денег."],
+    ans: 1, type: "mc"
+  },
+  {
+    q: "В комнате есть стулья.",
+    sub: "Выберите правильный перевод на английский:",
+    opts: ["There is a chair in the room.", "There are chairs in the room.", "There is a table in the room.", "There are tables in the room."],
+    ans: 1, type: "mc"
+  },
+  {
+    q: "New Year is celebrated ___ winter.",
+    sub: "Выберите правильный предлог:",
+    opts: ["in", "on", "–", "at"],
+    ans: 0, type: "mc"
+  },
+  {
+    q: "What is ___ name?",
+    sub: "Выберите правильное слово:",
+    opts: ["you", "your", "yourself", "yourselves"],
+    ans: 1, type: "mc"
+  },
+  {
+    q: "There ___ twelve people in the room.",
+    sub: "Выберите правильную форму глагола:",
+    opts: ["are", "is", "am", "–"],
+    ans: 0, type: "mc"
+  },
+  {
+    q: "This book is ___.",
+    sub: "Выберите правильное притяжательное слово:",
+    opts: ["mine", "my", "my friend", "my friend's"],
+    ans: 0, type: "mc"
+  },
+  {
+    q: "Your test is good, but mine is ___.",
+    sub: "Выберите правильную степень сравнения:",
+    opts: ["better", "badder", "gooder", "well"],
+    ans: 0, type: "mc"
+  },
+  {
+    q: "Russia is ___ country in the world.",
+    sub: "Выберите правильную степень сравнения:",
+    opts: ["large", "the most large", "the largest", "larger"],
+    ans: 2, type: "mc"
+  },
+  {
+    q: "Football is ___ sport in the world.",
+    sub: "Выберите правильную степень сравнения:",
+    opts: ["interesting", "the most interesting", "interestinger", "more interesting"],
+    ans: 1, type: "mc"
+  },
+  {
+    q: "There are many ___ in the room.",
+    sub: "Выберите правильную форму существительного:",
+    opts: ["man", "men", "mens", "mans"],
+    ans: 1, type: "mc"
+  },
+  {
+    q: "Where are you from? – I am from ___ Russia.",
+    sub: "Выберите правильный артикль:",
+    opts: ["a", "the", "–", "an"],
+    ans: 2, type: "mc"
+  },
+  {
+    q: "I ___ to college every day.",
+    sub: "Выберите правильную форму глагола:",
+    opts: ["will go", "goes", "going", "go"],
+    ans: 1, type: "mc"
+  },
+  {
+    q: "The students ___ the museum yesterday.",
+    sub: "Выберите правильную форму глагола:",
+    opts: ["visited", "visit", "was visiting", "visits"],
+    ans: 0, type: "mc"
+  },
+  {
+    q: "My parents and I ___ next summer.",
+    sub: "Выберите правильную форму глагола:",
+    opts: ["are travelling", "travel", "will travel", "travels"],
+    ans: 2, type: "mc"
+  },
+  {
+    q: "Mike ___ football now.",
+    sub: "Выберите правильную форму глагола:",
+    opts: ["are playing", "play", "plays", "is playing"],
+    ans: 3, type: "mc"
+  },
+  // 16: открытый вопрос
+  {
+    q: "Напишите числительное на английском языке:",
+    sub: "Пятьдесят восемь",
+    opts: null, type: "open",
+    answers: ["fifty-eight", "fifty eight"],
+    placeholder: "Напишите ответ..."
+  },
+  // 17: открытый вопрос
+  {
+    q: "Напишите фразу на английском языке:",
+    sub: "Тридцать первое декабря",
+    opts: null, type: "open",
+    answers: ["the thirty-first of december", "the 31st of december", "december 31st", "december the thirty-first", "thirty-first of december", "31st of december"],
+    placeholder: "Напишите дату..."
+  },
+  // 18: порядок слов
+  {
+    q: "Поставьте слова в правильном порядке:",
+    sub: "have, week, we, English, every",
+    opts: null, type: "open",
+    answers: ["we have english every week", "we have english class every week"],
+    placeholder: "Составьте предложение..."
+  }
+];
+
+// ══ СОСТОЯНИЕ ══
+var bCur = 0, bScore = 0, bMistakes = [], bResults = [];
+var resultsLog = JSON.parse(localStorage.getItem('entrance_results') || '[]');
+
+function switchTab(tab) {
+  document.getElementById('tab-basic').className = 'tab-btn' + (tab==='basic'?' active':'');
+  document.getElementById('tab-advanced').className = 'tab-btn' + (tab==='advanced'?' active':'');
+  document.getElementById('panel-basic').className = 'tab-panel' + (tab==='basic'?' active':'');
+  document.getElementById('panel-advanced').className = 'tab-panel' + (tab==='advanced'?' active':'');
+}
+
+// ══ БАЗОВЫЙ ТЕСТ ══
+function startBasic() {
+  bCur = 0; bScore = 0; bMistakes = []; bResults = [];
+  document.getElementById('basic-start').style.display = 'none';
+  document.getElementById('basic-result').style.display = 'none';
+  document.getElementById('basic-quiz').style.display = '';
+  showBasicQ();
+}
+function restartBasic() {
+  document.getElementById('basic-result').style.display = 'none';
+  document.getElementById('basic-start').style.display = '';
+}
+
+function showBasicQ() {
+  var total = BASIC_Q.length;
+  if (bCur >= total) { showBasicResult(); return; }
+  var q = BASIC_Q[bCur];
+  document.getElementById('b-progress').style.width = (bCur/total*100) + '%';
+  document.getElementById('b-counter').textContent = 'Вопрос ' + (bCur+1) + ' из ' + total;
+  document.getElementById('b-score-live').textContent = '✓ ' + bScore + ' \u00a0 ✗ ' + bResults.filter(function(r){return !r.ok;}).length;
+  document.getElementById('b-qnum').textContent = 'Вопрос ' + (bCur+1);
+  document.getElementById('b-qtext').innerHTML = '<span class="q-sub">' + (q.sub||'') + '</span>' + q.q.replace(/___/g, '<span class="blank">___</span>');
+  document.getElementById('b-feedback').textContent = '';
+  document.getElementById('b-feedback').className = 'feedback';
+  document.getElementById('b-next').style.display = 'none';
+  var area = document.getElementById('b-answer-area');
+  area.innerHTML = '';
+
+  if (q.type === 'mc') {
+    var div = document.createElement('div');
+    div.className = 'options';
+    q.opts.forEach(function(opt, i) {
+      var btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.dataset.idx = i;
+      btn.textContent = (i+1) + ')  ' + opt;
+      btn.onclick = (function(idx){ return function(){ selectBasic(idx); }; })(i);
+      div.appendChild(btn);
+    });
+    area.appendChild(div);
+  } else {
+    var inp = document.createElement('input');
+    inp.type = 'text';
+    inp.className = 'open-input';
+    inp.placeholder = q.placeholder || 'Введите ответ...';
+    inp.id = 'b-open-inp';
+    inp.addEventListener('keydown', function(e){ if(e.key==='Enter') checkOpenBasic(); });
+    area.appendChild(inp);
+    var chk = document.createElement('button');
+    chk.className = 'check-btn';
+    chk.textContent = '✓ Проверить';
+    chk.onclick = checkOpenBasic;
+    chk.id = 'b-chk-btn';
+    area.appendChild(chk);
+    setTimeout(function(){ inp.focus(); }, 50);
+  }
+}
+
+function selectBasic(idx) {
+  var q = BASIC_Q[bCur];
+  var btns = document.querySelectorAll('#basic-quiz .opt-btn');
+  btns.forEach(function(b){ b.disabled = true; });
+  var ok = (idx === q.ans);
+  btns[idx].classList.add(ok ? 'correct' : 'wrong');
+  if (!ok) btns[q.ans].classList.add('correct');
+  var fb = document.getElementById('b-feedback');
+  if (ok) {
+    fb.textContent = '✓ Верно!'; fb.className = 'feedback ok'; bScore++;
+  } else {
+    fb.textContent = '✗ Неверно. Правильный ответ: ' + q.opts[q.ans]; fb.className = 'feedback err';
+    bMistakes.push({ q: q.q, a: q.opts[q.ans] });
+  }
+  bResults.push({ok:ok});
+  showBNext();
+}
+
+function checkOpenBasic() {
+  var q = BASIC_Q[bCur];
+  var inp = document.getElementById('b-open-inp');
+  var chk = document.getElementById('b-chk-btn');
+  var val = inp.value.trim().toLowerCase();
+  var ok = q.answers.some(function(a){ return val === a.toLowerCase(); });
+  inp.disabled = true;
+  if (chk) chk.disabled = true;
+  inp.className = 'open-input ' + (ok ? 'correct' : 'wrong');
+  var fb = document.getElementById('b-feedback');
+  if (ok) {
+    fb.textContent = '✓ Верно!'; fb.className = 'feedback ok'; bScore++;
+  } else {
+    fb.textContent = '✗ Неверно. Правильный ответ: ' + q.answers[0]; fb.className = 'feedback err';
+    bMistakes.push({ q: q.q + ' ' + (q.sub||''), a: q.answers[0] });
+  }
+  bResults.push({ok:ok});
+  showBNext();
+}
+
+function showBNext() {
+  var nb = document.getElementById('b-next');
+  nb.style.display = 'inline-block';
+  nb.textContent = bCur < BASIC_Q.length - 1 ? 'Следующий →' : 'Посмотреть результат →';
+}
+
+function nextBasic() {
+  bCur++;
+  if (bCur < BASIC_Q.length) showBasicQ(); else showBasicResult();
+}
+
+function showBasicResult() {
+  document.getElementById('basic-quiz').style.display = 'none';
+  document.getElementById('basic-result').style.display = '';
+  document.getElementById('b-progress').style.width = '100%';
+
+  var total = BASIC_Q.length;
+  var pct = bScore / total;
+  var grade, gradeClass, emoji, msg;
+  if (bScore >= 10) {
+    grade = 'Оценка: 3'; gradeClass = 'grade-3'; emoji = '👍';
+    msg = 'Базовый уровень пройден. Вы можете приступить к повышенному уровню.';
+  } else {
+    grade = 'Оценка: 2'; gradeClass = 'grade-2'; emoji = '📖';
+    msg = 'Базовый уровень не пройден. Менее 10 баллов — оценка «2».';
+  }
+  if (bScore === total) { emoji = '🏆'; msg = 'Отлично! Все задания выполнены верно!'; }
+  else if (bScore >= 15) { emoji = '⭐'; }
+
+  document.getElementById('b-emoji').textContent = emoji;
+  document.getElementById('b-score-big').textContent = bScore;
+  document.getElementById('b-grade').textContent = grade;
+  document.getElementById('b-grade').className = 'grade-badge ' + gradeClass;
+  document.getElementById('b-msg').textContent = msg;
+
+  // ошибки
+  var mBlock = document.getElementById('b-mistakes');
+  if (bMistakes.length > 0) {
+    var html = '<h3>Разбор ошибок:</h3>';
+    bMistakes.forEach(function(m){
+      html += '<div class="mistake-item"><div class="m-q">' + m.q + '</div><div class="m-a">✓ ' + m.a + '</div></div>';
+    });
+    mBlock.innerHTML = html;
+  } else {
+    mBlock.innerHTML = '';
+  }
+
+  // лог
+  addToLog('Базовый', bScore + ' / ' + total, grade.replace('Оценка: ',''), gradeClass);
+}
+
+// ══ ПОВЫШЕННЫЙ ══
+var advSubmitted = false;
+function startAdv() {
+  advSubmitted = false;
+  document.getElementById('adv-start').style.display = 'none';
+  document.getElementById('adv-result').style.display = 'none';
+  document.getElementById('adv-quiz').style.display = '';
+  ['adv-s1','adv-s2','adv-s3'].forEach(function(id){
+    var el = document.getElementById(id);
+    el.value = ''; el.disabled = false; el.className = 'open-input';
+  });
+  document.getElementById('adv-feedback').textContent = '';
+}
+function restartAdv() {
+  document.getElementById('adv-result').style.display = 'none';
+  document.getElementById('adv-start').style.display = '';
+}
+
+function submitAdv() {
+  if (advSubmitted) return;
+  var s1 = document.getElementById('adv-s1').value.trim();
+  var s2 = document.getElementById('adv-s2').value.trim();
+  var s3 = document.getElementById('adv-s3').value.trim();
+  if (!s1 || !s2 || !s3) {
+    document.getElementById('adv-feedback').textContent = '⚠ Пожалуйста, заполните все три предложения.';
+    document.getElementById('adv-feedback').className = 'feedback err';
+    return;
+  }
+  advSubmitted = true;
+  ['adv-s1','adv-s2','adv-s3'].forEach(function(id){ document.getElementById(id).disabled = true; });
+
+  // Простая проверка: предложение должно начинаться с заглавной, заканчиваться точкой/! и содержать хотя бы 3 слова
+  function checkSentence(s) {
+    var trimmed = s.trim();
+    var words = trimmed.split(/\s+/).length;
+    var endsOk = /[.!?]$/.test(trimmed);
+    var startsOk = /^[A-Za-z]/.test(trimmed);
+    return words >= 3 && startsOk;
+  }
+
+  var ok1 = checkSentence(s1);
+  var ok2 = checkSentence(s2);
+  var ok3 = checkSentence(s3);
+  var advScore = (ok1?2:0) + (ok2?2:0) + (ok3?2:0);
+
+  document.getElementById('adv-s1').className = 'open-input ' + (ok1?'correct':'wrong');
+  document.getElementById('adv-s2').className = 'open-input ' + (ok2?'correct':'wrong');
+  document.getElementById('adv-s3').className = 'open-input ' + (ok3?'correct':'wrong');
+
+  setTimeout(function(){
+    document.getElementById('adv-quiz').style.display = 'none';
+    document.getElementById('adv-result').style.display = '';
+
+    var grade, gradeClass, emoji, msg;
+    if (advScore >= 5) {
+      grade = 'Оценка: 5'; gradeClass = 'grade-5'; emoji = '🏆'; msg = 'Отлично! Повышенный уровень выполнен.';
+    } else {
+      grade = 'Оценка: 4'; gradeClass = 'grade-3'; emoji = '⭐'; msg = 'Хорошо! 4 балла и менее — оценка «4».';
+    }
+    document.getElementById('adv-emoji').textContent = emoji;
+    document.getElementById('adv-score-big').textContent = advScore;
+    document.getElementById('adv-grade').textContent = grade;
+    document.getElementById('adv-grade').className = 'grade-badge ' + gradeClass;
+    document.getElementById('adv-msg').textContent = msg;
+    addToLog('Повышенный', advScore + ' / 6', grade.replace('Оценка: ',''), gradeClass);
+  }, 600);
+}
+
+// ══ ЖУРНАЛ РЕЗУЛЬТАТОВ ══
+function addToLog(level, score, grade, gradeClass) {
+  var now = new Date();
+  var time = now.toLocaleString('ru-RU', {hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'});
+  resultsLog.push({ time: time, level: level, score: score, grade: grade, gradeClass: gradeClass });
+  try { localStorage.setItem('entrance_results', JSON.stringify(resultsLog)); } catch(e){}
+  renderLog();
+}
+function clearResults() {
+  if (confirm('Очистить всю таблицу результатов?')) {
+    resultsLog = [];
+    try { localStorage.removeItem('entrance_results'); } catch(e){}
+    renderLog();
+  }
+}
+function renderLog() {
+  var tbody = document.getElementById('results-tbody');
+  if (!resultsLog.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Результаты появятся после прохождения теста</td></tr>';
+    return;
+  }
+  var html = '';
+  resultsLog.forEach(function(r, i) {
+    var gColor = r.gradeClass==='grade-5'?'#22543D;background:#C6F6D5':
+                 r.gradeClass==='grade-3'?'#1A4E8C;background:#EBF4FF':
+                 '#9B2335;background:#FDECEA';
+    html += '<tr><td>' + (i+1) + '</td><td>' + r.time + '</td><td>' + r.level + '</td><td>' + r.score + '</td>' +
+      '<td><span class="grade-cell" style="color:' + gColor + '">' + r.grade + '</span></td></tr>';
+  });
+  tbody.innerHTML = html;
+}
+renderLog();
+
+// ══ ССЫЛКА И QR ══
+var PAGE_URL = 'https://turanvic-pixel.github.io/English/grammar_tests/entrance_test.html';
+document.getElementById('share-url').href = PAGE_URL;
+document.getElementById('share-url').textContent = PAGE_URL;
+
+function copyLink() {
+  navigator.clipboard.writeText(PAGE_URL).then(function(){
+    var btn = document.querySelector('.copy-btn');
+    btn.textContent = '✅ Скопировано!';
+    setTimeout(function(){ btn.textContent = '📋 Скопировать ссылку'; }, 2000);
+  }).catch(function(){
+    prompt('Скопируйте ссылку:', PAGE_URL);
+  });
+}
+
+// QR-код
+function drawQR() {
+  var canvas = document.getElementById('qr-canvas');
+  // Простая реализация QR без библиотеки — использует qrcodejs если загрузился
+  if (typeof QRCode !== 'undefined') {
+    canvas.style.display = 'none';
+    var div = document.createElement('div');
+    div.id = 'qr-div';
+    canvas.parentNode.insertBefore(div, canvas);
+    new QRCode(div, {
+      text: PAGE_URL,
+      width: 110,
+      height: 110,
+      colorDark: '#1A4E8C',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+}
+
+// Попытка нарисовать QR, если скрипт не загрузился — показываем ссылку
+window.addEventListener('load', function(){
+  setTimeout(drawQR, 300);
+});
+</script>
+</body>
+</html>
