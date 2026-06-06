@@ -353,95 +353,221 @@
 <script>
 // ══ ВОПРОСЫ ══
 var BASIC_Q = [
-  // ── 1. ПЕРЕВОД (He has / В комнате) ──
+  // ══ 1. ПЕРЕВОД he/she/they has/have ══ (10 вопросов)
   {tag:"Перевод", q:"He has many friends.", sub:"Выберите правильный перевод:", opts:["У неё много друзей.","У него много друзей.","Он имеет много денег.","У его друзей много денег."], ans:1, type:"mc"},
   {tag:"Перевод", q:"She has a cat.", sub:"Выберите правильный перевод:", opts:["У него есть кошка.","У неё есть кот.","У неё много кошек.","У неё есть собака."], ans:1, type:"mc"},
   {tag:"Перевод", q:"They have two children.", sub:"Выберите правильный перевод:", opts:["У него двое детей.","У неё двое детей.","У них двое детей.","У них много детей."], ans:2, type:"mc"},
+  {tag:"Перевод", q:"We have a big house.", sub:"Выберите правильный перевод:", opts:["У них большой дом.","У нас большой дом.","У неё большой дом.","У него большой дом."], ans:1, type:"mc"},
+  {tag:"Перевод", q:"He has no money.", sub:"Выберите правильный перевод:", opts:["У него нет времени.","У неё нет денег.","У него нет денег.","У них нет денег."], ans:2, type:"mc"},
+  {tag:"Перевод", q:"She has long hair.", sub:"Выберите правильный перевод:", opts:["У него длинные волосы.","У неё длинные волосы.","У неё короткие волосы.","У него короткие волосы."], ans:1, type:"mc"},
+  {tag:"Перевод", q:"They have a new car.", sub:"Выберите правильный перевод:", opts:["У него новая машина.","У неё новая машина.","У них новая машина.","У нас новая машина."], ans:2, type:"mc"},
+  {tag:"Перевод", q:"I have two brothers.", sub:"Выберите правильный перевод:", opts:["У меня два брата.","У меня две сестры.","У него два брата.","У неё два брата."], ans:0, type:"mc"},
+  {tag:"Перевод", q:"My sister has a dog.", sub:"Выберите правильный перевод:", opts:["У моего брата есть собака.","У моей сестры есть кошка.","У моей сестры есть собака.","У моей мамы есть собака."], ans:2, type:"mc"},
+  {tag:"Перевод", q:"He has a lot of books.", sub:"Выберите правильный перевод:", opts:["У него мало книг.","У неё много книг.","У него много денег.","У него много книг."], ans:3, type:"mc"},
 
-  // ── 2. ПЕРЕВОД (There is/are) ──
+  // ══ 2. ПЕРЕВОД There is/are ══ (10 вопросов)
   {tag:"Перевод", q:"В комнате есть стулья.", sub:"Выберите правильный перевод:", opts:["There is a chair in the room.","There are chairs in the room.","There is a table in the room.","There are tables in the room."], ans:1, type:"mc"},
   {tag:"Перевод", q:"На столе есть книга.", sub:"Выберите правильный перевод:", opts:["There are books on the table.","There is a book on the table.","There is books on the table.","There are a book on the table."], ans:1, type:"mc"},
   {tag:"Перевод", q:"В классе есть студенты.", sub:"Выберите правильный перевод:", opts:["There is a student in the class.","There is students in the class.","There are students in the class.","There are a student in the class."], ans:2, type:"mc"},
+  {tag:"Перевод", q:"В парке есть дерево.", sub:"Выберите правильный перевод:", opts:["There are trees in the park.","There is a tree in the park.","There is trees in the park.","There are a tree in the park."], ans:1, type:"mc"},
+  {tag:"Перевод", q:"В сумке есть ручка.", sub:"Выберите правильный перевод:", opts:["There are pens in the bag.","There is pens in the bag.","There is a pen in the bag.","There are a pen in the bag."], ans:2, type:"mc"},
+  {tag:"Перевод", q:"На улице есть машины.", sub:"Выберите правильный перевод:", opts:["There is a car in the street.","There are cars in the street.","There is cars in the street.","There are a car in the street."], ans:1, type:"mc"},
+  {tag:"Перевод", q:"В холодильнике есть молоко.", sub:"Выберите правильный перевод:", opts:["There are milk in the fridge.","There is milks in the fridge.","There is milk in the fridge.","There are milks in the fridge."], ans:2, type:"mc"},
+  {tag:"Перевод", q:"На полке есть словарь.", sub:"Выберите правильный перевод:", opts:["There is a dictionary on the shelf.","There are dictionaries on the shelf.","There is dictionaries on the shelf.","There are a dictionary on the shelf."], ans:0, type:"mc"},
+  {tag:"Перевод", q:"В саду есть цветы.", sub:"Выберите правильный перевод:", opts:["There is a flower in the garden.","There is flowers in the garden.","There are flowers in the garden.","There are a flower in the garden."], ans:2, type:"mc"},
+  {tag:"Перевод", q:"В городе есть музей.", sub:"Выберите правильный перевод:", opts:["There are museums in the city.","There is a museum in the city.","There is museums in the city.","There are a museum in the city."], ans:1, type:"mc"},
 
-  // ── 3. ПРЕДЛОГИ (времена года/праздники) ──
+  // ══ 3. ПРЕДЛОГИ ══ (10 вопросов)
   {tag:"Предлоги", q:"New Year is celebrated <code>___</code> winter.", sub:"Выберите правильный предлог:", opts:["in","on","–","at"], ans:0, type:"mc"},
   {tag:"Предлоги", q:"His birthday is <code>___</code> Monday.", sub:"Выберите правильный предлог:", opts:["in","on","at","–"], ans:1, type:"mc"},
   {tag:"Предлоги", q:"We have classes <code>___</code> the morning.", sub:"Выберите правильный предлог:", opts:["on","at","in","–"], ans:2, type:"mc"},
+  {tag:"Предлоги", q:"She was born <code>___</code> 1999.", sub:"Выберите правильный предлог:", opts:["on","at","in","–"], ans:2, type:"mc"},
+  {tag:"Предлоги", q:"The meeting is <code>___</code> noon.", sub:"Выберите правильный предлог:", opts:["in","on","at","–"], ans:2, type:"mc"},
+  {tag:"Предлоги", q:"We go to the gym <code>___</code> Fridays.", sub:"Выберите правильный предлог:", opts:["in","at","on","–"], ans:2, type:"mc"},
+  {tag:"Предлоги", q:"I always wake up early <code>___</code> summer.", sub:"Выберите правильный предлог:", opts:["on","at","in","–"], ans:2, type:"mc"},
+  {tag:"Предлоги", q:"The concert starts <code>___</code> 7 o'clock.", sub:"Выберите правильный предлог:", opts:["in","on","at","–"], ans:2, type:"mc"},
+  {tag:"Предлоги", q:"He was born <code>___</code> the 5th of May.", sub:"Выберите правильный предлог:", opts:["in","at","on","–"], ans:2, type:"mc"},
+  {tag:"Предлоги", q:"They got married <code>___</code> spring.", sub:"Выберите правильный предлог:", opts:["on","at","in","–"], ans:2, type:"mc"},
 
-  // ── 4. МЕСТОИМЕНИЯ (What is your name) ──
+  // ══ 4. МЕСТОИМЕНИЯ (притяжательные) ══ (10 вопросов)
   {tag:"Местоимения", q:"What is <code>___</code> name?", sub:"Выберите правильное слово:", opts:["you","your","yourself","yourselves"], ans:1, type:"mc"},
   {tag:"Местоимения", q:"Is this <code>___</code> bag?", sub:"Выберите правильное слово:", opts:["she","her","hers","herself"], ans:1, type:"mc"},
   {tag:"Местоимения", q:"We did it <code>___</code>.", sub:"Выберите правильное слово:", opts:["us","our","ourselves","ours"], ans:2, type:"mc"},
+  {tag:"Местоимения", q:"He hurt <code>___</code> playing football.", sub:"Выберите правильное слово:", opts:["him","his","himself","he"], ans:2, type:"mc"},
+  {tag:"Местоимения", q:"This is not <code>___</code> pen.", sub:"Выберите правильное слово:", opts:["I","me","my","mine"], ans:2, type:"mc"},
+  {tag:"Местоимения", q:"<code>___</code> sister is a doctor.", sub:"Выберите правильное слово:", opts:["His","Him","He","Himself"], ans:0, type:"mc"},
+  {tag:"Местоимения", q:"The children enjoyed <code>___</code> at the party.", sub:"Выберите правильное слово:", opts:["them","their","themselves","theirs"], ans:2, type:"mc"},
+  {tag:"Местоимения", q:"Is this <code>___</code> book or mine?", sub:"Выберите правильное слово:", opts:["you","your","yours","yourself"], ans:2, type:"mc"},
+  {tag:"Местоимения", q:"She looked at <code>___</code> in the mirror.", sub:"Выберите правильное слово:", opts:["her","hers","herself","she"], ans:2, type:"mc"},
+  {tag:"Местоимения", q:"This is <code>___</code> problem, not yours.", sub:"Выберите правильное слово:", opts:["our","ours","ourselves","we"], ans:0, type:"mc"},
 
-  // ── 5. ГРАММАТИКА (There is/are) ──
+  // ══ 5. ГРАММАТИКА There is/are ══ (10 вопросов)
   {tag:"Грамматика", q:"There <code>___</code> twelve people in the room.", sub:"Выберите правильную форму глагола:", opts:["are","is","am","–"], ans:0, type:"mc"},
   {tag:"Грамматика", q:"There <code>___</code> a dog in the garden.", sub:"Выберите правильную форму глагола:", opts:["are","is","am","be"], ans:1, type:"mc"},
   {tag:"Грамматика", q:"There <code>___</code> no milk in the fridge.", sub:"Выберите правильную форму глагола:", opts:["are","am","is","be"], ans:2, type:"mc"},
+  {tag:"Грамматика", q:"There <code>___</code> many problems in this city.", sub:"Выберите правильную форму глагола:", opts:["is","am","are","be"], ans:2, type:"mc"},
+  {tag:"Грамматика", q:"There <code>___</code> a lot of noise outside.", sub:"Выберите правильную форму глагола:", opts:["are","am","is","be"], ans:2, type:"mc"},
+  {tag:"Грамматика", q:"There <code>___</code> two chairs and a table.", sub:"Выберите правильную форму глагола:", opts:["is","am","are","be"], ans:2, type:"mc"},
+  {tag:"Грамматика", q:"There <code>___</code> an apple on the plate.", sub:"Выберите правильную форму глагола:", opts:["are","am","is","be"], ans:2, type:"mc"},
+  {tag:"Грамматика", q:"There <code>___</code> no students in the classroom.", sub:"Выберите правильную форму глагола:", opts:["is","am","are","be"], ans:2, type:"mc"},
+  {tag:"Грамматика", q:"There <code>___</code> a pen and two pencils on the desk.", sub:"Выберите правильную форму глагола:", opts:["are","am","is","be"], ans:2, type:"mc"},
+  {tag:"Грамматика", q:"<code>___</code> there any water in the bottle?", sub:"Выберите правильную форму глагола:", opts:["Are","Am","Is","Be"], ans:2, type:"mc"},
 
-  // ── 6. ПРИТЯЖАТЕЛЬНЫЕ МЕСТОИМЕНИЯ ──
+  // ══ 6. ПРИТЯЖАТЕЛЬНЫЕ МЕСТОИМЕНИЯ ══ (10 вопросов)
   {tag:"Местоимения", q:"This book is <code>___</code>.", sub:"Выберите правильное притяжательное:", opts:["mine","my","my friend","my friend's"], ans:0, type:"mc"},
   {tag:"Местоимения", q:"Is this pen <code>___</code>?", sub:"Выберите правильное притяжательное:", opts:["your","yours","you","yourself"], ans:1, type:"mc"},
   {tag:"Местоимения", q:"The red car is <code>___</code>.", sub:"Выберите правильное притяжательное:", opts:["him","his","he","himself"], ans:1, type:"mc"},
+  {tag:"Местоимения", q:"That coat is <code>___</code>, not mine.", sub:"Выберите правильное притяжательное:", opts:["her","hers","she","herself"], ans:1, type:"mc"},
+  {tag:"Местоимения", q:"These shoes are <code>___</code>.", sub:"Выберите правильное притяжательное:", opts:["our","ours","we","ourselves"], ans:1, type:"mc"},
+  {tag:"Местоимения", q:"The decision was <code>___</code> to make.", sub:"Выберите правильное притяжательное:", opts:["them","their","theirs","themselves"], ans:2, type:"mc"},
+  {tag:"Местоимения", q:"Is this phone <code>___</code> or hers?", sub:"Выберите правильное притяжательное:", opts:["your","yours","you","yourself"], ans:1, type:"mc"},
+  {tag:"Местоимения", q:"The victory was <code>___</code>.", sub:"Выберите правильное притяжательное:", opts:["our","ours","we","ourselves"], ans:1, type:"mc"},
+  {tag:"Местоимения", q:"That bag is not <code>___</code>.", sub:"Выберите правильное притяжательное:", opts:["my","mine","me","myself"], ans:1, type:"mc"},
+  {tag:"Местоимения", q:"This flat is <code>___</code>.", sub:"Выберите правильное притяжательное:", opts:["him","he","his","himself"], ans:2, type:"mc"},
 
-  // ── 7. СТЕПЕНИ СРАВНЕНИЯ (better) ──
+  // ══ 7. СТЕПЕНИ СРАВНЕНИЯ (better/worse) ══ (10 вопросов)
   {tag:"Степени", q:"Your test is good, but mine is <code>___</code>.", sub:"Выберите правильную степень сравнения:", opts:["better","badder","gooder","well"], ans:0, type:"mc"},
   {tag:"Степени", q:"This road is bad, but that one is <code>___</code>.", sub:"Выберите правильную степень сравнения:", opts:["more bad","badder","worse","worst"], ans:2, type:"mc"},
   {tag:"Степени", q:"Today is <code>___</code> day of the year.", sub:"Выберите правильную степень сравнения:", opts:["the most good","the better","the best","more good"], ans:2, type:"mc"},
+  {tag:"Степени", q:"She sings <code>___</code> than her sister.", sub:"Выберите правильную степень сравнения:", opts:["more well","gooder","better","weller"], ans:2, type:"mc"},
+  {tag:"Степени", q:"This is the <code>___</code> film I have ever seen.", sub:"Выберите правильную степень сравнения:", opts:["worse","bad","worst","badly"], ans:2, type:"mc"},
+  {tag:"Степени", q:"He feels <code>___</code> today than yesterday.", sub:"Выберите правильную степень сравнения:", opts:["more well","weller","better","gooder"], ans:2, type:"mc"},
+  {tag:"Степени", q:"This coffee is <code>___</code> than the one I had this morning.", sub:"Выберите правильную степень сравнения:", opts:["gooder","more good","better","weller"], ans:2, type:"mc"},
+  {tag:"Степени", q:"My results were <code>___</code> than I expected.", sub:"Выберите правильную степень сравнения:", opts:["more bad","badder","worser","worse"], ans:3, type:"mc"},
+  {tag:"Степени", q:"This is the <code>___</code> pizza I have ever tasted.", sub:"Выберите правильную степень сравнения:", opts:["more good","the most good","best","the goodest"], ans:2, type:"mc"},
+  {tag:"Степени", q:"His condition is getting <code>___</code> every day.", sub:"Выберите правильную степень сравнения:", opts:["more bad","worse","worser","badder"], ans:1, type:"mc"},
 
-  // ── 8. СТЕПЕНИ (the largest) ──
+  // ══ 8. СТЕПЕНИ (the largest/longest) ══ (10 вопросов)
   {tag:"Степени", q:"Russia is <code>___</code> country in the world.", sub:"Выберите правильную степень сравнения:", opts:["large","the most large","the largest","larger"], ans:2, type:"mc"},
   {tag:"Степени", q:"The Amazon is <code>___</code> river in the world.", sub:"Выберите правильную степень сравнения:", opts:["long","the most long","the longest","more long"], ans:2, type:"mc"},
   {tag:"Степени", q:"This building is <code>___</code> than that one.", sub:"Выберите правильную степень сравнения:", opts:["tall","the tallest","more tall","taller"], ans:3, type:"mc"},
+  {tag:"Степени", q:"Mount Everest is <code>___</code> mountain in the world.", sub:"Выберите правильную степень сравнения:", opts:["high","higher","the highest","the most high"], ans:2, type:"mc"},
+  {tag:"Степени", q:"This summer was <code>___</code> than last year.", sub:"Выберите правильную степень сравнения:", opts:["hot","more hot","the hottest","hotter"], ans:3, type:"mc"},
+  {tag:"Степени", q:"She is <code>___</code> student in the class.", sub:"Выберите правильную степень сравнения:", opts:["the most smart","the smartest","smarter","more smart"], ans:1, type:"mc"},
+  {tag:"Степени", q:"This is <code>___</code> book I have ever read.", sub:"Выберите правильную степень сравнения:", opts:["the most long","longer","the longest","more long"], ans:2, type:"mc"},
+  {tag:"Степени", q:"The Pacific Ocean is <code>___</code> ocean on Earth.", sub:"Выберите правильную степень сравнения:", opts:["deep","deeper","the most deep","the deepest"], ans:3, type:"mc"},
+  {tag:"Степени", q:"January is <code>___</code> month of the year.", sub:"Выберите правильную степень сравнения:", opts:["the coldest","more cold","most cold","the most cold"], ans:0, type:"mc"},
+  {tag:"Степени", q:"That was <code>___</code> joke he told.", sub:"Выберите правильную степень сравнения:", opts:["funniest","more funny","the most funny","the funniest"], ans:3, type:"mc"},
 
-  // ── 9. СТЕПЕНИ (the most interesting) ──
+  // ══ 9. СТЕПЕНИ (more interesting) ══ (10 вопросов)
   {tag:"Степени", q:"Football is <code>___</code> sport in the world.", sub:"Выберите правильную степень сравнения:", opts:["interesting","the most interesting","interestinger","more interesting"], ans:1, type:"mc"},
   {tag:"Степени", q:"English is <code>___</code> subject for me.", sub:"Выберите правильную степень сравнения:", opts:["the most important","the importantest","more important","importanter"], ans:0, type:"mc"},
   {tag:"Степени", q:"This film is <code>___</code> than the book.", sub:"Выберите правильную степень сравнения:", opts:["more exciting","the most exciting","excitinger","most exciting"], ans:0, type:"mc"},
+  {tag:"Степени", q:"This task is <code>___</code> than I thought.", sub:"Выберите правильную степень сравнения:", opts:["difficulter","most difficult","more difficult","the most difficult"], ans:2, type:"mc"},
+  {tag:"Степени", q:"Science is <code>___</code> subject than art.", sub:"Выберите правильную степень сравнения:", opts:["more complicated","most complicated","complicateder","the most complicated"], ans:0, type:"mc"},
+  {tag:"Степени", q:"This museum is <code>___</code> place in the city.", sub:"Выберите правильную степень сравнения:", opts:["more popular","the most popular","popularer","most popular"], ans:1, type:"mc"},
+  {tag:"Степени", q:"Today's lesson was <code>___</code> than yesterday's.", sub:"Выберите правильную степень сравнения:", opts:["interestinger","more interesting","the most interesting","most interesting"], ans:1, type:"mc"},
+  {tag:"Степени", q:"He is <code>___</code> person I know.", sub:"Выберите правильную степень сравнения:", opts:["more creative","creativer","the most creative","most creative"], ans:2, type:"mc"},
+  {tag:"Степени", q:"This problem is <code>___</code> than the previous one.", sub:"Выберите правильную степень сравнения:", opts:["more serious","the most serious","seriouser","most serious"], ans:0, type:"mc"},
+  {tag:"Степени", q:"History is <code>___</code> subject in our school.", sub:"Выберите правильную степень сравнения:", opts:["more popular","popularer","the most popular","most popular"], ans:2, type:"mc"},
 
-  // ── 10. СУЩЕСТВИТЕЛЬНЫЕ мн. число ──
+  // ══ 10. СУЩЕСТВИТЕЛЬНЫЕ мн.число ══ (10 вопросов)
   {tag:"Существительные", q:"There are many <code>___</code> in the room.", sub:"Выберите правильную форму мн. числа:", opts:["man","men","mens","mans"], ans:1, type:"mc"},
   {tag:"Существительные", q:"The <code>___</code> are playing in the park.", sub:"Выберите правильную форму мн. числа:", opts:["childs","childrens","children","child"], ans:2, type:"mc"},
   {tag:"Существительные", q:"She has two <code>___</code>.", sub:"Выберите правильную форму мн. числа:", opts:["foots","feet","feets","foot"], ans:1, type:"mc"},
+  {tag:"Существительные", q:"The <code>___</code> are in the field.", sub:"Выберите правильную форму мн. числа:", opts:["sheeps","sheepies","sheep","sheepen"], ans:2, type:"mc"},
+  {tag:"Существительные", q:"He has three <code>___</code>.", sub:"Выберите правильную форму мн. числа:", opts:["tooths","teeths","tooth","teeth"], ans:3, type:"mc"},
+  {tag:"Существительные", q:"The <code>___</code> are swimming in the pond.", sub:"Выберите правильную форму мн. числа:", opts:["gooses","geese","goosies","goose"], ans:1, type:"mc"},
+  {tag:"Существительные", q:"Two <code>___</code> are sitting on the bench.", sub:"Выберите правильную форму мн. числа:", opts:["womans","womens","women","woman"], ans:2, type:"mc"},
+  {tag:"Существительные", q:"The <code>___</code> ran across the field.", sub:"Выберите правильную форму мн. числа:", opts:["oxes","oxen","ox","oxs"], ans:1, type:"mc"},
+  {tag:"Существительные", q:"I saw three <code>___</code> in the forest.", sub:"Выберите правильную форму мн. числа:", opts:["mouses","mouse","mice","mices"], ans:2, type:"mc"},
+  {tag:"Существительные", q:"There were five <code>___</code> at the door.", sub:"Выберите правильную форму мн. числа:", opts:["persons","people","peoples","person"], ans:1, type:"mc"},
 
-  // ── 11. АРТИКЛИ ──
+  // ══ 11. АРТИКЛИ ══ (10 вопросов)
   {tag:"Артикли", q:"Where are you from? – I am from <code>___</code> Russia.", sub:"Выберите правильный артикль:", opts:["a","the","–","an"], ans:2, type:"mc"},
   {tag:"Артикли", q:"She is <code>___</code> engineer.", sub:"Выберите правильный артикль:", opts:["–","the","a","an"], ans:3, type:"mc"},
   {tag:"Артикли", q:"<code>___</code> Sun rises in the east.", sub:"Выберите правильный артикль:", opts:["A","An","The","–"], ans:2, type:"mc"},
+  {tag:"Артикли", q:"He is <code>___</code> honest man.", sub:"Выберите правильный артикль:", opts:["a","the","–","an"], ans:3, type:"mc"},
+  {tag:"Артикли", q:"She plays <code>___</code> piano every evening.", sub:"Выберите правильный артикль:", opts:["a","an","–","the"], ans:3, type:"mc"},
+  {tag:"Артикли", q:"We live on <code>___</code> second floor.", sub:"Выберите правильный артикль:", opts:["a","an","–","the"], ans:3, type:"mc"},
+  {tag:"Артикли", q:"I had <code>___</code> egg for breakfast.", sub:"Выберите правильный артикль:", opts:["a","–","the","an"], ans:3, type:"mc"},
+  {tag:"Артикли", q:"<code>___</code> Nile is the longest river in Africa.", sub:"Выберите правильный артикль:", opts:["A","An","The","–"], ans:2, type:"mc"},
+  {tag:"Артикли", q:"He is <code>___</code> best student in the class.", sub:"Выберите правильный артикль:", opts:["a","an","–","the"], ans:3, type:"mc"},
+  {tag:"Артикли", q:"She went to <code>___</code> hospital yesterday.", sub:"Выберите правильный артикль:", opts:["an","–","a","the"], ans:3, type:"mc"},
 
-  // ── 12. ВРЕМЕНА (Present Simple) ──
+  // ══ 12. ВРЕМЕНА Present Simple ══ (10 вопросов)
   {tag:"Времена", q:"I <code>___</code> to college every day.", sub:"Выберите правильную форму глагола:", opts:["will go","goes","going","go"], ans:3, type:"mc"},
   {tag:"Времена", q:"She <code>___</code> English every evening.", sub:"Выберите правильную форму глагола:", opts:["study","studies","is studying","will study"], ans:1, type:"mc"},
   {tag:"Времена", q:"They <code>___</code> football on Sundays.", sub:"Выберите правильную форму глагола:", opts:["plays","is playing","play","will play"], ans:2, type:"mc"},
+  {tag:"Времена", q:"He <code>___</code> in Moscow.", sub:"Выберите правильную форму глагола:", opts:["live","is living","lives","will live"], ans:2, type:"mc"},
+  {tag:"Времена", q:"Water <code>___</code> at 100°C.", sub:"Выберите правильную форму глагола:", opts:["boil","is boiling","boils","will boil"], ans:2, type:"mc"},
+  {tag:"Времена", q:"My parents <code>___</code> tea every morning.", sub:"Выберите правильную форму глагола:", opts:["drinks","is drinking","drink","will drink"], ans:2, type:"mc"},
+  {tag:"Времена", q:"The train <code>___</code> at 9 a.m.", sub:"Выберите правильную форму глагола:", opts:["leave","is leaving","leaves","will leave"], ans:2, type:"mc"},
+  {tag:"Времена", q:"She <code>___</code> the piano very well.", sub:"Выберите правильную форму глагола:", opts:["play","is playing","plays","will play"], ans:2, type:"mc"},
+  {tag:"Времена", q:"We <code>___</code> English at school.", sub:"Выберите правильную форму глагола:", opts:["studies","is studying","study","will study"], ans:2, type:"mc"},
+  {tag:"Времена", q:"He <code>___</code> to work by bus.", sub:"Выберите правильную форму глагола:", opts:["go","goes","is going","will go"], ans:1, type:"mc"},
 
-  // ── 13. ВРЕМЕНА (Past Simple) ──
+  // ══ 13. ВРЕМЕНА Past Simple ══ (10 вопросов)
   {tag:"Времена", q:"The students <code>___</code> the museum yesterday.", sub:"Выберите правильную форму глагола:", opts:["visited","visit","was visiting","visits"], ans:0, type:"mc"},
   {tag:"Времена", q:"She <code>___</code> a letter last night.", sub:"Выберите правильную форму глагола:", opts:["writes","write","is writing","wrote"], ans:3, type:"mc"},
   {tag:"Времена", q:"We <code>___</code> to London two years ago.", sub:"Выберите правильную форму глагола:", opts:["go","goes","went","have gone"], ans:2, type:"mc"},
+  {tag:"Времена", q:"He <code>___</code> football yesterday evening.", sub:"Выберите правильную форму глагола:", opts:["play","plays","played","is playing"], ans:2, type:"mc"},
+  {tag:"Времена", q:"They <code>___</code> a film last Saturday.", sub:"Выберите правильную форму глагола:", opts:["watch","watches","watched","are watching"], ans:2, type:"mc"},
+  {tag:"Времена", q:"I <code>___</code> a strange dream last night.", sub:"Выберите правильную форму глагола:", opts:["have","has","had","was having"], ans:2, type:"mc"},
+  {tag:"Времена", q:"She <code>___</code> her keys yesterday.", sub:"Выберите правильную форму глагола:", opts:["lose","loses","lost","is losing"], ans:2, type:"mc"},
+  {tag:"Времена", q:"We <code>___</code> pizza for dinner.", sub:"Выберите правильную форму глагола:", opts:["eat","eats","ate","are eating"], ans:2, type:"mc"},
+  {tag:"Времена", q:"He <code>___</code> to me this morning.", sub:"Выберите правильную форму глагола:", opts:["speak","speaks","spoke","is speaking"], ans:2, type:"mc"},
+  {tag:"Времена", q:"They <code>___</code> the test last week.", sub:"Выберите правильную форму глагола:", opts:["pass","passes","passed","are passing"], ans:2, type:"mc"},
 
-  // ── 14. ВРЕМЕНА (Future Simple) ──
+  // ══ 14. ВРЕМЕНА Future Simple ══ (10 вопросов)
   {tag:"Времена", q:"My parents and I <code>___</code> next summer.", sub:"Выберите правильную форму глагола:", opts:["are travelling","travel","will travel","travels"], ans:2, type:"mc"},
   {tag:"Времена", q:"He <code>___</code> us tomorrow.", sub:"Выберите правильную форму глагола:", opts:["visit","visits","visited","will visit"], ans:3, type:"mc"},
   {tag:"Времена", q:"They <code>___</code> the exam next week.", sub:"Выберите правильную форму глагола:", opts:["pass","passed","are pass","will pass"], ans:3, type:"mc"},
+  {tag:"Времена", q:"I think it <code>___</code> rain tomorrow.", sub:"Выберите правильную форму глагола:", opts:["is","was","will","would"], ans:2, type:"mc"},
+  {tag:"Времена", q:"She <code>___</code> a nurse when she grows up.", sub:"Выберите правильную форму глагола:", opts:["is","was","will be","would be"], ans:2, type:"mc"},
+  {tag:"Времена", q:"We <code>___</code> you as soon as we arrive.", sub:"Выберите правильную форму глагола:", opts:["call","called","will call","are calling"], ans:2, type:"mc"},
+  {tag:"Времена", q:"He <code>___</code> the project by Friday.", sub:"Выберите правильную форму глагола:", opts:["finish","finished","will finish","finishes"], ans:2, type:"mc"},
+  {tag:"Времена", q:"I promise I <code>___</code> late.", sub:"Выберите правильную форму глагола:", opts:["am not","was not","will not be","would not be"], ans:2, type:"mc"},
+  {tag:"Времена", q:"They <code>___</code> a new school next year.", sub:"Выберите правильную форму глагола:", opts:["build","built","are building","will build"], ans:3, type:"mc"},
+  {tag:"Времена", q:"Don't worry, I <code>___</code> you.", sub:"Выберите правильную форму глагола:", opts:["help","helped","will help","am helping"], ans:2, type:"mc"},
 
-  // ── 15. ВРЕМЕНА (Present Continuous) ──
+  // ══ 15. ВРЕМЕНА Present Continuous ══ (10 вопросов)
   {tag:"Времена", q:"Mike <code>___</code> football now.", sub:"Выберите правильную форму глагола:", opts:["are playing","play","plays","is playing"], ans:3, type:"mc"},
   {tag:"Времена", q:"Look! The children <code>___</code> in the yard.", sub:"Выберите правильную форму глагола:", opts:["run","runs","are running","were running"], ans:2, type:"mc"},
   {tag:"Времена", q:"She <code>___</code> a book at the moment.", sub:"Выберите правильную форму глагола:", opts:["reads","read","is reading","was reading"], ans:2, type:"mc"},
+  {tag:"Времена", q:"They <code>___</code> dinner right now.", sub:"Выберите правильную форму глагола:", opts:["cook","cooked","are cooking","were cooking"], ans:2, type:"mc"},
+  {tag:"Времена", q:"I <code>___</code> to music at the moment.", sub:"Выберите правильную форму глагола:", opts:["listen","listened","am listening","was listening"], ans:2, type:"mc"},
+  {tag:"Времена", q:"He <code>___</code> on the phone right now.", sub:"Выберите правильную форму глагола:", opts:["talks","talked","is talking","was talking"], ans:2, type:"mc"},
+  {tag:"Времена", q:"We <code>___</code> for the bus now.", sub:"Выберите правильную форму глагола:", opts:["wait","waited","are waiting","were waiting"], ans:2, type:"mc"},
+  {tag:"Времена", q:"The baby <code>___</code> at the moment.", sub:"Выберите правильную форму глагола:", opts:["sleep","slept","is sleeping","was sleeping"], ans:2, type:"mc"},
+  {tag:"Времена", q:"She <code>___</code> her homework now.", sub:"Выберите правильную форму глагола:", opts:["does","did","is doing","was doing"], ans:2, type:"mc"},
+  {tag:"Времена", q:"They <code>___</code> a new house at the moment.", sub:"Выберите правильную форму глагола:", opts:["build","built","are building","were building"], ans:2, type:"mc"},
 
-  // ── 16. ЧИСЛИТЕЛЬНЫЕ (написать) ──
+  // ══ 16. ЧИСЛИТЕЛЬНЫЕ (написать) ══ (10 вопросов)
   {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Пятьдесят восемь", opts:null, type:"open", answers:["fifty-eight","fifty eight"], placeholder:"Напишите ответ..."},
   {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Семьдесят два", opts:null, type:"open", answers:["seventy-two","seventy two"], placeholder:"Напишите ответ..."},
   {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Сорок пять", opts:null, type:"open", answers:["forty-five","forty five"], placeholder:"Напишите ответ..."},
+  {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Девяносто три", opts:null, type:"open", answers:["ninety-three","ninety three"], placeholder:"Напишите ответ..."},
+  {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Шестьдесят один", opts:null, type:"open", answers:["sixty-one","sixty one"], placeholder:"Напишите ответ..."},
+  {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Двадцать семь", opts:null, type:"open", answers:["twenty-seven","twenty seven"], placeholder:"Напишите ответ..."},
+  {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Восемьдесят четыре", opts:null, type:"open", answers:["eighty-four","eighty four"], placeholder:"Напишите ответ..."},
+  {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Тридцать шесть", opts:null, type:"open", answers:["thirty-six","thirty six"], placeholder:"Напишите ответ..."},
+  {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Пятнадцать", opts:null, type:"open", answers:["fifteen"], placeholder:"Напишите ответ..."},
+  {tag:"Числительные", q:"Напишите числительное на английском языке:", sub:"Сто", opts:null, type:"open", answers:["one hundred","a hundred","hundred"], placeholder:"Напишите ответ..."},
 
-  // ── 17. ЧИСЛИТЕЛЬНЫЕ (дата) ──
+  // ══ 17. ЧИСЛИТЕЛЬНЫЕ (дата) ══ (10 вопросов)
   {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Тридцать первое декабря", opts:null, type:"open", answers:["the thirty-first of december","thirty-first of december","december the thirty-first","the 31st of december","31st of december","december 31st"], placeholder:"Напишите дату..."},
   {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Первое сентября", opts:null, type:"open", answers:["the first of september","first of september","september the first","the 1st of september","1st of september","september 1st"], placeholder:"Напишите дату..."},
   {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Восьмое марта", opts:null, type:"open", answers:["the eighth of march","eighth of march","march the eighth","the 8th of march","8th of march","march 8th"], placeholder:"Напишите дату..."},
+  {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Двадцать третье февраля", opts:null, type:"open", answers:["the twenty-third of february","twenty-third of february","february the twenty-third","the 23rd of february","23rd of february","february 23rd"], placeholder:"Напишите дату..."},
+  {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Девятое мая", opts:null, type:"open", answers:["the ninth of may","ninth of may","may the ninth","the 9th of may","9th of may","may 9th"], placeholder:"Напишите дату..."},
+  {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Четвёртое ноября", opts:null, type:"open", answers:["the fourth of november","fourth of november","november the fourth","the 4th of november","4th of november","november 4th"], placeholder:"Напишите дату..."},
+  {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Двенадцатое июня", opts:null, type:"open", answers:["the twelfth of june","twelfth of june","june the twelfth","the 12th of june","12th of june","june 12th"], placeholder:"Напишите дату..."},
+  {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Седьмое января", opts:null, type:"open", answers:["the seventh of january","seventh of january","january the seventh","the 7th of january","7th of january","january 7th"], placeholder:"Напишите дату..."},
+  {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Второе октября", opts:null, type:"open", answers:["the second of october","second of october","october the second","the 2nd of october","2nd of october","october 2nd"], placeholder:"Напишите дату..."},
+  {tag:"Числительные", q:"Напишите фразу на английском языке:", sub:"Пятнадцатое июля", opts:null, type:"open", answers:["the fifteenth of july","fifteenth of july","july the fifteenth","the 15th of july","15th of july","july 15th"], placeholder:"Напишите дату..."},
 
-  // ── 18. ПОРЯДОК СЛОВ ──
+  // ══ 18. ПОРЯДОК СЛОВ ══ (10 вопросов)
   {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"have, week, we, English, every", opts:null, type:"open", answers:["we have english every week","we have english class every week"], placeholder:"Составьте предложение..."},
   {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"like, I, music, listening, to", opts:null, type:"open", answers:["i like listening to music"], placeholder:"Составьте предложение..."},
-  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"school, go, they, to, every, day", opts:null, type:"open", answers:["they go to school every day"], placeholder:"Составьте предложение..."}
+  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"school, go, they, to, every, day", opts:null, type:"open", answers:["they go to school every day"], placeholder:"Составьте предложение..."},
+  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"morning, she, in, runs, the", opts:null, type:"open", answers:["she runs in the morning"], placeholder:"Составьте предложение..."},
+  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"coffee, drinks, he, every, morning", opts:null, type:"open", answers:["he drinks coffee every morning"], placeholder:"Составьте предложение..."},
+  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"never, late, I, am", opts:null, type:"open", answers:["i am never late"], placeholder:"Составьте предложение..."},
+  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"cat, the, on, sleeping, is, sofa, the", opts:null, type:"open", answers:["the cat is sleeping on the sofa"], placeholder:"Составьте предложение..."},
+  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"visit, we, often, grandparents, our", opts:null, type:"open", answers:["we often visit our grandparents"], placeholder:"Составьте предложение..."},
+  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"watching, they, TV, are, now", opts:null, type:"open", answers:["they are watching tv now"], placeholder:"Составьте предложение..."},
+  {tag:"Порядок слов", q:"Поставьте слова в правильном порядке:", sub:"yesterday, bought, she, new, a, dress", opts:null, type:"open", answers:["she bought a new dress yesterday"], placeholder:"Составьте предложение..."}
 ];
 
 // ══ СОСТОЯНИЕ БАЗОВОГО ══
