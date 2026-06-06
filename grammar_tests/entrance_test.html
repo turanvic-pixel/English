@@ -342,7 +342,6 @@
         <div class="grade-big" id="adv-grade-big"></div>
         <div class="result-msg" id="adv-msg"></div>
         <div id="adv-send-status" class="send-status"></div>
-        <div id="adv-timer-tag" class="timer-tag"></div>
 
       </div>
     </div>
@@ -629,8 +628,8 @@ function sendToForms(name, group, testName, result, statusId, timerTagId, timerO
   .then(function(){
     var el=document.getElementById(statusId);
     if(el){el.textContent='✅ Результат отправлен преподавателю';el.className='send-status ok';}
-    var tt=document.getElementById(timerTagId);
-    if(tt){tt.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен';tt.className='timer-tag '+(timerOn?'timer-on':'timer-off');}
+    if(timerTagId){var tt=document.getElementById(timerTagId);
+    if(tt){tt.textContent=timerOn?'⏱ Таймер: включён':'⏱ Таймер: выключен';tt.className='timer-tag '+(timerOn?'timer-on':'timer-off');}}
   }).catch(function(){
     var el=document.getElementById(statusId);
     if(el){el.textContent='⚠️ Нет соединения — результат не отправлен';el.className='send-status err';}
@@ -975,7 +974,7 @@ function submitAdv(){
     var advGroup=document.getElementById('adv-inp-group').value.trim()||'—';
     var advResult=advScore+'/6 | '+grade;
     var advAttempt=getAttemptNum('attempt_entrance_adv');
-    sendToForms(advName,advGroup,'Входной контроль — Повышенный',advResult,'adv-send-status','adv-send-status',false,advAttempt,violations);
+    sendToForms(advName,advGroup,'Входной контроль — Повышенный',advResult,'adv-send-status',null,false,advAttempt,violations);
     document.getElementById('adv-emoji').textContent=emoji;
     document.getElementById('adv-score-big').textContent=advScore;
     document.getElementById('adv-grade-big').textContent=grade;
