@@ -308,14 +308,11 @@
         <b>Повышенный уровень (Задание 19)</b><br>
         Tell about yourself in 3 sentences.<br>
         За каждое правильное предложение — <b>2 балла</b>. Всего <b>6 баллов</b>.<br><br>
-        Оценка: <b>5–6 баллов → «5»</b> &nbsp;|&nbsp; <b>4 балла и менее → «4»</b>
+        Оценка: <b>6 баллов → «5»</b> &nbsp;|&nbsp; <b>3–4 балла → «4»</b> &nbsp;|&nbsp; <b>менее 3 баллов → «3»</b><br><br>⏱ <b>Таймер:</b> 1 минута на каждое предложение
       </div>
       <div style="margin:0 auto 1rem;max-width:340px;text-align:left;">
         <input class="name-input" id="adv-inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
         <input class="name-input" id="adv-inp-group" type="text" placeholder="Номер группы" autocomplete="off">
-      </div>
-      <div style="background:#fff3dc;border:1.5px solid #f6ad55;border-radius:10px;padding:10px 16px;margin-bottom:1rem;font-size:13px;color:#92400e;text-align:left;">
-        ⏱ <b>Таймер включён:</b> 1 минута на каждое предложение. При истечении времени предложение засчитывается как невыполненное.
       </div>
       <button class="start-btn" onclick="startAdv()">▶ Начать задание</button>
     </div>
@@ -846,8 +843,8 @@ function submitAdv(){
     document.getElementById('adv-result').style.display='';
     var grade,gradeClass,emoji,msg;
     if(advScore===6){grade='Оценка «5»';gradeClass='grade-5';emoji='🏆';msg='Отлично! Все предложения составлены верно.';}
-    else if(advScore>=4){grade='Оценка «4»';gradeClass='grade-3';emoji='⭐';msg='Хорошо! 4–5 баллов — оценка «4».';}
-    else{grade='Оценка «3»';gradeClass='grade-2';emoji='📖';msg='Менее 4 баллов — оценка «3».';};
+    else if(advScore>=3){grade='Оценка «4»';gradeClass='grade-3';emoji='⭐';msg='3–4 балла — оценка «4».';}
+    else{grade='Оценка «3»';gradeClass='grade-2';emoji='📖';msg='Менее 3 баллов — оценка «3».';};
     var advName=document.getElementById('adv-inp-name').value.trim()||'—';
     var advGroup=document.getElementById('adv-inp-group').value.trim()||'—';
     var advResult=advScore+'/6 | '+grade;
