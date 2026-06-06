@@ -849,7 +849,7 @@ function submitAdv(){
     var advGroup=document.getElementById('adv-inp-group').value.trim()||'—';
     var advResult=advScore+'/6 | '+grade;
     var advAttempt=getAttemptNum('attempt_entrance_adv');
-    sendToForms(advName,advGroup,'Входной контроль — Повышенный',advResult,'adv-send-status','adv-timer-tag',false,advAttempt,violations);
+    sendToForms(advName,advGroup,'Входной контроль — Повышенный',advResult,'adv-send-status','adv-send-status',false,advAttempt,violations);
     document.getElementById('adv-emoji').textContent=emoji;
     document.getElementById('adv-score-big').textContent=advScore;
     document.getElementById('adv-grade-big').textContent=grade;
