@@ -314,6 +314,9 @@
         <input class="name-input" id="adv-inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
         <input class="name-input" id="adv-inp-group" type="text" placeholder="Номер группы" autocomplete="off">
       </div>
+      <div style="background:#fff3dc;border:1.5px solid #f6ad55;border-radius:10px;padding:10px 16px;margin-bottom:1rem;font-size:13px;color:#92400e;text-align:left;">
+        ⏱ <b>Таймер включён:</b> 1 минута на каждое предложение. При истечении времени предложение засчитывается как невыполненное.
+      </div>
       <button class="start-btn" onclick="startAdv()">▶ Начать задание</button>
     </div>
 
@@ -321,11 +324,11 @@
       <div class="q-tag">Задание 19</div>
       <div class="q-text" style="margin-top:8px;">Tell about yourself in 3 sentences.</div>
       <p style="font-size:13px;color:var(--gray);margin-bottom:14px;">Напишите 3 предложения о себе на английском языке.</p>
-      <span class="adv-label">Предложение 1:</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><span class="adv-label" style="margin:0;">Предложение 1:</span><span class="timer-chip" id="adv-t1" style="font-size:13px;">⏱ <b id="adv-tv1">60</b></span></div>
       <input type="text" class="open-input adv-label" id="adv-s1" placeholder="" style="margin-top:0"/>
-      <span class="adv-label">Предложение 2:</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;margin-top:10px;"><span class="adv-label" style="margin:0;">Предложение 2:</span><span class="timer-chip" id="adv-t2" style="font-size:13px;display:none;">⏱ <b id="adv-tv2">60</b></span></div>
       <input type="text" class="open-input" id="adv-s2" placeholder="" />
-      <span class="adv-label">Предложение 3:</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;margin-top:10px;"><span class="adv-label" style="margin:0;">Предложение 3:</span><span class="timer-chip" id="adv-t3" style="font-size:13px;display:none;">⏱ <b id="adv-tv3">60</b></span></div>
       <input type="text" class="open-input" id="adv-s3" placeholder="" />
       <div style="margin-top:14px;">
         <button class="check-btn" onclick="submitAdv()">✓ Отправить</button>
@@ -753,8 +756,57 @@ function bTimeOut(){
 
 // ══ ПОВЫШЕННЫЙ ══
 var advSubmitted=false;
+
+// ══ ТАЙМЕР ПОВЫШЕННОГО ══
+var advTimerInterval = null;
+var advCurrentSentence = 1;
+
+function startAdvTimer() {
+  advCurrentSentence = 1;
+  document.getElementById('adv-t1').style.display = '';
+  runAdvSentenceTimer(1);
+}
+
+function runAdvSentenceTimer(num) {
+  var sec = 60;
+  var chipId = 'adv-t' + num;
+  var valId = 'adv-tv' + num;
+  var inputId = 'adv-s' + num;
+  if(advTimerInterval) clearInterval(advTimerInterval);
+  document.getElementById(valId).textContent = sec;
+  var chip = document.getElementById(chipId);
+  chip.className = 'timer-chip';
+
+  advTimerInterval = setInterval(function() {
+    sec--;
+    document.getElementById(valId).textContent = sec;
+    if(sec <= 10) chip.className = 'timer-chip danger';
+    else if(sec <= 20) chip.className = 'timer-chip warn';
+    if(sec <= 0) {
+      clearInterval(advTimerInterval);
+      // Lock current input
+      var inp = document.getElementById(inputId);
+      if(inp && !inp.disabled) { inp.disabled = true; inp.style.opacity='.5'; }
+      // Move to next sentence
+      if(num < 3) {
+        var nextChip = document.getElementById('adv-t' + (num+1));
+        if(nextChip) nextChip.style.display = '';
+        runAdvSentenceTimer(num + 1);
+      } else {
+        // All time up - auto submit
+        submitAdv();
+      }
+    }
+  }, 1000);
+}
+
+function stopAdvTimer() {
+  if(advTimerInterval) { clearInterval(advTimerInterval); advTimerInterval = null; }
+}
+
 function startAdv(){
   violations=0; warnShown=false; advSubmitted=false;
+  stopAdvTimer();
   document.getElementById('adv-start').style.display='none';
   document.getElementById('adv-result').style.display='none';
   document.getElementById('adv-quiz').style.display='';
@@ -763,6 +815,7 @@ function startAdv(){
     el.value=''; el.disabled=false; el.className='open-input';
   });
   document.getElementById('adv-feedback').textContent='';
+  setTimeout(startAdvTimer, 100);
 }
 function restartAdv(){
   document.getElementById('adv-result').style.display='none';
@@ -772,6 +825,7 @@ function restartAdv(){
 }
 function submitAdv(){
   if(advSubmitted)return;
+  stopAdvTimer();
   var s1=document.getElementById('adv-s1').value.trim();
   var s2=document.getElementById('adv-s2').value.trim();
   var s3=document.getElementById('adv-s3').value.trim();
