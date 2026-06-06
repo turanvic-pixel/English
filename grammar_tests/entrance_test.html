@@ -670,7 +670,11 @@ function showBasicResult(){
   var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
   var emoji=bScore===total?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
   var grade,gradeClass,msg;
-  if(bScore>=10){grade='Оценка «3»';gradeClass='grade-3';msg='Базовый уровень пройден. Переходите к повышенному уровню.';}
+  if(bScore>=9){
+    basicPassed=true;
+    var advTab=document.getElementById('tab-advanced');
+    if(advTab){advTab.className='tab-btn';advTab.onclick=function(){switchTab('advanced');};}
+    grade='Оценка «3»';gradeClass='grade-3';msg='Базовый уровень пройден. Переходите к повышенному уровню.';}
   else{grade='Оценка «2»';gradeClass='grade-2';msg='Менее 10 баллов — оценка «2». Повторите материал.';}
   if(bScore===total){emoji='🏆';msg='Отлично! Все задания выполнены верно!';}
   var bResult=bScore+'/'+bQuestions.length+' ('+Math.round(bScore/BASIC_Q.length*100)+'%) | Оценка: '+grade;
