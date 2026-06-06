@@ -554,8 +554,6 @@ function showBasicQ() {
   document.getElementById('b-counter-cur').textContent=bCur+1;
   document.getElementById('b-hud-ok').textContent=bScore;
   document.getElementById('b-hud-err').textContent=bResults.filter(function(r){return !r.ok;}).length;
-  document.getElementById('b-hint-btn').textContent='💡 Подсказка ('+bHints+')';
-  document.getElementById('b-hint-btn').disabled=(bHints<=0||q.type==='open');
   document.getElementById('b-qtag').textContent=q.tag;
   document.getElementById('b-qtext').innerHTML='<span class="q-sub">'+(q.sub||'')+'</span>'+q.q;
   document.getElementById('b-feedback').textContent='';
