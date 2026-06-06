@@ -99,9 +99,10 @@
   .streak-badge { font-size: 12px; font-weight: 700; background: var(--blue-light); color: var(--blue); border-radius: 99px; padding: 4px 12px; transition: all .3s; }
   .streak-badge.hot  { background: #fff3dc; color: #b45309; }
   .streak-badge.fire { background: linear-gradient(135deg,#fef3c7,#fde68a); color: #92400e; }
-  .timer-chip { font-size: 12px; font-weight: 700; background: var(--blue-light); color: var(--blue); border-radius: 99px; padding: 4px 12px; margin-left: auto; display: none; transition: background .3s, color .3s; }
-  .timer-chip.warn   { background: #fff3dc; color: #b45309; }
-  .timer-chip.danger { background: var(--red-light); color: #b91c1c; }
+  .timer-chip { font-size: 15px; font-weight: 800; background: var(--blue-light); color: var(--blue); border-radius: 12px; padding: 6px 16px; margin-left: auto; transition: background .3s, color .3s, transform .1s; border: 2px solid var(--blue-mid); }
+  .timer-chip.warn   { background: #fff3dc; color: #b45309; border-color: #f6ad55; transform: scale(1.05); }
+  .timer-chip.danger { background: var(--red-light); color: #b91c1c; border-color: #ef4444; transform: scale(1.08); animation: timerPulse .5s ease infinite alternate; }
+  @keyframes timerPulse { from{opacity:1} to{opacity:.6} }
 
   /* ── ПРОГРЕСС ── */
   .progress-bar { height: 7px; background: var(--blue-bg); border-radius: 99px; margin-bottom: 1rem; overflow: hidden; }
@@ -255,6 +256,9 @@
       <div style="margin:0 auto 1rem;max-width:340px;text-align:left;">
         <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
         <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+      </div>
+      <div style="background:#fff3dc;border:1.5px solid #f6ad55;border-radius:10px;padding:10px 16px;margin-bottom:1rem;font-size:13px;color:#92400e;text-align:left;">
+        ⏱ <b>Таймер включён:</b> 20 секунд на вопрос с выбором ответа, 30 секунд на вопросы с вводом. При истечении времени ответ засчитывается как неверный.
       </div>
       <button class="start-btn" onclick="startBasic()">▶ Начать тест</button>
     </div>
@@ -536,7 +540,7 @@ function startBasic() {
   document.getElementById('basic-result').style.display='none';
   document.getElementById('basic-quiz').style.display='';
   document.getElementById('b-counter-tot').textContent=18;
-  document.getElementById('b-timer-chip').style.display='';
+  document.getElementById('b-timer-chip').style.display='flex';
   updateBXp(); updateBStreak();
   showBasicQ();
 }
