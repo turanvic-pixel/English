@@ -251,15 +251,7 @@
         За каждый верный ответ — <b>1 балл</b>. Всего <b>18 баллов</b>.<br><br>
         Оценка: <b>9–18 баллов → «3»</b> &nbsp;|&nbsp; <b>менее 9 баллов → «2»</b>
       </div>
-      <div class="toggle-row">
-        <div class="toggle-label">⏱ Таймер
-          <span class="toggle-sub">15 секунд на вопрос · бонус XP за быстрый ответ</span>
-        </div>
-        <label class="toggle-switch">
-          <input type="checkbox" id="b-timer-toggle" onchange="bTimerEnabled=this.checked">
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
+
       <div style="margin:0 auto 1rem;max-width:340px;text-align:left;">
         <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
         <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
@@ -530,7 +522,7 @@ function tryAdvTab() {
 }
 
 function startBasic() {
-  violations=0; warnShown=false;
+  violations=0; warnShown=false; bTimerEnabled=true;
   studentName=document.getElementById('inp-name').value.trim()||'—';
   studentGroup=document.getElementById('inp-group').value.trim()||'—';
   // Из каждой тройки выбираем 1 случайный вопрос
@@ -544,7 +536,7 @@ function startBasic() {
   document.getElementById('basic-result').style.display='none';
   document.getElementById('basic-quiz').style.display='';
   document.getElementById('b-counter-tot').textContent=18;
-  document.getElementById('b-timer-chip').style.display=bTimerEnabled?'':'none';
+  document.getElementById('b-timer-chip').style.display='';
   updateBXp(); updateBStreak();
   showBasicQ();
 }
@@ -594,7 +586,8 @@ function showBasicQ() {
     area.appendChild(chk);
     setTimeout(function(){inp.focus();},50);
   }
-  if(bTimerEnabled) startBTimer(15); else resetBTimerUI();
+  var timerSec = (q.type==='open') ? 30 : 20;
+  startBTimer(timerSec);
   bQStartTime=Date.now();
 }
 
@@ -610,7 +603,7 @@ function selectBasic(idx){
   var fb=document.getElementById('b-feedback');
   if(ok){
     bStreak++; bScore++;
-    var fast=bTimerEnabled&&elapsed<5;
+    var fast=bTimerEnabled&&elapsed<8;
     var sb=bStreak>=3?3:0;
     var gained=10+(fast?5:0)+sb;
     fb.textContent='✓ Правильно!'+(fast?' ⚡':'')+(sb?' 🔥':'');
@@ -731,7 +724,7 @@ function startBTimer(sec){
 function stopBTimer(){if(bTimerInterval){clearInterval(bTimerInterval);bTimerInterval=null;}}
 function resetBTimerUI(){
   var c=document.getElementById('b-timer-chip');
-  if(c){c.className='timer-chip';document.getElementById('b-timer-val').textContent='15';}
+  if(c){c.className='timer-chip';document.getElementById('b-timer-val').textContent='20';}
 }
 function updateBTimerUI(){
   document.getElementById('b-timer-val').textContent=bTimerSec;
