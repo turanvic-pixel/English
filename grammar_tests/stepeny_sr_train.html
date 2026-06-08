@@ -767,7 +767,7 @@ function finishStage(){
   testActive = false;
   var _name=(document.getElementById('inp-name')?document.getElementById('inp-name').value.trim():'')||'Аноним';
   var _group=(document.getElementById('inp-group')?document.getElementById('inp-group').value.trim():'')||'—';
-  sendToGoogleForms(_name,_group,'Степени сравнения — Тренировка',score+'/'+total,xp,timerEnabled);
+  sendToGoogleForms(_name,_group,'Степени сравнения — Тренировка (' + STAGE_CONFIG[currentStage].label + ' из 5)',score+'/'+total,xp,timerEnabled);
 
   var pct=score/total;
   if(pct>=0.7){
