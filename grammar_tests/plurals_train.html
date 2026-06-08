@@ -515,7 +515,7 @@ function resetTest(){
 ============================================================ */
 function sendToTelegram(name, group, stageName, score, total, xpEarned, viols){
   var pct = Math.round(score/total*100);
-  var testName = TEST_NAME + ' — ' + stageName;
+  var testName = TEST_NAME + ' — ' + stageName + ' (из 3)';
   var _grade = getGrade(pct);
   var _attempt = getAttemptNum('attempt_plurals_train');
   var _hintsUsed = (3 - hints);
