@@ -737,6 +737,13 @@ function useHint(){
   fb.innerHTML='💡 Подсказка: правильный ответ — <b>«'+q.plural+'»</b>.';
   fb.className='feedback ok';
   if(hints===0) document.getElementById('hint-btn').disabled=true;
+  // Показать кнопку Следующий после подсказки
+  document.getElementById('next-btn').style.display='inline-block';
+  // Заблокировать варианты ответа
+  document.getElementById('options').querySelectorAll('.opt-btn').forEach(function(b){
+    b.disabled=true;
+    if(b.textContent===q.plural) b.classList.add('correct');
+  });
 }
 
 function finishStage(){
