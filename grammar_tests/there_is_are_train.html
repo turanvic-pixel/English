@@ -722,7 +722,7 @@ function finishStage(){
   testActive = false;
   var _name=(document.getElementById('inp-name')?document.getElementById('inp-name').value.trim():'')||'Аноним';
   var _group=(document.getElementById('inp-group')?document.getElementById('inp-group').value.trim():'')||'—';
-  sendToGoogleForms(_name,_group,'There is/are — Тренировка',score+'/'+total,xp,(typeof timerEnabled !== 'undefined' ? timerEnabled : false));
+  sendToGoogleForms(_name,_group,'There is/are — Тренировка (' + STAGE_CONFIG[currentStage].label + ' из 5)',score+'/'+total,xp,(typeof timerEnabled !== 'undefined' ? timerEnabled : false));
 
   var pct=score/total;
   stageScores[currentStage]=Math.max(stageScores[currentStage]||0,score);
