@@ -712,7 +712,7 @@ function finishStage(){
   var _group = (document.getElementById('inp-group') ? document.getElementById('inp-group').value.trim() : '') || '—';
   var _result = score + '/' + total;
   var _xp = xp;
-  sendToGoogleForms(_name, _group, 'Числа', _result, _xp, (typeof timerEnabled !== 'undefined' ? timerEnabled : false));
+  sendToGoogleForms(_name, _group, 'Числа (' + STAGE_CONFIG[currentStage].label + ' из 6)', _result, _xp, (typeof timerEnabled !== 'undefined' ? timerEnabled : false));
 
   var pct=score/total;
   stageScores[currentStage]=Math.max(stageScores[currentStage]||0,score);
