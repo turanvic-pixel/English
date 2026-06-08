@@ -422,7 +422,7 @@ function buildStage4(){
   var qOther=Q_EN.filter(function(q){return q.tag!=="Ступень 2 · замена" && q.opts.indexOf("he")!==-1;});
   var sub=shuffle(qSub.slice()).map(function(q){return Object.assign({},q,{tag:"Ступень 4 · замена"});});
   var eng=shuffle(qOther.slice()).slice(0,5).map(function(q){return Object.assign({},q,{tag:"Ступень 4 · англ."});});
-  return shuffle(r.concat(eng).concat(sub).concat(Q_S3_EXTRA));
+  return shuffle(r.concat(eng).concat(sub).concat(Q_S3_EXTRA)).slice(0,30);
 }
 
 var STAGE_CONFIG = [
@@ -772,6 +772,11 @@ function showFinalResult(pct){
   document.getElementById('rank-badge-wrap').innerHTML='<span class="rank-badge" style="background:'+rank.bg+';color:'+rank.color+'">🏅 '+rank.name+'</span>';
   renderStageGrid();
   if(pct>=0.9) launchBigConfetti();
+  // Отправка результата преподавателю
+  var _nameVal = (document.getElementById('inp-name') ? document.getElementById('inp-name').value.trim() : '') || 'Аноним';
+  var _groupVal = (document.getElementById('inp-group') ? document.getElementById('inp-group').value.trim() : '') || '—';
+  var _stageLabel = STAGE_CONFIG[currentStage].label;
+  sendToGoogleForms(_nameVal, _groupVal, 'Личные местоимения · ' + _stageLabel, score + '/' + total, xp, typeof timerEnabled !== 'undefined' ? timerEnabled : false);
   var nextBtn2=document.getElementById('next-stage-btn');
   if(currentStage<3 && stageUnlocked[currentStage+1]){
     nextBtn2.style.display='inline-block';
