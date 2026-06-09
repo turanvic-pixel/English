@@ -513,6 +513,26 @@ function resetTest(){
 /* ============================================================
    TELEGRAM УВЕДОМЛЕНИЕ
 ============================================================ */
+function getGrade(pct){
+  if(pct >= 90) return '5 (Отлично)';
+  if(pct >= 75) return '4 (Хорошо)';
+  if(pct >= 50) return '3 (Удовл.)';
+  if(pct >= 10) return '2 (Неудовл.)';
+  return '1 (Не зачтено)';
+}
+
+function getAttemptNum(storageKey){
+  try {
+    var n = parseInt(localStorage.getItem(storageKey) || '0') + 1;
+    localStorage.setItem(storageKey, n);
+    return n;
+  } catch(e){ return 1; }
+}
+
+</script>
+</body>
+</html>
+
 function sendToTelegram(name, group, stageName, score, total, xpEarned, viols){
   var pct = Math.round(score/total*100);
   var testName = TEST_NAME + ' — ' + stageName + ' (из 3)';
