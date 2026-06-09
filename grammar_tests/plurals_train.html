@@ -537,7 +537,7 @@ function sendToTelegram(name, group, stageName, score, total, xpEarned, viols){
   var _grade = getGrade(pct);
   var _attempt = getAttemptNum('attempt_plurals_train');
   var _hintsUsed = (3 - hints);
-  var result = score + '/' + total + ' (' + pct + '%) | Оценка: ' + _grade + ' | Попытка: ' + _attempt + ' | Подсказок: ' + _hintsUsed + '/3 | XP:' + xpEarned + (viols>0?' | ⚠️ Покидал:'+viols+' раз':' | ✅ Не покидал') + (timerEnabled?' | ⏱ Таймер: ВКЛ':' | ⏱ Таймер: ВЫКЛ');
+  var result = score + '/' + total + ' (' + pct + '%) | Оценка: ' + _grade + ' | Попытка: ' + _attempt + ' | Подсказок: ' + _hintsUsed + '/3' + (viols>0?' | ⚠️ Покидал:'+viols+' раз':' | ✅ Не покидал') + (timerEnabled?' | ⏱ Таймер: ВКЛ':' | ⏱ Таймер: ВЫКЛ');
   var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdfme_aKvoexXRSz7LTn5dxgY_7P2lBJsokU3puqehRxZVslw/formResponse';
   var body = new FormData();
   body.append('entry.1795360459', name);
