@@ -461,7 +461,7 @@ function showResult(){
   var _group = (document.getElementById('inp-group') ? document.getElementById('inp-group').value.trim() : '') || '—';
   var _result = score + '/' + total;
   var _xp = xp;
-  sendToGoogleForms(_name, _group, 'Personal Pronouns — Контроль', _result, _xp, (typeof timerEnabled !== 'undefined' ? timerEnabled : false));
+  sendToGoogleForms(_name, _group, 'Личные местоимения — Контроль', _result, _xp, (typeof timerEnabled !== 'undefined' ? timerEnabled : false));
 
   stopTimer();
   document.getElementById('progress').style.width='100%';
