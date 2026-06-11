@@ -229,7 +229,7 @@
       <button class="hub-tab" onclick="switchHubTab('table')">📋 Таблица</button>
     </div>
     <div class="hub-panel active" id="htab-play">
-      <div class="unlock-rule">🔓 <b>Правило:</b> ступень 2 открывается после набора <b>70%</b> в ступени 1, ступень 3 — после <b>70%</b> в ступени 2. Каждую ступень можно перепроходить любое количество раз.</div>
+      <div class="unlock-rule">🔓 <b>Правило:</b> ступень 2 открывается после набора <b>50%</b> в ступени 1, ступень 3 — после <b>50%</b> в ступени 2. Каждую ступень можно перепроходить любое количество раз.</div>
       <div class="record-box" id="record-box">Начните со ступени 1, чтобы разблокировать следующие!</div>
       <div class="toggle-row">
         <div class="toggle-label">⏱ Таймер
@@ -749,12 +749,12 @@ function showFinalResult(pct){
   var emoji=pct===1?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
   var unlockMsg='';
   if(pct>=0.5 && currentStage<3) unlockMsg=' 🔓 Ступень '+(currentStage+2)+' открыта!';
-  var needPct=Math.ceil((Math.ceil(total*0.7))/total*100);
+  var needPct=Math.ceil((Math.ceil(total*0.5))/total*100);
   var msg=pct===1?'Отлично! Все ответы верны. Местоимения усвоены!'+unlockMsg:
           pct>=0.8?'Очень хорошо! Разберите ошибки ниже.'+unlockMsg:
           pct>=0.5?'Хороший результат!'+unlockMsg:
           pct>=0.5?'Неплохо, но нужно набрать 50% для следующей ступени. Попробуйте снова!':
-                  'Нужно ещё поработать. Нужно минимум '+needPct+'% ('+Math.ceil(total*0.7)+'/'+total+') для разблокировки!';
+                  'Нужно ещё поработать. Нужно минимум '+needPct+'% ('+Math.ceil(total*0.5)+'/'+total+') для разблокировки!';
   document.getElementById('res-emoji').textContent=emoji;
   document.getElementById('res-score').textContent=score+' / '+total
   var _pct_disp = Math.round(score / (total||1) * 100);
