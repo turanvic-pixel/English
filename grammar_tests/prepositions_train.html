@@ -196,7 +196,7 @@
         <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
         <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
       </div>
-<div class="unlock-rule">&#x1F513; Для открытия следующей ступени нужно набрать <b>70%+</b> правильных ответов.</div>
+<div class="unlock-rule">&#x1F513; Для открытия следующей ступени нужно набрать <b>50%+</b> правильных ответов.</div>
     <div class="stage-grid" id="stage-grid"></div>
     <div class="record-box" id="record-box">Рекорды загружаются...</div>
     <div class="toggle-row">
@@ -825,6 +825,13 @@ var XP_PER_LEVEL=200;
 function loadProgress(){
   try{var d=JSON.parse(localStorage.getItem('prep_v3')||'{}');stageUnlocked=d.u||[true,false,false];stageScores=d.s||[0,0,0];stageDone=d.d||[false,false,false];}
   catch(e){stageUnlocked=[true,false,false];stageScores=[0,0,0];stageDone=[false,false,false];}
+
+  // Пересчитать разблокировки по порогу 50%
+  var _totals=[];
+  for(var _i=0;_i<-1;_i++){
+    if(stageScores[_i]>0) stageDone[_i]=true;
+    if(stageScores[_i] && stageScores[_i]/_totals[_i]>=0.5) stageUnlocked[_i+1]=true;
+  }
 }
 function saveProgress(){try{localStorage.setItem('prep_v3',JSON.stringify({u:stageUnlocked,s:stageScores,d:stageDone}));}catch(e){}}
 
