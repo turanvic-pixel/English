@@ -217,7 +217,7 @@
         <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
         <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
       </div>
-<div class="unlock-rule">🔓 Для открытия следующей ступени нужно набрать <b>70%+</b> правильных ответов.</div>
+<div class="unlock-rule">🔓 Для открытия следующей ступени нужно набрать <b>50%+</b> правильных ответов.</div>
     <div class="stage-grid" id="stage-grid"></div>
     <div class="record-box" id="record-box">Рекорды загружаются...</div>
     <div class="toggle-row">
@@ -494,6 +494,13 @@ function loadProgress(){
     stageUnlocked=[true,false,false,false,false];
     stageScores=[0,0,0,0,0];
     stageDone=[false,false,false,false,false];
+  }
+
+  // Пересчитать разблокировки по порогу 50%
+  var _totals=[];
+  for(var _i=0;_i<-1;_i++){
+    if(stageScores[_i]>0) stageDone[_i]=true;
+    if(stageScores[_i] && stageScores[_i]/_totals[_i]>=0.5) stageUnlocked[_i+1]=true;
   }
 }
 function saveProgress(){
