@@ -271,7 +271,7 @@
     <div class="hub-panel active" id="htab-play">
       <div class="unlock-rule" style="background:#f0f7ff;border-color:#c8dff7;line-height:2;font-size:12px">
         <div style="font-weight:700;color:#185FA5;font-size:13px;margin-bottom:4px">🎮 Правила игры</div>
-        🔓 <b>Разблокировка:</b> следующая ступень открывается при <b>70%+</b> правильных ответов.<br>
+        🔓 <b>Разблокировка:</b> следующая ступень открывается при <b>50%+</b> правильных ответов.<br>
         ⭐ <b>XP:</b> +10 за правильный ответ · −3 за ошибку.<br>
         🔥 <b>Серия (streak):</b> 3+ ответа подряд → бонус +5 XP, значок становится оранжевым. 5+ → огонь и конфетти!<br>
         ⏱ <b>Таймер:</b> 15 секунд на вопрос. Ответ за &lt;8 сек → +5 XP бонус за скорость.<br>
@@ -507,6 +507,13 @@ function loadProgress(){
     var d=JSON.parse(raw);
     if(d){stageUnlocked=d.unlocked||stageUnlocked;stageDone=d.done||stageDone;stageScores=d.scores||stageScores;}
   }catch(e){}
+
+  // Пересчитать разблокировки по порогу 50%
+  var _totals=[10,15,15,15,15,30];
+  for(var _i=0;_i<5;_i++){
+    if(stageScores[_i]>0) stageDone[_i]=true;
+    if(stageScores[_i] && stageScores[_i]/_totals[_i]>=0.5) stageUnlocked[_i+1]=true;
+  }
 }
 function saveProgress(){
   var d=JSON.stringify({unlocked:stageUnlocked,done:stageDone,scores:stageScores});
