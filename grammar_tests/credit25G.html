@@ -616,10 +616,10 @@ function showNextBtn(){
 function nextQuestion(){ cur++; if(cur<total) showQuestion(); else showResult(); }
 
 // ══ RESULT ══
-function calcStars(pct){ return pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0; }
+function calcStars(pct){ return pct>=0.9?3:pct>=0.5?2:pct>=0.5?1:0; }
 function rankInfo(pct){
   if(pct>=0.9) return {name:'Мастер',   bg:'#ede9fe',color:'#6d28d9'};
-  if(pct>=0.7) return {name:'Знаток',   bg:'#e4eef8',color:'#1A4A7A'};
+  if(pct>=0.5) return {name:'Знаток',   bg:'#e4eef8',color:'#1A4A7A'};
   if(pct>=0.5) return {name:'Ученик',   bg:'#e4f0ea',color:'#2D5A3D'};
   return            {name:'Новичок', bg:'#f0eaf8',color:'#6B2FA0'};
 }
