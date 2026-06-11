@@ -555,7 +555,7 @@ function finishStage(){
   var pct=score/total;
   stageScores[currentStage]=Math.max(stageScores[currentStage]||0,score);
   stageDone[currentStage]=true;
-  if(pct>=0.7){ stageUnlocked[0]=true; }
+  if(pct>=0.5){ stageUnlocked[0]=true; }
   saveProgress();
   showFinalResult(pct);
 }
@@ -563,9 +563,9 @@ function finishStage(){
 function showFinalResult(pct){
   document.getElementById('quiz-screen').style.display='none';
   document.getElementById('result-screen').style.display='block';
-  var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
+  var stars=pct>=0.9?3:pct>=0.5?2:pct>=0.5?1:0;
   var rank=pct>=0.9?{name:'Мастер',bg:'#ede9fe',color:'#6d28d9'}:
-           pct>=0.7?{name:'Знаток',bg:'#e4eef8',color:'#1A4A7A'}:
+           pct>=0.5?{name:'Знаток',bg:'#e4eef8',color:'#1A4A7A'}:
            pct>=0.5?{name:'Ученик',bg:'#e4f0ea',color:'#2D5A3D'}:
                    {name:'Новичок',bg:'#f0eaf8',color:'#6B2FA0'};
   var emoji=pct===1?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
@@ -573,8 +573,8 @@ function showFinalResult(pct){
   unlockMsg='';
   var msg=pct===1?'Отлично! Все ответы верны!'+unlockMsg:
           pct>=0.8?'Очень хорошо! Разберите ошибки ниже.'+unlockMsg:
-          pct>=0.7?'Хороший результат!'+unlockMsg:
-          'Нужно набрать 70%+ для разблокировки следующей ступени. Попробуйте ещё раз!';
+          pct>=0.5?'Хороший результат!'+unlockMsg:
+          'Нужно набрать 50%+ для разблокировки следующей ступени. Попробуйте ещё раз!';
   document.getElementById('res-emoji').textContent=emoji;
   document.getElementById('res-score').textContent=score+' / '+total
   var _pct_disp = Math.round(score / (total||1) * 100);
