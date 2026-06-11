@@ -242,7 +242,7 @@
       <button class="hub-tab" onclick="switchHubTab('table')">📋 Таблица</button>
     </div>
     <div class="hub-panel active" id="htab-play">
-      <div class="unlock-rule">🔓 <b>Правило:</b> каждая следующая ступень открывается после набора <b>70%</b> в предыдущей. Каждую ступень можно перепроходить любое количество раз.</div>
+      <div class="unlock-rule">🔓 <b>Правило:</b> каждая следующая ступень открывается после набора <b>50%</b> в предыдущей. Каждую ступень можно перепроходить любое количество раз.</div>
       <div class="record-box" id="record-box">Начните со ступени 1, чтобы разблокировать следующие!</div>
     <div class="toggle-row">
       <label class="toggle-label">⏱ Таймер <span class="toggle-sub">20 секунд на вопрос</span></label>
@@ -560,6 +560,13 @@ function loadProgress(){
       if(d.s) for(var i=0;i<d.s.length;i++) if(d.s[i]>stageScores[i]) stageScores[i]=d.s[i];
     }
   }catch(e){}
+
+  // Пересчитать разблокировки по порогу 50%
+  var _totals=[20,20,20,20,20];
+  for(var _i=0;_i<4;_i++){
+    if(stageScores[_i]>0) stageDone[_i]=true;
+    if(stageScores[_i] && stageScores[_i]/_totals[_i]>=0.5) stageUnlocked[_i+1]=true;
+  }
 }
 function saveProgress(){
   var v=JSON.stringify({u:stageUnlocked,d:stageDone,s:stageScores});
@@ -789,12 +796,12 @@ function showFinalResult(pct){
   var emoji=pct===1?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
   var unlockMsg='';
   if(pct>=0.5&&currentStage<4) unlockMsg=' 🔓 Ступень '+(currentStage+2)+' открыта!';
-  var needPct=Math.ceil((Math.ceil(total*0.7))/total*100);
+  var needPct=Math.ceil((Math.ceil(total*0.5))/total*100);
   var msg=pct===1?'Отлично! Все ответы верны!'+unlockMsg:
           pct>=0.8?'Очень хорошо! Разберите ошибки ниже.'+unlockMsg:
           pct>=0.5?'Хороший результат!'+unlockMsg:
           pct>=0.5?'Неплохо, но нужно набрать 50% для следующей ступени. Попробуйте снова!':
-                  'Нужно ещё поработать. Минимум '+needPct+'% ('+Math.ceil(total*0.7)+'/'+total+') для разблокировки!';
+                  'Нужно ещё поработать. Минимум '+needPct+'% ('+Math.ceil(total*0.5)+'/'+total+') для разблокировки!';
   document.getElementById('res-emoji').textContent=emoji;
   document.getElementById('res-score').textContent=score+' / '+total
   var _pct_disp = Math.round(score / (total||1) * 100);
