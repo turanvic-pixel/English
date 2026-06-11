@@ -730,15 +730,15 @@ function finishTest(){
   var pct=score/TOTAL;
   document.getElementById('quiz-screen').style.display='none';
   document.getElementById('result-screen').style.display='block';
-  var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
+  var stars=pct>=0.9?3:pct>=0.5?2:pct>=0.5?1:0;
   var rank=pct>=0.9?{name:'Мастер',bg:'#ede9fe',color:'#6d28d9'}:
-           pct>=0.7?{name:'Знаток',bg:'#e4eef8',color:'#1A4A7A'}:
+           pct>=0.5?{name:'Знаток',bg:'#e4eef8',color:'#1A4A7A'}:
            pct>=0.5?{name:'Ученик',bg:'#e4f0ea',color:'#2D5A3D'}:
                    {name:'Новичок',bg:'#f0eaf8',color:'#6B2FA0'};
   var emoji=pct===1?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
   var msg=pct===1?'Отлично! Все ответы верны!':
           pct>=0.8?'Очень хорошо! Разберите ошибки ниже.':
-          pct>=0.7?'Хороший результат! Изучите ошибки.':
+          pct>=0.5?'Хороший результат! Изучите ошибки.':
           'Нужна практика. Повторите справочник и попробуйте снова!';
   document.getElementById('res-emoji').textContent=emoji;
   document.getElementById('res-score').textContent=score+' / '+TOTAL
