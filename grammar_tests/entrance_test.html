@@ -792,7 +792,7 @@ function showBasicResult(){
   document.getElementById('basic-result').style.display='';
   var total=bQuestions.length;
   var pct=bScore/total;
-  var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
+  var stars=pct>=0.9?3:pct>=0.5?2:pct>=0.5?1:0;
   var emoji=bScore===total?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
   var grade,gradeClass,msg;
   if(bScore>=9){
@@ -812,7 +812,7 @@ function showBasicResult(){
   document.getElementById('b-msg').textContent=msg;
   var sHTML=''; for(var i=1;i<=3;i++) sHTML+='<span class="star'+(stars>=i?' lit':'')+'" style="animation-delay:'+((i-1)*.18)+'s">⭐</span>';
   document.getElementById('b-stars').innerHTML=sHTML;
-  var rank=pct>=0.9?{n:'Мастер',bg:'#ede9fe',c:'#6d28d9'}:pct>=0.7?{n:'Знаток',bg:'#e0eeff',c:'#185FA5'}:pct>=0.5?{n:'Ученик',bg:'#e4f0ea',c:'#2D5A3D'}:{n:'Новичок',bg:'#f0eaf8',c:'#6B2FA0'};
+  var rank=pct>=0.9?{n:'Мастер',bg:'#ede9fe',c:'#6d28d9'}:pct>=0.5?{n:'Знаток',bg:'#e0eeff',c:'#185FA5'}:pct>=0.5?{n:'Ученик',bg:'#e4f0ea',c:'#2D5A3D'}:{n:'Новичок',bg:'#f0eaf8',c:'#6B2FA0'};
   document.getElementById('b-rank-wrap').innerHTML='<span class="rank-badge" style="background:'+rank.bg+';color:'+rank.c+'">🏅 '+rank.n+'</span>';
   if(pct>=0.9) launchBigConfetti();
   var mBlock=document.getElementById('b-mistakes');
