@@ -543,7 +543,7 @@ function sendToTelegram(name, group, stageName, score, total, xpEarned, viols){
   body.append('entry.1795360459', name);
   body.append('entry.1572037373', group);
   body.append('entry.1562414669', testName);
-  body.append('entry.994594767', result + (timerEnabled ? ' | ⏱ Таймер: ВКЛ' : ' | ⏱ Таймер: ВЫКЛ') + (violations > 0 ? ' | ⚠️ Покидал: ' + violations + ' раз' : ' | ✅ Не покидал'));
+  body.append('entry.994594767', result);
   body.append('entry.1290836239', xpEarned);
   fetch(formUrl, {method:'POST', body:body, mode:'no-cors'})
   .then(function(){
