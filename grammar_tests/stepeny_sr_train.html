@@ -208,25 +208,25 @@
         <span class="stage-icon">✏️</span>
         <div class="stage-title">Ступень 2</div>
         <div class="stage-desc-sm">Образование сравнительной</div>
-        <span class="stage-badge lock-badge" id="sb1">🔒 нужно 70% в ступени 1</span>
+        <span class="stage-badge lock-badge" id="sb1">🔒 нужно 50% в ступени 1</span>
       </div>
       <div class="stage-card locked" id="sc2" onclick="pickStage(2)">
         <span class="stage-icon">🏆</span>
         <div class="stage-title">Ступень 3</div>
         <div class="stage-desc-sm">Перевод превосходной степени</div>
-        <span class="stage-badge lock-badge" id="sb2">🔒 нужно 70% в ступени 2</span>
+        <span class="stage-badge lock-badge" id="sb2">🔒 нужно 50% в ступени 2</span>
       </div>
       <div class="stage-card locked" id="sc3" onclick="pickStage(3)">
         <span class="stage-icon">⌨️</span>
         <div class="stage-title">Ступень 4</div>
         <div class="stage-desc-sm">Образование превосходной</div>
-        <span class="stage-badge lock-badge" id="sb3">🔒 нужно 70% в ступени 3</span>
+        <span class="stage-badge lock-badge" id="sb3">🔒 нужно 50% в ступени 3</span>
       </div>
       <div class="stage-card locked" id="sc4" onclick="pickStage(4)" style="grid-column:span 2">
         <span class="stage-icon">🌍</span>
         <div class="stage-title">Ступень 5</div>
         <div class="stage-desc-sm">Смешанные: сравнительная + превосходная (20 вопросов)</div>
-        <span class="stage-badge lock-badge" id="sb4">🔒 нужно 70% в ступени 4</span>
+        <span class="stage-badge lock-badge" id="sb4">🔒 нужно 50% в ступени 4</span>
       </div>
     </div>
   </div>
@@ -591,7 +591,7 @@ function renderStageGrid(){
       sb.textContent=stageDone[i]?'✓ Лучший: '+best:'20 вопросов';
     } else {
       sb.className='stage-badge lock-badge';
-      sb.textContent='🔒 нужно 70% в ступени '+i;
+      sb.textContent='🔒 нужно 50% в ступени '+i;
     }
   }
   var btn=document.getElementById('main-start-btn');
@@ -770,7 +770,7 @@ function finishStage(){
   sendToGoogleForms(_name,_group,'Степени сравнения — Тренировка (' + STAGE_CONFIG[currentStage].label + ' из 5)',score+'/'+total,xp,timerEnabled);
 
   var pct=score/total;
-  if(pct>=0.7){
+  if(pct>=0.5){
     if(currentStage<4) stageUnlocked[currentStage+1]=true;
     stageDone[currentStage]=true;
     if(pct>stageScores[currentStage]) stageScores[currentStage]=pct;
@@ -781,19 +781,19 @@ function finishStage(){
 function showFinalResult(pct){
   document.getElementById('quiz-screen').style.display='none';
   document.getElementById('result-screen').style.display='block';
-  var stars=pct>=0.9?3:pct>=0.7?2:pct>=0.5?1:0;
+  var stars=pct>=0.9?3:pct>=0.5?2:pct>=0.5?1:0;
   var rank=pct>=0.9?{name:'Мастер',bg:'#ede9fe',color:'#6d28d9'}:
-           pct>=0.7?{name:'Знаток',bg:'#e4eef8',color:'#1A4A7A'}:
+           pct>=0.5?{name:'Знаток',bg:'#e4eef8',color:'#1A4A7A'}:
            pct>=0.5?{name:'Ученик',bg:'#e4f0ea',color:'#2D5A3D'}:
                    {name:'Новичок',bg:'#f0eaf8',color:'#6B2FA0'};
   var emoji=pct===1?'🏆':pct>=0.8?'⭐':pct>=0.6?'👍':'📖';
   var unlockMsg='';
-  if(pct>=0.7&&currentStage<4) unlockMsg=' 🔓 Ступень '+(currentStage+2)+' открыта!';
+  if(pct>=0.5&&currentStage<4) unlockMsg=' 🔓 Ступень '+(currentStage+2)+' открыта!';
   var needPct=Math.ceil((Math.ceil(total*0.7))/total*100);
   var msg=pct===1?'Отлично! Все ответы верны!'+unlockMsg:
           pct>=0.8?'Очень хорошо! Разберите ошибки ниже.'+unlockMsg:
-          pct>=0.7?'Хороший результат!'+unlockMsg:
-          pct>=0.5?'Неплохо, но нужно набрать 70% для следующей ступени. Попробуйте снова!':
+          pct>=0.5?'Хороший результат!'+unlockMsg:
+          pct>=0.5?'Неплохо, но нужно набрать 50% для следующей ступени. Попробуйте снова!':
                   'Нужно ещё поработать. Минимум '+needPct+'% ('+Math.ceil(total*0.7)+'/'+total+') для разблокировки!';
   document.getElementById('res-emoji').textContent=emoji;
   document.getElementById('res-score').textContent=score+' / '+total
