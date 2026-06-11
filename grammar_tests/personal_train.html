@@ -464,7 +464,8 @@ function loadProgress(){
   // Пересчитать разблокировки: если ступень пройдена ИЛИ score >= 50%
   var totals=[10,20,20,30];
   for(var i=0;i<3;i++){
-    if(stageDone[i] || (stageScores[i] && stageScores[i]/totals[i]>=0.5)){
+    if(stageScores[i] > 0) stageDone[i]=true;
+    if(stageScores[i] && stageScores[i]/totals[i]>=0.5){
       stageUnlocked[i+1]=true;
     }
   }
