@@ -370,6 +370,13 @@ function loadProgress(){
       stageScores=d.scores||stageScores;
     }
   }catch(e){}
+
+  // Пересчитать разблокировки по порогу 50%
+  var _totals=[15];
+  for(var _i=0;_i<0;_i++){
+    if(stageScores[_i]>0) stageDone[_i]=true;
+    if(stageScores[_i] && stageScores[_i]/_totals[_i]>=0.5) stageUnlocked[_i+1]=true;
+  }
 }
 function saveProgress(){
   var d=JSON.stringify({unlocked:stageUnlocked,done:stageDone,scores:stageScores});
