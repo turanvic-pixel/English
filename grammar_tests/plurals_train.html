@@ -68,7 +68,7 @@ h1 { text-align: center; font-size: 20px; font-weight: 700; color: #185FA5; marg
 .hint-btn { font-size:12px; font-weight:600; background:#f5f9ff; border:1.5px solid #c8dff7; border-radius:8px; padding:6px 13px; cursor:pointer; color:#7aa8d4; font-family:Arial,sans-serif; }
 .hint-btn:hover:not(:disabled) { background:#dbeafe; }
 .hint-btn:disabled { opacity:.35; cursor:default; }
-.q-illustration { width:100%; max-height:110px; margin-bottom:10px; border-radius:10px; overflow:hidden; background:#f8fbff; border:1px solid #dbeafe; display:flex; align-items:center; justify-content:center; }
+.q-illustration { display:none; }
 .q-illustration svg { width:100%; height:110px; }
 .q-word-box { background:#f0f7ff; border-radius:10px; padding:12px 16px; margin-bottom:1rem; text-align:center; }
 .q-word-singular { font-size:26px; font-weight:700; color:#185FA5; }
@@ -659,7 +659,7 @@ function showQuestion(){
   document.getElementById('q-tag').textContent=q.tag;
   document.getElementById('q-word').textContent=q.word;
   document.getElementById('q-translation').textContent=q.tr;
-  document.getElementById('q-illustration').innerHTML=q.svg;
+  document.getElementById('q-illustration').innerHTML='';
   document.getElementById('feedback').textContent='';
   document.getElementById('feedback').className='feedback';
   document.getElementById('next-btn').style.display='none';
