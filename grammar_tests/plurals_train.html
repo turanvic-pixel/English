@@ -669,7 +669,7 @@ function showQuestion(){
   q._sOpts=opts;
 
   var optsDiv=document.getElementById('options');
-  optsDiv.innerHTML=q.svg;
+  optsDiv.innerHTML='';
   opts.forEach(function(opt,i){
     var btn=document.createElement('button');
     btn.className='opt-btn'; btn.textContent=opt;
