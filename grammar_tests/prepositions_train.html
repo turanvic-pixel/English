@@ -22,7 +22,7 @@
   .q-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
   .q-tag { font-size: 11px; background: #e0eeff; color: #185FA5; padding: 2px 9px; border-radius: 99px; font-weight: 600; }
   .q-situation { font-size: 13px; color: #5b8dc7; background: #f0f7ff; border-left: 3px solid #378ADD; padding: 7px 12px; border-radius: 0 8px 8px 0; margin-bottom: 10px; line-height: 1.5; }
-  .q-illustration { display:none; }
+  .q-illustration { width:100%; max-height:110px; margin-bottom:10px; border-radius:10px; overflow:hidden; background:#f8fbff; border:1px solid #dbeafe; display:flex; align-items:center; justify-content:center; }
   .q-illustration svg { width: 100%; height: 110px; }
   .q-text { font-size: 17px; font-weight: 600; color: #1a2e4a; margin-bottom: 1.2rem; line-height: 1.7; }
   .blank { display: inline-block; background: #e8f2ff; color: #185FA5; border-bottom: 2px solid #378ADD; padding: 0 10px; border-radius: 4px; font-weight: 700; min-width: 60px; text-align: center; }
@@ -905,7 +905,7 @@ function showQuestion(){
   document.getElementById('feedback').textContent='';
   document.getElementById('feedback').className='feedback';
   document.getElementById('next-btn').style.display='none';
-  var opts=document.getElementById('options');opts.innerHTML='';
+  var opts=document.getElementById('options');opts.innerHTML=q.svg;
   var order=shuffle([0,1,2]);
   order.forEach(function(oi){
     var b=document.createElement('button');
@@ -1053,7 +1053,7 @@ function showFinalResult(pct){
     var html='<h3 style="font-size:14px;font-weight:600;color:#7aa8d4;margin-bottom:.75rem">Разбор ошибок:</h3>';
     mistakes.forEach(function(m){html+='<div class="mistake-item"><div class="m-q">'+m.q+'</div><div class="m-a">✓ '+m.ans+'</div></div>';});
     mBlock.innerHTML=html;
-  }else{mBlock.innerHTML='';}
+  }else{mBlock.innerHTML=q.svg;}
 }
 
 function retryMistakes(){
