@@ -761,6 +761,38 @@ function switchTab(name){
   document.querySelectorAll('.hub-tab').forEach(t=>{
     if(t.getAttribute('onclick')===`switchTab('${name}')`) t.classList.add('active');
   });
+  if(name==='rewards') renderRewardsTab();
+}
+
+function renderRewardsTab(){
+  const el = document.getElementById('tab-rewards');
+  if(!el) return;
+  const TENSE_KEYS = Object.keys(TENSES);
+  let html = '<div style="padding:1rem 1.2rem">';
+  let anyRecord = false;
+  TENSE_KEYS.forEach(tkey=>{
+    const T = TENSES[tkey];
+    const sections = T.sections.filter(s=>!s.isExternal);
+    sections.forEach(s=>{
+      const key = tkey+'_'+s.id;
+      const rec = getRecord(key);
+      if(rec){
+        anyRecord = true;
+        html += `<div class="reward-row">
+          <div class="reward-row-icon">${s.icon}</div>
+          <div class="reward-row-body">
+            <div class="reward-row-title">${T.name} · ${s.title}</div>
+            <div style="font-size:0.78rem;color:var(--muted)">${starsStr(rec.stars)} · ${rec.pct}% · ${rec.xp} XP</div>
+          </div>
+        </div>`;
+      }
+    });
+  });
+  if(!anyRecord){
+    html += '<p style="color:var(--muted);font-size:0.9rem;text-align:center;padding:2rem 0">Пройдите тесты чтобы увидеть результаты здесь</p>';
+  }
+  html += '</div>';
+  el.innerHTML = html;
 }
 
 function goRoot(){
