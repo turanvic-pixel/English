@@ -311,7 +311,7 @@ main { max-width: 680px; margin: 0 auto; padding: 0 1.5rem 4rem; }
       <div class="reg-form">
         <h3>👤 Представьтесь перед началом</h3>
         <input class="reg-input" id="inp-name" type="text" placeholder="Имя и Фамилия" autocomplete="off">
-        <input class="reg-input" id="inp-group" type="text" placeholder="Номер группы (например: 101)" autocomplete="off">
+        <input class="reg-input" id="inp-group" type="number" inputmode="numeric" pattern="[0-9]*" min="100" max="999" placeholder="Номер группы (например: 101)" autocomplete="off">
       </div>
       <div class="hub-label">Выберите раздел</div>
       <div id="root-sections"></div>
