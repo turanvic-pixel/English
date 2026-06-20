@@ -731,6 +731,13 @@ const SECTION_LABELS = {
   negative:'Полное отрицательное предложение',
   special:'Специальный вопрос',
 };
+const SECTION_STEP = {
+  affirmative: 1,
+  question:    2,
+  shortanswer: 3,
+  negative:    4,
+  special:     5,
+};
 
 // ══════════════════════════════════════════════════════════════
 // NAVIGATION STATE
@@ -1412,7 +1419,8 @@ function showScore(){
   var _group = (document.getElementById('inp-group') ? document.getElementById('inp-group').value.trim() : '') || '—';
   var _sLabel = navState.section ? (SECTION_LABELS[navState.section] || navState.section) : '';
   var _tName = navState.tense && TENSES[navState.tense] ? TENSES[navState.tense].name : 'Present Simple';
-  var _testName = _sLabel ? (_tName + ' — ' + _sLabel) : _tName;
+  var _step = navState.section ? (SECTION_STEP[navState.section] || '') : '';
+  var _testName = _sLabel ? (_tName + ' — Ступень ' + _step + ': ' + _sLabel + ' из 5') : _tName;
   sendToGoogleForms(_name, _group, _testName, score + '/' + TOTAL, 0, (typeof timerEnabled !== 'undefined' ? timerEnabled : false));
 
   stopTimer();
