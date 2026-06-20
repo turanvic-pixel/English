@@ -1410,7 +1410,10 @@ function showScore(){
   // Send to Google Forms
   var _name = (document.getElementById('inp-name') ? document.getElementById('inp-name').value.trim() : '') || 'Аноним';
   var _group = (document.getElementById('inp-group') ? document.getElementById('inp-group').value.trim() : '') || '—';
-  sendToGoogleForms(_name, _group, 'Present Simple', score + '/' + TOTAL, 0, (typeof timerEnabled !== 'undefined' ? timerEnabled : false));
+  var _sLabel = navState.section ? (SECTION_LABELS[navState.section] || navState.section) : '';
+  var _tName = navState.tense && TENSES[navState.tense] ? TENSES[navState.tense].name : 'Present Simple';
+  var _testName = _sLabel ? (_tName + ' — ' + _sLabel) : _tName;
+  sendToGoogleForms(_name, _group, _testName, score + '/' + TOTAL, 0, (typeof timerEnabled !== 'undefined' ? timerEnabled : false));
 
   stopTimer();
   document.getElementById('prog').style.width='100%';
