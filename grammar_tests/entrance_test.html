@@ -255,7 +255,7 @@
 
       <div style="margin:0 auto 1rem;max-width:340px;text-align:left;">
         <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
-        <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+        <input class="name-input" id="inp-group" type="number" inputmode="numeric" pattern="[0-9]*" min="100" max="999" placeholder="Номер группы" autocomplete="off">
       </div>
       <div style="background:#fff3dc;border:1.5px solid #f6ad55;border-radius:10px;padding:10px 16px;margin-bottom:1rem;font-size:13px;color:#92400e;text-align:left;">
         ⏱ <b>Таймер включён:</b> 20 секунд на вопрос с выбором ответа, 30 секунд на вопросы с вводом. При истечении времени ответ засчитывается как неверный.
@@ -312,7 +312,7 @@
       </div>
       <div style="margin:0 auto 1rem;max-width:340px;text-align:left;">
         <input class="name-input" id="adv-inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
-        <input class="name-input" id="adv-inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+        <input class="name-input" id="adv-inp-group" type="number" inputmode="numeric" pattern="[0-9]*" min="100" max="999" placeholder="Номер группы" autocomplete="off">
       </div>
       <button class="start-btn" onclick="startAdv()">▶ Начать задание</button>
     </div>
