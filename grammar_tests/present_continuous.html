@@ -703,6 +703,13 @@ const SECTION_LABELS = {
   special:'Специальный вопрос',
 };
 
+const SECTION_STEP = {
+  affirmative: 1,
+  question:    2,
+  shortanswer: 3,
+  negative:    4,
+  special:     5,
+};
 // ══════════════════════════════════════════════════════════════
 // NAVIGATION STATE
 // ══════════════════════════════════════════════════════════════
@@ -1349,7 +1356,10 @@ function showScore(){
   // Send to Google Forms
   var _name = (document.getElementById('inp-name') ? document.getElementById('inp-name').value.trim() : '') || 'Аноним';
   var _group = (document.getElementById('inp-group') ? document.getElementById('inp-group').value.trim() : '') || '—';
-  sendToGoogleForms(_name, _group, 'Present Continuous', score + '/' + TOTAL, 0, (typeof timerEnabled !== 'undefined' ? timerEnabled : false));
+  var _step = navState.section ? (SECTION_STEP[navState.section] || '') : '';
+  var _sLabel = navState.section ? (SECTION_LABELS[navState.section] || navState.section) : '';
+  var _testNameFull = _sLabel ? ('Present Continuous — Ступень ' + _step + ': ' + _sLabel + ' из 5') : 'Present Continuous';
+  sendToGoogleForms(_name, _group, _testNameFull, score + '/' + TOTAL, 0, (typeof timerEnabled !== 'undefined' ? timerEnabled : false));
 
   stopTimer();
   document.getElementById('prog').style.width='100%';
