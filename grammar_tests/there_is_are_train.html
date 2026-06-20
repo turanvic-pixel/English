@@ -215,7 +215,7 @@
           <div style="margin-bottom:1rem;">
         <div style="font-weight:600;color:#185FA5;margin-bottom:.5rem;font-size:14px;">👤 Представьтесь перед началом теста</div>
         <input class="name-input" id="inp-name" type="text" placeholder="Имя Фамилия" autocomplete="name">
-        <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+        <input class="name-input" id="inp-group" type="number" inputmode="numeric" pattern="[0-9]*" min="100" max="999" placeholder="Номер группы" autocomplete="off">
       </div>
 <div class="unlock-rule">🔓 Для открытия следующей ступени нужно набрать <b>50%+</b> правильных ответов.</div>
     <div class="stage-grid" id="stage-grid"></div>
