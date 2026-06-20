@@ -1392,6 +1392,13 @@ function showScore(){
         </div>
       </div>`).join('');
 
+  const SECTION_ORDER = ['affirmative','question','shortanswer','negative','special'];
+  const curIdx = navState.section ? SECTION_ORDER.indexOf(navState.section) : -1;
+  const nextSection = (curIdx >= 0 && curIdx < SECTION_ORDER.length - 1) ? SECTION_ORDER[curIdx + 1] : null;
+  const nextBtn = (!navState.mixMode && nextSection)
+    ? `<button class="btn btn-primary" onclick="startSection('${navState.tense}','${nextSection}')" style="background:var(--accent)">Следующая ступень →</button>`
+    : '';
+
   const replayBtn = navState.mixMode==='30'
     ? `<button class="btn btn-primary" onclick="buildAndStart30()" style="background:var(--accent)">Новые 30 →</button>`
     : navState.mixMode==='sections'
@@ -1422,7 +1429,7 @@ function showScore(){
       <div class="score-title">${msg}</div>
       <div class="score-sub">${pct}% верных · ${errors} ошибок · <b style="color:#ef4444">⭐ ${xp} XP</b></div>
       ${statsHTML}
-      <div class="btn-row" style="justify-content:center;gap:10px;flex-wrap:wrap;">${backBtn}${replayBtn}</div>
+      <div class="btn-row" style="justify-content:center;gap:10px;flex-wrap:wrap;">${backBtn}${replayBtn}${nextBtn}</div>
       ${retryBtn?`<div class="btn-row" style="justify-content:center;margin-top:8px;">${retryBtn}</div>`:''}
     </div>
     <div class="card">
