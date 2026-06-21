@@ -771,7 +771,7 @@
     fetch(formUrl, {method:'POST', body:body, mode:'no-cors'})
       .then(function() {
         var el = document.getElementById('send-status');
-        if(el){ el.textContent='✅ Ответы отправлены'; el.style.color='#3d7a50'; }
+        if(el){ el.textContent='✅ Ответы отправлены преподавателю'; el.style.color='#3d7a50'; }
       })
       .catch(function() {
         var el = document.getElementById('send-status');
