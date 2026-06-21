@@ -747,29 +747,26 @@
     // ── Отправка в Google Forms ──
     var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScIHi0C53q0BDvElzMEB7CA5xeGeTVLIFG7jvUF5R7G7GOTuA/formResponse';
     var body = new FormData();
-    body.append('entry.489152298', document.getElementById('lastName').value + ' ' + document.getElementById('firstName').value);
-    body.append('entry.335628947', document.getElementById('groupNumber').value);
-    body.append('entry.915681793', 'Анкета конец года');
     var q1v = document.querySelector('input[name="q1"]:checked');
     var q6v = document.querySelector('input[name="q6"]:checked');
     var q7v = document.querySelector('input[name="q7"]:checked');
     var q8v = document.querySelector('input[name="q8"]:checked');
     var q9v = document.querySelector('input[name="q9"]:checked');
     var skills = Array.from(document.querySelectorAll('input[name="q5"]:checked')).map(function(el){return el.value;}).join(', ');
-    var resultText =
-      'Впечатление: ' + (q1v?q1v.value:'—') + '/10 | ' +
-      'Атмосфера: ' + (q6v?q6v.value:'—') + '/5 | ' +
-      'Материалы: ' + (q7v?q7v.value:'—') + '/5 | ' +
-      'Оценки: ' + (q8v?q8v.value:'—') + '/5 | ' +
-      'Мотивация: ' + (q9v?q9v.value:'—') + '/5 | ' +
-      'Навыки: ' + (skills||'—') + ' | ' +
-      'Позитив: ' + (document.querySelector('[name=q2]').value||'—') + ' | ' +
-      'Негатив: ' + (document.querySelector('[name=q3]').value||'—') + ' | ' +
-      'Рост: ' + (document.querySelector('[name=q4]').value||'—') + ' | ' +
-      'Рекомендации: ' + (document.querySelector('[name=q10]').value||'—') + ' | ' +
-      'Доп: ' + (document.querySelector('[name=q11]').value||'—');
-    body.append('entry.1201603464', resultText);
-    
+    body.append('entry.489152298', document.getElementById('lastName').value + ' ' + document.getElementById('firstName').value);
+    body.append('entry.335628947', document.getElementById('groupNumber').value);
+    body.append('entry.915681793', 'Анкета конец года');
+    body.append('entry.1201603464', q1v ? q1v.value : '');
+    body.append('entry.1692874917', document.querySelector('[name=q2]').value || '');
+    body.append('entry.174744243',  document.querySelector('[name=q3]').value || '');
+    body.append('entry.1337312612', document.querySelector('[name=q4]').value || '');
+    body.append('entry.1833310022', skills);
+    body.append('entry.131502496',  q6v ? q6v.value : '');
+    body.append('entry.374760231',  q7v ? q7v.value : '');
+    body.append('entry.2079416865', q8v ? q8v.value : '');
+    body.append('entry.513158122',  q9v ? q9v.value : '');
+    body.append('entry.1743698440', document.querySelector('[name=q10]').value || '');
+    body.append('entry.1466608764', document.querySelector('[name=q11]').value || '');
     fetch(formUrl, {method:'POST', body:body, mode:'no-cors'});
 
     // ── Показать успех ──
