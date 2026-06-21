@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анкета студента | Английский язык</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --ink: #1f2b1e;
+    --fog: #f2f4ee;
+    --mist: #e4ead9;
+    --accent: #4a6b47;
+    --accent-light: #6a8f66;
+    --gold: #b5a96a;
+    --gold-light: #ddd49a;
+    --white: #fafcf7;
+    --text-secondary: #6b7a5e;
+    --border: #cdd6c0;
+    --success: #3d7a50;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--fog);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 60px 0;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--accent);
+    color: var(--white);
+    padding: 48px 32px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(201,168,76,.18);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.06);
+  }
+  .header-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+    position: relative; z-index: 1;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(24px, 5vw, 38px);
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 14px;
+    position: relative; z-index: 1;
+  }
+  .header p {
+    font-size: 14px;
+    font-weight: 300;
+    opacity: .85;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+    position: relative; z-index: 1;
+  }
+  .gold-line {
+    width: 48px; height: 3px;
+    background: var(--gold);
+    margin: 20px auto 0;
+    border-radius: 2px;
+    position: relative; z-index: 1;
+  }
+
+  /* ── Form wrapper ── */
+  .form-wrap {
+    max-width: 720px;
+    margin: 40px auto 0;
+    padding: 0 20px;
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(92,75,138,.08);
+    border: 1px solid var(--border);
+    transition: box-shadow .2s;
+  }
+  .card:hover { box-shadow: 0 4px 24px rgba(92,75,138,.13); }
+
+  /* ── Identity fields ── */
+  .identity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .identity-grid .full { grid-column: 1 / -1; }
+  @media (max-width: 540px) {
+    .identity-grid { grid-template-columns: 1fr; }
+    .identity-grid .full { grid-column: 1; }
+  }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    color: var(--accent);
+    margin-bottom: 7px;
+    text-transform: uppercase;
+  }
+  .field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--fog);
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+  }
+  .field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(92,75,138,.1);
+    background: var(--white);
+  }
+  .field input::placeholder { color: #aaa; }
+
+  /* ── Question card ── */
+  .q-number {
+    display: inline-block;
+    width: 28px; height: 28px;
+    background: var(--accent);
+    color: var(--white);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 28px;
+    text-align: center;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .q-text {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.55;
+    padding-top: 3px;
+  }
+  .q-hint {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
+  /* ── Scale ── */
+  .scale-wrap { margin-top: 4px; }
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .scale-labels span {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-style: italic;
+    max-width: 140px;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .scale-labels span:first-child { text-align: left; }
+  .scale-labels span:last-child { text-align: right; }
+
+  .scale-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .scale-buttons input[type="radio"] { display: none; }
+  .scale-buttons label {
+    flex: 1;
+    min-width: 36px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    background: var(--fog);
+    color: var(--text-secondary);
+    user-select: none;
+  }
+  .scale-buttons input[type="radio"]:checked + label {
+    background: var(--accent);
+    color: var(--white);
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(92,75,138,.3);
+    transform: translateY(-1px);
+  }
+  .scale-buttons label:hover {
+    border-color: var(--accent-light);
+    color: var(--accent);
+    background: var(--mist);
+  }
+  .scale-milestone {
+    font-size: 18px;
+  }
+
+  /* ── Textarea ── */
+  .q-textarea {
+    width: 100%;
+    min-height: 110px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--fog);
+    resize: vertical;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .q-textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(92,75,138,.1);
+    background: var(--white);
+  }
+  .q-textarea::placeholder { color: #bbb; font-style: italic; }
+
+  /* ── Likert ── */
+  .likert-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .likert-option input[type="radio"] { display: none; }
+  .likert-option label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all .15s;
+    background: var(--fog);
+  }
+  .likert-option label::before {
+    content: '';
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all .15s;
+  }
+  .likert-option input[type="radio"]:checked + label {
+    border-color: var(--accent);
+    background: var(--mist);
+    font-weight: 500;
+  }
+  .likert-option input[type="radio"]:checked + label::before {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: inset 0 0 0 3px var(--white);
+  }
+  .likert-option label:hover {
+    border-color: var(--accent-light);
+    background: var(--mist);
+  }
+
+  /* ── Checkbox ── */
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  @media (max-width: 480px) { .checkbox-grid { grid-template-columns: 1fr; } }
+  .checkbox-option input[type="checkbox"] { display: none; }
+  .checkbox-option label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all .15s;
+    background: var(--fog);
+  }
+  .checkbox-option label::before {
+    content: '';
+    width: 17px; height: 17px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    transition: all .15s;
+  }
+  .checkbox-option input[type="checkbox"]:checked + label {
+    border-color: var(--accent);
+    background: var(--mist);
+    font-weight: 500;
+  }
+  .checkbox-option input[type="checkbox"]:checked + label::before {
+    background: var(--accent);
+    border-color: var(--accent);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1 5l3.5 3.5L11 1' stroke='white' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 10px;
+  }
+  .checkbox-option label:hover {
+    border-color: var(--accent-light);
+    background: var(--mist);
+  }
+
+  /* ── Submit ── */
+  .submit-area {
+    text-align: center;
+    margin-top: 36px;
+  }
+  .submit-btn {
+    background: var(--accent);
+    color: var(--white);
+    border: none;
+    padding: 16px 52px;
+    border-radius: 50px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: .5px;
+    transition: all .2s;
+    box-shadow: 0 4px 16px rgba(92,75,138,.3);
+  }
+  .submit-btn:hover {
+    background: var(--accent-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(92,75,138,.4);
+  }
+  .submit-btn:active { transform: translateY(0); }
+
+  /* ── Success ── */
+  #success-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .success-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+  }
+  #success-screen h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  #success-screen p {
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  /* ── Error highlight ── */
+  .field input.error,
+  .q-textarea.error {
+    border-color: #c0392b;
+    box-shadow: 0 0 0 3px rgba(192,57,43,.1);
+  }
+  .error-msg {
+    font-size: 12px;
+    color: #c0392b;
+    margin-top: 5px;
+  }
+
+  /* ── Footer note ── */
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+
+  /* ── Required star ── */
+  .req { color: #c0392b; margin-left: 2px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Конец учебного года · Английский язык</div>
+  <h1>Ваше мнение важно для нас</h1>
+  <p>Уважаемые студенты, просим вас уделить несколько минут и честно ответить на вопросы — это поможет улучшить качество обучения в следующем году.</p>
+  <div class="gold-line"></div>
+</div>
+
+<div class="form-wrap">
+  <form id="survey-form" novalidate>
+
+    <!-- ── Личные данные ── -->
+    <div class="section-label">Личные данные</div>
+    <div class="card">
+      <div class="identity-grid">
+        <div class="field full">
+          <label>Фамилия <span class="req">*</span></label>
+          <input type="text" id="lastName" name="lastName" placeholder="Иванова" autocomplete="family-name" pattern="[А-Яа-яЁёA-Za-z\s\-]+" title="Только буквы" required>
+        </div>
+        <div class="field">
+          <label>Имя <span class="req">*</span></label>
+          <input type="text" id="firstName" name="firstName" placeholder="Мария" autocomplete="given-name" pattern="[А-Яа-яЁёA-Za-z\s\-]+" title="Только буквы" required>
+        </div>
+        <div class="field">
+          <label>Номер группы <span class="req">*</span></label>
+          <input type="number" id="groupNumber" name="groupNumber" placeholder="101" min="1" max="9999" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Вопрос 1: Шкала ── -->
+    <div class="section-label">Общее впечатление</div>
+    <div class="card">
+      <div class="q-header">
+        <div class="q-number">1</div>
+        <div>
+          <div class="q-text">Какое впечатление в целом у вас осталось после окончания курса от работы с преподавателем Турскене Татьяной Владимировной? <span class="req">*</span></div>
+          <div class="q-hint">Оцените от 0 до 10</div>
+        </div>
+      </div>
+      <div class="scale-wrap">
+        <div class="scale-labels">
+          <span>😞<br>Крайне отрицательное</span>
+          <span>😐<br>Нейтральное</span>
+          <span>🤝<br>Хорошее</span>
+          <span>🌟<br>Отличное, приду в гости!</span>
+        </div>
+        <div class="scale-buttons" id="scale-q1">
+          <input type="radio" name="q1" id="q1_0" value="0"><label for="q1_0">0</label>
+          <input type="radio" name="q1" id="q1_1" value="1"><label for="q1_1">1</label>
+          <input type="radio" name="q1" id="q1_2" value="2"><label for="q1_2">2</label>
+          <input type="radio" name="q1" id="q1_3" value="3"><label for="q1_3">3</label>
+          <input type="radio" name="q1" id="q1_4" value="4"><label for="q1_4">4</label>
+          <input type="radio" name="q1" id="q1_5" value="5"><label for="q1_5">5</label>
+          <input type="radio" name="q1" id="q1_6" value="6"><label for="q1_6">6</label>
+          <input type="radio" name="q1" id="q1_7" value="7"><label for="q1_7">7</label>
+          <input type="radio" name="q1" id="q1_8" value="8"><label for="q1_8">8</label>
+          <input type="radio" name="q1" id="q1_9" value="9"><label for="q1_9">9</label>
+          <input type="radio" name="q1" id="q1_10" value="10"><label for="q1_10" class="scale-milestone">10 🌟</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Вопрос 2: Позитив ── -->
+    <div class="section-label">Запоминающиеся моменты</div>
+    <div class="card">
+      <div class="q-header">
+        <div class="q-number">2</div>
+        <div class="q-text">Какой момент в учебном году на уроке английского языка вызвал у вас наиболее <strong>положительные</strong> эмоции?</div>
+      </div>
+      <textarea class="q-textarea" name="q2" placeholder="Опишите ситуацию, задание, тему или активность, которые запомнились вам с лучшей стороны…"></textarea>
+    </div>
+
+    <!-- ── Вопрос 3: Негатив ── -->
+    <div class="card">
+      <div class="q-header">
+        <div class="q-number">3</div>
+        <div class="q-text">Какой момент в учебном году на уроке английского языка вызвал у вас наиболее <strong>отрицательные</strong> эмоции?</div>
+      </div>
+      <textarea class="q-textarea" name="q3" placeholder="Опишите, что вызвало дискомфорт, непонимание или разочарование…"></textarea>
+    </div>
+
+    <!-- ── Вопрос 4: Развитие ── -->
+    <div class="section-label">Личный рост</div>
+    <div class="card">
+      <div class="q-header">
+        <div class="q-number">4</div>
+        <div class="q-text">В чём преподаватель Турскене Татьяна Владимировна помогла вам: какие качества развить, над чем задуматься?</div>
+      </div>
+      <textarea class="q-textarea" name="q4" placeholder="Например: ответственность, честность, вера в свои силы, умение работать в команде, самодисциплина…"></textarea>
+    </div>
+
+    <!-- ── Вопрос 5: Навыки ── -->
+    <div class="card">
+      <div class="q-header">
+        <div class="q-number">5</div>
+        <div class="q-text">Какие навыки английского языка вы считаете наиболее развитыми после этого курса?</div>
+      </div>
+      <div class="checkbox-grid">
+        <div class="checkbox-option"><input type="checkbox" name="q5" id="q5_1" value="speaking"><label for="q5_1">Говорение (Speaking)</label></div>
+        <div class="checkbox-option"><input type="checkbox" name="q5" id="q5_2" value="listening"><label for="q5_2">Аудирование (Listening)</label></div>
+        <div class="checkbox-option"><input type="checkbox" name="q5" id="q5_3" value="reading"><label for="q5_3">Чтение (Reading)</label></div>
+        <div class="checkbox-option"><input type="checkbox" name="q5" id="q5_4" value="writing"><label for="q5_4">Письмо (Writing)</label></div>
+        <div class="checkbox-option"><input type="checkbox" name="q5" id="q5_5" value="grammar"><label for="q5_5">Грамматика</label></div>
+        <div class="checkbox-option"><input type="checkbox" name="q5" id="q5_6" value="vocabulary"><label for="q5_6">Словарный запас</label></div>
+      </div>
+    </div>
+
+    <!-- ── Вопрос 6: Методы ── -->
+    <div class="section-label">Методы и атмосфера</div>
+    <div class="card">
+      <div class="q-header">
+        <div class="q-number">6</div>
+        <div class="q-text">Как вы оцениваете атмосферу на занятиях по английскому языку? <span class="req">*</span></div>
+      </div>
+      <div class="likert-options" id="q6-options">
+        <div class="likert-option"><input type="radio" name="q6" id="q6_1" value="5"><label for="q6_1">Очень комфортная, можно было свободно высказываться</label></div>
+        <div class="likert-option"><input type="radio" name="q6" id="q6_2" value="4"><label for="q6_2">В целом хорошая, иногда были напряжённые моменты</label></div>
+        <div class="likert-option"><input type="radio" name="q6" id="q6_3" value="3"><label for="q6_3">Нейтральная — ни хорошо, ни плохо</label></div>
+        <div class="likert-option"><input type="radio" name="q6" id="q6_4" value="2"><label for="q6_4">Скованная, было трудно участвовать в обсуждениях</label></div>
+        <div class="likert-option"><input type="radio" name="q6" id="q6_5" value="1"><label for="q6_5">Напряжённая или дискомфортная</label></div>
+      </div>
+    </div>
+
+    <!-- ── Вопрос 7: Материалы ── -->
+    <div class="card">
+      <div class="q-header">
+        <div class="q-number">7</div>
+        <div class="q-text">Насколько учебные материалы и задания были понятны и полезны для вашего обучения? <span class="req">*</span></div>
+      </div>
+      <div class="likert-options">
+        <div class="likert-option"><input type="radio" name="q7" id="q7_1" value="5"><label for="q7_1">Полностью понятны и очень полезны</label></div>
+        <div class="likert-option"><input type="radio" name="q7" id="q7_2" value="4"><label for="q7_2">В основном понятны и достаточно полезны</label></div>
+        <div class="likert-option"><input type="radio" name="q7" id="q7_3" value="3"><label for="q7_3">Частично понятны, некоторые задания вызывали затруднения</label></div>
+        <div class="likert-option"><input type="radio" name="q7" id="q7_4" value="2"><label for="q7_4">Нередко непонятны или казались неактуальными</label></div>
+        <div class="likert-option"><input type="radio" name="q7" id="q7_5" value="1"><label for="q7_5">Сложны для понимания, польза неочевидна</label></div>
+      </div>
+    </div>
+
+    <!-- ── Вопрос 8: Обратная связь ── -->
+    <div class="section-label">Оценка и обратная связь</div>
+    <div class="card">
+      <div class="q-header">
+        <div class="q-number">8</div>
+        <div class="q-text">Считаете ли вы, что оценки на курсе выставлялись справедливо?</div>
+      </div>
+      <div class="likert-options">
+        <div class="likert-option"><input type="radio" name="q8" id="q8_1" value="5"><label for="q8_1">Да, полностью справедливо</label></div>
+        <div class="likert-option"><input type="radio" name="q8" id="q8_2" value="4"><label for="q8_2">В большинстве случаев да</label></div>
+        <div class="likert-option"><input type="radio" name="q8" id="q8_3" value="3"><label for="q8_3">Затрудняюсь ответить</label></div>
+        <div class="likert-option"><input type="radio" name="q8" id="q8_4" value="2"><label for="q8_4">Иногда казалось несправедливым</label></div>
+        <div class="likert-option"><input type="radio" name="q8" id="q8_5" value="1"><label for="q8_5">Нет, оценки часто казались несправедливыми</label></div>
+      </div>
+    </div>
+
+    <!-- ── Вопрос 9: Мотивация ── -->
+    <div class="card">
+      <div class="q-header">
+        <div class="q-number">9</div>
+        <div class="q-text">Насколько курс повлиял на ваш интерес к английскому языку в целом?</div>
+      </div>
+      <div class="likert-options">
+        <div class="likert-option"><input type="radio" name="q9" id="q9_1" value="5"><label for="q9_1">Значительно повысил мотивацию изучать английский</label></div>
+        <div class="likert-option"><input type="radio" name="q9" id="q9_2" value="4"><label for="q9_2">Немного повысил интерес</label></div>
+        <div class="likert-option"><input type="radio" name="q9" id="q9_3" value="3"><label for="q9_3">Не изменил моего отношения</label></div>
+        <div class="likert-option"><input type="radio" name="q9" id="q9_4" value="2"><label for="q9_4">Немного снизил интерес</label></div>
+        <div class="likert-option"><input type="radio" name="q9" id="q9_5" value="1"><label for="q9_5">Значительно снизил мотивацию</label></div>
+      </div>
+    </div>
+
+    <!-- ── Вопрос 10: Рекомендации ── -->
+    <div class="section-label">Предложения и пожелания</div>
+    <div class="card">
+      <div class="q-header">
+        <div class="q-number">10</div>
+        <div class="q-text">Что бы вы посоветовали изменить или внедрить преподавателю Турскене Татьяне Владимировне для более эффективной работы в следующем году?</div>
+      </div>
+      <textarea class="q-textarea" name="q10" placeholder="Форматы занятий, темы, методы, технологии, частота контроля — любые идеи приветствуются…"></textarea>
+    </div>
+
+    <!-- ── Вопрос 11: Свободный отзыв ── -->
+    <div class="card">
+      <div class="q-header">
+        <div class="q-number">11</div>
+        <div class="q-text">Есть ли что-то важное, чего мы не спросили? Любые дополнительные мысли, пожелания или слова благодарности — здесь.</div>
+      </div>
+      <textarea class="q-textarea" name="q11" style="min-height:90px;" placeholder="Свободный комментарий…"></textarea>
+    </div>
+
+    <!-- ── Closing message ── -->
+    <div class="card" style="background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); border: none; text-align: center; padding: 36px 32px;">
+      <div style="font-size: 32px; margin-bottom: 16px;">🎓</div>
+      <p style="font-family: 'Playfair Display', serif; font-size: 16px; line-height: 1.75; color: var(--white); margin-bottom: 20px;">
+        Я поздравляю с успешным окончанием курса английского языка на первом году обучения, благодарю за совместную работу и желаю всего наилучшего в личной жизни и на профессиональном пути.
+      </p>
+      <div style="width: 40px; height: 2px; background: var(--gold); margin: 0 auto 14px;"></div>
+      <p style="font-size: 14px; font-weight: 600; color: var(--gold-light); letter-spacing: .5px;">Турскене Татьяна Владимировна</p>
+    </div>
+
+    <!-- ── Submit ── -->
+    <div class="submit-area">
+      <button type="submit" class="submit-btn">Отправить анкету</button>
+      <div class="footer-note">
+        Все ответы анонимны и будут использованы исключительно<br>в целях улучшения учебного процесса.
+      </div>
+    </div>
+
+  </form>
+
+  <!-- ── Success ── -->
+  <div id="success-screen">
+    <div class="success-icon">🎓</div>
+    <h2>Спасибо за честные ответы!</h2>
+    <p>Ваше мнение будет учтено при подготовке к следующему учебному году. Удачи в дальнейшей учёбе!</p>
+  </div>
+
+</div>
+
+<script>
+  // ── Только буквы для имени и фамилии ──
+  ['firstName','lastName'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('input', () => {
+      el.value = el.value.replace(/[^А-Яа-яЁёA-Za-z\s\-]/g,'');
+    });
+  });
+
+  // ── Только цифры для номера группы ──
+  const groupEl = document.getElementById('groupNumber');
+  groupEl.addEventListener('input', () => {
+    groupEl.value = groupEl.value.replace(/[^0-9]/g,'');
+  });
+  groupEl.addEventListener('keypress', e => {
+    if(!/[0-9]/.test(e.key) && e.key !== 'Backspace') e.preventDefault();
+  });
+
+  // ── Валидация и отправка ──
+  document.getElementById('survey-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let valid = true;
+
+    // Очистим старые ошибки
+    document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+    document.querySelectorAll('.error-msg').forEach(el => el.remove());
+
+    function markError(el, msg) {
+      el.classList.add('error');
+      const span = document.createElement('div');
+      span.className = 'error-msg';
+      span.textContent = msg;
+      el.parentNode.appendChild(span);
+      valid = false;
+    }
+
+    // Фамилия
+    const ln = document.getElementById('lastName');
+    if (!ln.value.trim()) markError(ln, 'Пожалуйста, введите фамилию.');
+
+    // Имя
+    const fn = document.getElementById('firstName');
+    if (!fn.value.trim()) markError(fn, 'Пожалуйста, введите имя.');
+
+    // Номер группы
+    const gn = document.getElementById('groupNumber');
+    if (!gn.value.trim() || isNaN(gn.value)) markError(gn, 'Введите номер группы (числом).');
+
+    // Шкала Q1
+    if (!document.querySelector('input[name="q1"]:checked')) {
+      const wrap = document.getElementById('scale-q1');
+      const span = document.createElement('div');
+      span.className = 'error-msg';
+      span.textContent = 'Пожалуйста, выберите оценку.';
+      wrap.parentNode.appendChild(span);
+      valid = false;
+    }
+
+    // Атмосфера Q6
+    if (!document.querySelector('input[name="q6"]:checked')) {
+      const wrap = document.getElementById('q6-options');
+      const span = document.createElement('div');
+      span.className = 'error-msg';
+      span.textContent = 'Пожалуйста, выберите вариант.';
+      wrap.parentNode.appendChild(span);
+      valid = false;
+    }
+
+    // Материалы Q7
+    if (!document.querySelector('input[name="q7"]:checked')) {
+      const q7radios = document.querySelectorAll('input[name="q7"]');
+      const lastLabel = q7radios[q7radios.length - 1].nextElementSibling;
+      const span = document.createElement('div');
+      span.className = 'error-msg';
+      span.textContent = 'Пожалуйста, выберите вариант.';
+      lastLabel.parentNode.parentNode.appendChild(span);
+      valid = false;
+    }
+
+    if (!valid) {
+      document.querySelector('.error-msg').scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+
+    // ── Отправка в Google Forms ──
+    var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdfme_aKvoexXRSz7LTn5dxgY_7P2lBJsokU3puqehRxZVslw/formResponse';
+    var body = new FormData();
+    body.append('entry.1795360459', document.getElementById('lastName').value + ' ' + document.getElementById('firstName').value);
+    body.append('entry.1572037373', document.getElementById('groupNumber').value);
+    body.append('entry.1562414669', 'Анкета конец года');
+    var q1v = document.querySelector('input[name="q1"]:checked');
+    var q6v = document.querySelector('input[name="q6"]:checked');
+    var q7v = document.querySelector('input[name="q7"]:checked');
+    var q8v = document.querySelector('input[name="q8"]:checked');
+    var q9v = document.querySelector('input[name="q9"]:checked');
+    var skills = Array.from(document.querySelectorAll('input[name="q5"]:checked')).map(function(el){return el.value;}).join(', ');
+    var resultText =
+      'Впечатление: ' + (q1v?q1v.value:'—') + '/10 | ' +
+      'Атмосфера: ' + (q6v?q6v.value:'—') + '/5 | ' +
+      'Материалы: ' + (q7v?q7v.value:'—') + '/5 | ' +
+      'Оценки: ' + (q8v?q8v.value:'—') + '/5 | ' +
+      'Мотивация: ' + (q9v?q9v.value:'—') + '/5 | ' +
+      'Навыки: ' + (skills||'—') + ' | ' +
+      'Позитив: ' + (document.querySelector('[name=q2]').value||'—') + ' | ' +
+      'Негатив: ' + (document.querySelector('[name=q3]').value||'—') + ' | ' +
+      'Рост: ' + (document.querySelector('[name=q4]').value||'—') + ' | ' +
+      'Рекомендации: ' + (document.querySelector('[name=q10]').value||'—') + ' | ' +
+      'Доп: ' + (document.querySelector('[name=q11]').value||'—');
+    body.append('entry.994594767', resultText);
+    body.append('entry.1290836239', '');
+    fetch(formUrl, {method:'POST', body:body, mode:'no-cors'});
+
+    // ── Показать успех ──
+    document.getElementById('survey-form').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+</script>
+
+</body>
+</html>
