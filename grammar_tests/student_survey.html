@@ -750,11 +750,11 @@
     }
 
     // ── Отправка в Google Forms ──
-    var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdfme_aKvoexXRSz7LTn5dxgY_7P2lBJsokU3puqehRxZVslw/formResponse';
+    var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScIHi0C53q0BDvElzMEB7CA5xeGeTVLIFG7jvUF5R7G7GOTuA/formResponse';
     var body = new FormData();
-    body.append('entry.1795360459', document.getElementById('lastName').value + ' ' + document.getElementById('firstName').value);
-    body.append('entry.1572037373', document.getElementById('groupNumber').value);
-    body.append('entry.1562414669', 'Анкета конец года');
+    body.append('entry.489152298', document.getElementById('lastName').value + ' ' + document.getElementById('firstName').value);
+    body.append('entry.335628947', document.getElementById('groupNumber').value);
+    body.append('entry.915681793', 'Анкета конец года');
     var q1v = document.querySelector('input[name="q1"]:checked');
     var q6v = document.querySelector('input[name="q6"]:checked');
     var q7v = document.querySelector('input[name="q7"]:checked');
@@ -773,8 +773,8 @@
       'Рост: ' + (document.querySelector('[name=q4]').value||'—') + ' | ' +
       'Рекомендации: ' + (document.querySelector('[name=q10]').value||'—') + ' | ' +
       'Доп: ' + (document.querySelector('[name=q11]').value||'—');
-    body.append('entry.994594767', resultText);
-    body.append('entry.1290836239', '');
+    body.append('entry.1201603464', resultText);
+    
     fetch(formUrl, {method:'POST', body:body, mode:'no-cors'});
 
     // ── Показать успех ──
