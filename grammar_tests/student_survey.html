@@ -652,6 +652,7 @@
   </form>
 
   <!-- ── Success ── -->
+  <div id="send-status" style="text-align:center;padding:10px;font-size:14px;font-weight:600;min-height:20px;"></div>
   <div id="success-screen">
     <div class="success-icon">🎓</div>
     <h2>Спасибо за честные ответы!</h2>
@@ -767,7 +768,15 @@
     body.append('entry.513158122',  q9v ? q9v.value : '');
     body.append('entry.1743698440', document.querySelector('[name=q10]').value || '');
     body.append('entry.1466608764', document.querySelector('[name=q11]').value || '');
-    fetch(formUrl, {method:'POST', body:body, mode:'no-cors'});
+    fetch(formUrl, {method:'POST', body:body, mode:'no-cors'})
+      .then(function() {
+        var el = document.getElementById('send-status');
+        if(el){ el.textContent='✅ Ответы отправлены'; el.style.color='#3d7a50'; }
+      })
+      .catch(function() {
+        var el = document.getElementById('send-status');
+        if(el){ el.textContent='⚠️ Ошибка отправки — попробуйте ещё раз'; el.style.color='#c0392b'; }
+      });
 
     // ── Показать успех ──
     document.getElementById('survey-form').style.display = 'none';
