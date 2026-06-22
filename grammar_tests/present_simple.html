@@ -1467,8 +1467,10 @@ function showScore(){
   const SECTION_ORDER = ['affirmative','question','shortanswer','negative','special'];
   const curIdx = navState.section ? SECTION_ORDER.indexOf(navState.section) : -1;
   const nextSection = (curIdx >= 0 && curIdx < SECTION_ORDER.length - 1) ? SECTION_ORDER[curIdx + 1] : null;
-  const nextBtn = (!navState.mixMode && nextSection)
+  const nextBtn = (!navState.mixMode && nextSection && pct >= 50)
     ? `<button class="btn btn-primary" onclick="startSection('${navState.tense}','${nextSection}')" style="background:var(--accent)">Следующая ступень →</button>`
+    : (!navState.mixMode && nextSection && pct < 50)
+    ? `<div style="font-size:0.85rem;color:#c0392b;margin-top:8px;">🔒 Следующая ступень откроется при оценке 3 и выше</div>`
     : '';
 
   const replayBtn = navState.mixMode==='30'
