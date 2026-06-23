@@ -755,8 +755,8 @@
     var q9v = document.querySelector('input[name="q9"]:checked');
     var skills = Array.from(document.querySelectorAll('input[name="q5"]:checked')).map(function(el){return el.value;}).join(', ');
     body.append('entry.489152298', document.getElementById('lastName').value + ' ' + document.getElementById('firstName').value);
-    body.append('entry.335628947', document.getElementById('groupNumber').value);
-    body.append('entry.915681793', 'Анкета конец года');
+    body.append('entry.915681793', document.getElementById('groupNumber').value);
+    body.append('entry.335628947', 'Анкета конец года');
     body.append('entry.1201603464', q1v ? q1v.value : '');
     body.append('entry.1692874917', document.querySelector('[name=q2]').value || '');
     body.append('entry.174744243',  document.querySelector('[name=q3]').value || '');
