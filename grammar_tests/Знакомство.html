@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Знакомство — English Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f3ff;
+  --surface: #ffffff;
+  --surface2: #f0edfd;
+  --border: rgba(100,80,220,0.13);
+  --border2: rgba(100,80,220,0.25);
+  --accent: #6b54f0;
+  --accent2: #9080ff;
+  --accent-light: #ede9ff;
+  --green: #16a34a;
+  --green-bg: #dcfce7;
+  --green-border: #86efac;
+  --red: #dc2626;
+  --red-bg: #fee2e2;
+  --red-border: #fca5a5;
+  --amber: #d97706;
+  --text: #1e1a3c;
+  --text2: #6b63a0;
+  --text3: #a8a0cc;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 2px 16px rgba(107,84,240,0.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Mulish', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+}
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 340px;
+  background: linear-gradient(160deg, #e8e3ff 0%, #f5f3ff 60%);
+  z-index: 0;
+  pointer-events: none;
+}
+.app {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 560px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 20px 48px;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.logo {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+.logo span { color: var(--text3); font-weight: 400; }
+.stat-row { display: flex; gap: 8px; align-items: center; }
+.stat-chip {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  box-shadow: var(--shadow);
+}
+.stat-chip b { color: var(--accent); }
+.hearts { display: flex; gap: 3px; }
+.heart-icon { font-size: 16px; }
+
+/* PROGRESS */
+.progress-track {
+  height: 6px;
+  background: rgba(107,84,240,0.12);
+  border-radius: 6px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 6px;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ILLUSTRATION */
+.q-illustration {
+  width: 100%;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 160px;
+  animation: fadeUp 0.35s ease both;
+}
+
+/* QUESTION CARD */
+.question-wrap {
+  margin-bottom: 16px;
+  animation: fadeUp 0.3s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.q-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1px solid rgba(107,84,240,0.2);
+  border-radius: 20px;
+  padding: 3px 12px;
+  margin-bottom: 12px;
+}
+.q-text {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.q-hint {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.55;
+  min-height: 18px;
+}
+
+/* OPTIONS */
+.options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+.opt {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 13px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 1px 4px rgba(107,84,240,0.06);
+}
+.opt-letter {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: var(--accent-light);
+  border: 1px solid rgba(107,84,240,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent);
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+.opt:hover:not(:disabled) {
+  background: var(--accent-light);
+  border-color: var(--accent2);
+  transform: translateX(4px);
+  box-shadow: 0 2px 10px rgba(107,84,240,0.12);
+}
+.opt.correct {
+  background: var(--green-bg);
+  border-color: var(--green-border);
+}
+.opt.correct .opt-letter {
+  background: #16a34a;
+  color: #fff;
+  border-color: #16a34a;
+}
+.opt.wrong {
+  background: var(--red-bg);
+  border-color: var(--red-border);
+  color: var(--text2);
+}
+.opt.wrong .opt-letter {
+  background: #dc2626;
+  color: #fff;
+  border-color: #dc2626;
+}
+.opt:disabled { cursor: default; transform: none; }
+
+/* FEEDBACK */
+.feedback {
+  border-radius: var(--radius-sm);
+  padding: 13px 16px;
+  font-size: 14px;
+  line-height: 1.55;
+  margin-bottom: 14px;
+  display: none;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+.feedback.show { display: block; }
+.feedback.ok {
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  color: #14532d;
+}
+.feedback.bad {
+  background: var(--red-bg);
+  border: 1px solid var(--red-border);
+  color: #7f1d1d;
+}
+.fb-title {
+  font-weight: 800;
+  margin-bottom: 4px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* NEXT BUTTON */
+.next-btn {
+  width: 100%;
+  padding: 15px;
+  font-family: 'Mulish', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow: 0 4px 16px rgba(107,84,240,0.3);
+  display: none;
+}
+.next-btn:hover { background: var(--accent2); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(107,84,240,0.35); }
+.next-btn:active { transform: scale(0.98); }
+
+/* INTRO SCREEN */
+.intro-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  justify-content: center;
+  animation: fadeUp 0.4s ease;
+}
+.intro-illo {
+  width: 180px; height: 150px;
+  margin-bottom: 24px;
+}
+.intro-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+.intro-sub {
+  font-size: 14px;
+  color: var(--text2);
+  margin-bottom: 28px;
+  max-width: 320px;
+  line-height: 1.65;
+}
+.intro-rules {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 28px;
+  text-align: left;
+  box-shadow: var(--shadow);
+}
+.rule {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+.rule:last-child { border-bottom: none; }
+.rule-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.start-btn {
+  width: 100%;
+  max-width: 380px;
+  padding: 16px;
+  font-family: 'Mulish', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(107,84,240,0.35);
+  transition: background 0.15s, transform 0.1s;
+}
+.start-btn:hover { background: var(--accent2); transform: translateY(-2px); }
+
+/* RESULT SCREEN */
+.result-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  justify-content: center;
+  animation: fadeUp 0.4s ease;
+}
+.result-screen.show { display: flex; }
+.result-illo { width: 150px; height: 130px; margin-bottom: 18px; }
+.result-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text3);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.result-score {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.result-score span { color: var(--text3); font-size: 28px; }
+.result-msg {
+  font-size: 15px;
+  color: var(--text2);
+  line-height: 1.6;
+  max-width: 320px;
+  margin: 0 auto 24px;
+}
+.result-stats {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 20px;
+}
+.rstat {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 8px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.rstat-num { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.rstat-num.green { color: var(--green); }
+.rstat-num.red { color: var(--red); }
+.rstat-num.amber { color: var(--amber); }
+.rstat-label { font-size: 11px; color: var(--text3); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 28px; }
+.badge {
+  font-size: 12px; font-weight: 700; padding: 5px 14px;
+  border-radius: 20px;
+  background: var(--accent-light);
+  border: 1px solid rgba(107,84,240,0.2);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+.result-btns { display: flex; gap: 10px; width: 100%; max-width: 360px; }
+.result-btn {
+  flex: 1; padding: 13px;
+  font-family: 'Mulish', sans-serif;
+  font-size: 14px; font-weight: 800;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.result-btn.primary { background: var(--accent); color: #fff; border: none; box-shadow: 0 4px 14px rgba(107,84,240,0.3); }
+.result-btn.primary:hover { background: var(--accent2); }
+.result-btn.secondary { background: var(--surface); color: var(--text2); border: 1.5px solid var(--border2); }
+.result-btn.secondary:hover { background: var(--accent-light); color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- INTRO SCREEN -->
+  <div class="intro-screen" id="intro-screen">
+    <svg class="intro-illo" viewBox="0 0 180 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- two people greeting -->
+      <!-- person left -->
+      <circle cx="52" cy="42" r="20" fill="#ede9ff" stroke="#9080ff" stroke-width="1.5"/>
+      <circle cx="52" cy="42" r="12" fill="#c4b8ff"/>
+      <text x="52" y="47" text-anchor="middle" font-size="14" fill="#6b54f0" font-family="Mulish,sans-serif" font-weight="700">👤</text>
+      <rect x="30" y="64" width="44" height="36" rx="10" fill="#ede9ff" stroke="#9080ff" stroke-width="1.5"/>
+      <!-- wave arm left -->
+      <path d="M74 70 Q90 55 86 45" stroke="#9080ff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <circle cx="86" cy="43" r="4" fill="#9080ff"/>
+      <!-- person right -->
+      <circle cx="130" cy="42" r="20" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5"/>
+      <circle cx="130" cy="42" r="12" fill="#bae6fd"/>
+      <text x="130" y="47" text-anchor="middle" font-size="14" fill="#0284c7" font-family="Mulish,sans-serif" font-weight="700">👤</text>
+      <rect x="108" y="64" width="44" height="36" rx="10" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5"/>
+      <!-- wave arm right -->
+      <path d="M108 70 Q92 55 96 45" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <circle cx="96" cy="43" r="4" fill="#38bdf8"/>
+      <!-- speech bubbles -->
+      <rect x="12" y="108" width="64" height="26" rx="8" fill="#6b54f0"/>
+      <text x="44" y="126" text-anchor="middle" font-size="11" fill="white" font-family="Mulish,sans-serif" font-weight="700">Hello!</text>
+      <polygon points="32,134 44,134 38,142" fill="#6b54f0"/>
+      <rect x="104" y="108" width="64" height="26" rx="8" fill="#0284c7"/>
+      <text x="136" y="126" text-anchor="middle" font-size="11" fill="white" font-family="Mulish,sans-serif" font-weight="700">Hi there!</text>
+      <polygon points="124,134 136,134 130,142" fill="#0284c7"/>
+    </svg>
+    <div class="intro-title">Знакомство<br>на английском</div>
+    <div class="intro-sub">Тренируй фразы приветствия, личную информацию и диалоги — тема «Знакомство», уровень A1</div>
+    <div class="intro-rules">
+      <div class="rule"><span class="rule-icon">📋</span><span>10 вопросов на русском — выбери правильный ответ на английском</span></div>
+      <div class="rule"><span class="rule-icon">❤️</span><span>3 жизни — за каждую ошибку теряешь одну</span></div>
+      <div class="rule"><span class="rule-icon">💡</span><span>После каждого ответа — объяснение на русском</span></div>
+      <div class="rule"><span class="rule-icon">🏆</span><span>Набери максимум баллов!</span></div>
+    </div>
+    <button class="start-btn" onclick="startGame()">Начать игру →</button>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game-screen" style="display:none; flex-direction:column; flex:1;">
+    <div class="header">
+      <div class="logo">ENGLISH <span>/ A1</span></div>
+      <div class="stat-row">
+        <div class="stat-chip">Счёт: <b id="score-num">0</b></div>
+        <div class="hearts" id="hearts"></div>
+      </div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="q-illustration" id="q-illustration"></div>
+    <div class="question-wrap" id="question-wrap">
+      <div class="q-tag" id="q-tag">Тема</div>
+      <div class="q-text" id="q-text">Вопрос</div>
+      <div class="q-hint" id="q-hint"></div>
+    </div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback">
+      <div class="fb-title" id="fb-title"></div>
+      <div id="fb-body"></div>
+    </div>
+    <button class="next-btn" id="next-btn" onclick="nextQ()">Следующий вопрос →</button>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div class="result-screen" id="result-screen">
+    <svg class="result-illo" id="result-illo" viewBox="0 0 150 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="75" cy="50" r="38" fill="#ede9ff" stroke="#9080ff" stroke-width="2"/>
+      <text x="75" y="67" text-anchor="middle" font-size="36" font-family="Mulish,sans-serif">🏆</text>
+      <path d="M40 100 Q75 88 110 100" stroke="#9080ff" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <circle cx="30" cy="108" r="14" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="30" y="113" text-anchor="middle" font-size="12" font-family="Mulish,sans-serif">😊</text>
+      <circle cx="120" cy="108" r="14" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+      <text x="120" y="113" text-anchor="middle" font-size="12" font-family="Mulish,sans-serif">🎉</text>
+    </svg>
+    <div class="result-title">Результат</div>
+    <div class="result-score" id="r-score">0 <span>/ 10</span></div>
+    <div class="result-msg" id="r-msg"></div>
+    <div class="result-stats">
+      <div class="rstat"><div class="rstat-num green" id="r-correct">0</div><div class="rstat-label">Верно</div></div>
+      <div class="rstat"><div class="rstat-num red" id="r-wrong">0</div><div class="rstat-label">Ошибок</div></div>
+      <div class="rstat"><div class="rstat-num amber" id="r-pct">0%</div><div class="rstat-label">Точность</div></div>
+    </div>
+    <div class="badges" id="r-badges"></div>
+    <div class="result-btns">
+      <button class="result-btn primary" onclick="restart()">Играть снова</button>
+      <button class="result-btn secondary" onclick="goIntro()">Главная</button>
+    </div>
+  </div>
+
+</div>
+<script>
+const ILLUSTRATIONS = {
+
+  // Два мультяшных персонажа машут друг другу на улице
+  "Приветствие": `<svg viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+    <rect width="520" height="160" fill="#eef4ff"/>
+    <ellipse cx="260" cy="155" rx="260" ry="18" fill="#c7d9ff" opacity="0.5"/>
+    <rect x="0" y="130" width="520" height="30" rx="0" fill="#dbeafe" opacity="0.4"/>
+    <!-- sun -->
+    <circle cx="460" cy="32" r="22" fill="#fde68a"/>
+    <line x1="460" y1="4" x2="460" y2="0" stroke="#fde68a" stroke-width="3" stroke-linecap="round"/>
+    <line x1="460" y1="60" x2="460" y2="64" stroke="#fde68a" stroke-width="3" stroke-linecap="round"/>
+    <line x1="432" y1="32" x2="428" y2="32" stroke="#fde68a" stroke-width="3" stroke-linecap="round"/>
+    <line x1="488" y1="32" x2="492" y2="32" stroke="#fde68a" stroke-width="3" stroke-linecap="round"/>
+    <line x1="441" y1="13" x2="438" y2="10" stroke="#fde68a" stroke-width="3" stroke-linecap="round"/>
+    <line x1="479" y1="51" x2="482" y2="54" stroke="#fde68a" stroke-width="3" stroke-linecap="round"/>
+    <!-- tree -->
+    <rect x="380" y="90" width="10" height="44" rx="4" fill="#92400e"/>
+    <ellipse cx="385" cy="82" rx="28" ry="22" fill="#4ade80"/>
+    <ellipse cx="370" cy="92" rx="18" ry="14" fill="#22c55e"/>
+    <ellipse cx="400" cy="88" rx="16" ry="13" fill="#16a34a"/>
+    <!-- left character — girl, pink top -->
+    <rect x="60" y="84" width="44" height="50" rx="18" fill="#f9a8d4"/>
+    <circle cx="82" cy="70" r="22" fill="#fcd9b6"/>
+    <circle cx="75" cy="66" r="3.5" fill="#3b1f5e"/>
+    <circle cx="89" cy="66" r="3.5" fill="#3b1f5e"/>
+    <path d="M75 76 Q82 83 89 76" stroke="#3b1f5e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <!-- curly hair -->
+    <ellipse cx="82" cy="50" rx="21" ry="11" fill="#b45309"/>
+    <ellipse cx="64" cy="60" rx="8" ry="13" fill="#b45309"/>
+    <ellipse cx="100" cy="60" rx="8" ry="13" fill="#b45309"/>
+    <ellipse cx="72" cy="48" rx="12" ry="7" fill="#b45309"/>
+    <ellipse cx="92" cy="48" rx="12" ry="7" fill="#b45309"/>
+    <!-- waving arm right -->
+    <path d="M104 88 Q132 64 144 52" stroke="#fcd9b6" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="147" cy="50" r="9" fill="#fcd9b6"/>
+    <!-- other arm -->
+    <path d="M60 90 Q44 106 38 118" stroke="#fcd9b6" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <!-- legs + skirt -->
+    <ellipse cx="82" cy="134" rx="24" ry="8" fill="#fbbf24"/>
+    <rect x="68" y="134" width="14" height="20" rx="7" fill="#fcd9b6"/>
+    <rect x="86" y="134" width="14" height="20" rx="7" fill="#fcd9b6"/>
+    <ellipse cx="75" cy="154" rx="10" ry="5" fill="#f472b6"/>
+    <ellipse cx="93" cy="154" rx="10" ry="5" fill="#f472b6"/>
+    <!-- right character — boy, blue top -->
+    <rect x="310" y="84" width="44" height="50" rx="18" fill="#93c5fd"/>
+    <circle cx="332" cy="70" r="22" fill="#fcd9b6"/>
+    <circle cx="325" cy="66" r="3.5" fill="#3b1f5e"/>
+    <circle cx="339" cy="66" r="3.5" fill="#3b1f5e"/>
+    <path d="M325 76 Q332 83 339 76" stroke="#3b1f5e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <!-- short hair -->
+    <ellipse cx="332" cy="50" rx="20" ry="9" fill="#1e3a5f"/>
+    <rect x="314" y="48" width="36" height="10" rx="4" fill="#1e3a5f"/>
+    <!-- waving arm left -->
+    <path d="M310 88 Q284 64 272 52" stroke="#fcd9b6" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="269" cy="50" r="9" fill="#fcd9b6"/>
+    <!-- other arm -->
+    <path d="M354 90 Q370 106 376 118" stroke="#fcd9b6" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <!-- legs -->
+    <rect x="318" y="134" width="14" height="20" rx="7" fill="#1d4ed8"/>
+    <rect x="336" y="134" width="14" height="20" rx="7" fill="#1d4ed8"/>
+    <ellipse cx="325" cy="154" rx="10" ry="5" fill="#1e3a5f"/>
+    <ellipse cx="343" cy="154" rx="10" ry="5" fill="#1e3a5f"/>
+    <!-- hearts floating between -->
+    <text x="192" y="58" font-size="18" font-family="sans-serif" opacity="0.8">💛</text>
+    <text x="218" y="38" font-size="13" font-family="sans-serif" opacity="0.6">💜</text>
+    <text x="244" y="55" font-size="16" font-family="sans-serif" opacity="0.7">🩵</text>
+  </svg>`,
+
+  // Персонаж с бейджем на конференции
+  "Личная информация": `<svg viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+    <rect width="520" height="160" fill="#fefce8"/>
+    <ellipse cx="260" cy="155" rx="260" ry="18" fill="#fef08a" opacity="0.4"/>
+    <!-- podium / stage -->
+    <rect x="140" y="120" width="240" height="38" rx="8" fill="#fde68a"/>
+    <rect x="155" y="112" width="210" height="16" rx="5" fill="#fbbf24"/>
+    <!-- star decorations -->
+    <text x="80" y="55" font-size="28" font-family="sans-serif" opacity="0.25">⭐</text>
+    <text x="400" y="45" font-size="22" font-family="sans-serif" opacity="0.2">⭐</text>
+    <text x="430" y="100" font-size="16" font-family="sans-serif" opacity="0.3">✨</text>
+    <text x="70" y="110" font-size="14" font-family="sans-serif" opacity="0.3">✨</text>
+    <!-- character center — excited, standing on podium -->
+    <rect x="218" y="64" width="84" height="56" rx="24" fill="#a78bfa"/>
+    <!-- badge hanging from neck -->
+    <path d="M238 72 L230 98 L290 98 L282 72" stroke="#f59e0b" stroke-width="2" fill="#fef3c7" stroke-linejoin="round"/>
+    <rect x="228" y="96" width="64" height="34" rx="7" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+    <!-- badge lines (NO text) -->
+    <rect x="234" y="103" width="32" height="5" rx="2.5" fill="#fbbf24"/>
+    <rect x="234" y="112" width="22" height="4" rx="2" fill="#fde68a"/>
+    <rect x="234" y="120" width="28" height="3.5" rx="1.8" fill="#fde68a"/>
+    <!-- smiley face on badge -->
+    <circle cx="274" cy="110" r="10" fill="#fde68a" stroke="#f59e0b" stroke-width="1"/>
+    <circle cx="271" cy="108" r="1.5" fill="#92400e"/>
+    <circle cx="277" cy="108" r="1.5" fill="#92400e"/>
+    <path d="M271 113 Q274 117 277 113" stroke="#92400e" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <!-- head -->
+    <circle cx="260" cy="50" r="24" fill="#fcd9b6"/>
+    <circle cx="252" cy="46" r="4" fill="#3b1f5e"/>
+    <circle cx="268" cy="46" r="4" fill="#3b1f5e"/>
+    <!-- big happy grin -->
+    <path d="M251 58 Q260 68 269 58" stroke="#3b1f5e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <!-- excited hair spiky -->
+    <ellipse cx="260" cy="28" rx="20" ry="10" fill="#7c3aed"/>
+    <path d="M244 28 L238 14 L248 24" fill="#7c3aed"/>
+    <path d="M260 26 L258 10 L266 22" fill="#7c3aed"/>
+    <path d="M276 28 L282 14 L272 24" fill="#7c3aed"/>
+    <!-- both arms raised in excitement -->
+    <path d="M218 76 Q190 54 178 42" stroke="#fcd9b6" stroke-width="13" stroke-linecap="round" fill="none"/>
+    <circle cx="175" cy="40" r="10" fill="#fcd9b6"/>
+    <path d="M302 76 Q330 54 342 42" stroke="#fcd9b6" stroke-width="13" stroke-linecap="round" fill="none"/>
+    <circle cx="345" cy="40" r="10" fill="#fcd9b6"/>
+    <!-- legs -->
+    <rect x="232" y="118" width="18" height="14" rx="7" fill="#6d28d9"/>
+    <rect x="270" y="118" width="18" height="14" rx="7" fill="#6d28d9"/>
+    <ellipse cx="241" cy="132" rx="12" ry="5" fill="#4c1d95"/>
+    <ellipse cx="279" cy="132" rx="12" ry="5" fill="#4c1d95"/>
+  </svg>`,
+
+  // Персонаж задумался — облако с вопросительным знаком над головой
+  "Заполни пропуск": `<svg viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+    <rect width="520" height="160" fill="#f0fdf4"/>
+    <ellipse cx="260" cy="155" rx="260" ry="18" fill="#bbf7d0" opacity="0.4"/>
+    <!-- grass -->
+    <rect x="0" y="136" width="520" height="24" rx="0" fill="#dcfce7" opacity="0.6"/>
+    <!-- thought cloud (large) -->
+    <ellipse cx="330" cy="50" rx="88" ry="38" fill="white" stroke="#86efac" stroke-width="2"/>
+    <ellipse cx="258" cy="62" rx="22" ry="18" fill="white" stroke="#86efac" stroke-width="2"/>
+    <ellipse cx="232" cy="72" rx="14" ry="12" fill="white" stroke="#86efac" stroke-width="2"/>
+    <ellipse cx="215" cy="82" rx="9" ry="8" fill="white" stroke="#86efac" stroke-width="2"/>
+    <!-- ? marks inside cloud -->
+    <text x="304" y="58" font-size="38" font-family="sans-serif" fill="#16a34a" opacity="0.85" font-weight="900">?</text>
+    <text x="352" y="52" font-size="24" font-family="sans-serif" fill="#4ade80" opacity="0.7">?</text>
+    <!-- character scratching head -->
+    <rect x="98" y="86" width="44" height="52" rx="18" fill="#6ee7b7"/>
+    <circle cx="120" cy="72" r="22" fill="#fcd9b6"/>
+    <circle cx="112" cy="68" r="3.5" fill="#3b1f5e"/>
+    <circle cx="126" cy="68" r="3.5" fill="#3b1f5e"/>
+    <!-- one eye normal, one slightly raised — puzzled look -->
+    <path d="M109 62 Q112 59 115 62" stroke="#3b1f5e" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <path d="M123 62 Q126 60 129 62" stroke="#3b1f5e" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <!-- confused mouth -->
+    <path d="M112 78 Q116 82 124 76" stroke="#3b1f5e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <!-- hair -->
+    <ellipse cx="120" cy="52" rx="20" ry="9" fill="#f97316"/>
+    <ellipse cx="103" cy="60" rx="7" ry="11" fill="#f97316"/>
+    <ellipse cx="137" cy="60" rx="7" ry="11" fill="#f97316"/>
+    <!-- arm raised to head (scratching) -->
+    <path d="M142 90 Q158 72 158 66" stroke="#fcd9b6" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="158" cy="63" r="9" fill="#fcd9b6"/>
+    <!-- other arm -->
+    <path d="M98 92 Q82 106 76 116" stroke="#fcd9b6" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <!-- legs -->
+    <rect x="102" y="134" width="15" height="20" rx="7" fill="#059669"/>
+    <rect x="122" y="134" width="15" height="20" rx="7" fill="#059669"/>
+    <ellipse cx="110" cy="154" rx="11" ry="5" fill="#065f46"/>
+    <ellipse cx="129" cy="154" rx="11" ry="5" fill="#065f46"/>
+    <!-- small floating question bubbles -->
+    <circle cx="320" cy="108" r="8" fill="white" stroke="#86efac" stroke-width="1.5"/>
+    <circle cx="295" cy="116" r="5" fill="white" stroke="#86efac" stroke-width="1.5"/>
+    <circle cx="276" cy="122" r="3.5" fill="white" stroke="#86efac" stroke-width="1.5"/>
+  </svg>`,
+
+  // Два персонажа стоят на фоне флажков разных стран
+  "Происхождение": `<svg viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+    <rect width="520" height="160" fill="#eff6ff"/>
+    <ellipse cx="260" cy="155" rx="260" ry="18" fill="#bfdbfe" opacity="0.4"/>
+    <rect x="0" y="132" width="520" height="28" rx="0" fill="#dbeafe" opacity="0.5"/>
+    <!-- bunting flags top -->
+    <polyline points="30,10 110,28 190,10 270,28 350,10 430,28 490,10" stroke="#93c5fd" stroke-width="2" fill="none"/>
+    <!-- flag 1 -->
+    <polygon points="30,10 110,28 30,28" fill="#3b82f6" opacity="0.7"/>
+    <!-- flag 2 -->
+    <polygon points="110,28 190,10 190,28" fill="#ef4444" opacity="0.7"/>
+    <!-- flag 3 -->
+    <polygon points="190,10 270,28 190,28" fill="#fbbf24" opacity="0.7"/>
+    <!-- flag 4 -->
+    <polygon points="270,28 350,10 350,28" fill="#22c55e" opacity="0.7"/>
+    <!-- flag 5 -->
+    <polygon points="350,10 430,28 350,28" fill="#a855f7" opacity="0.7"/>
+    <!-- flag 6 -->
+    <polygon points="430,28 490,10 490,28" fill="#f97316" opacity="0.7"/>
+    <!-- left character — lighter skin, curly hair -->
+    <rect x="88" y="82" width="44" height="52" rx="18" fill="#fb923c"/>
+    <circle cx="110" cy="68" r="22" fill="#fde8c8"/>
+    <circle cx="103" cy="64" r="3.5" fill="#3b1f5e"/>
+    <circle cx="117" cy="64" r="3.5" fill="#3b1f5e"/>
+    <path d="M103 74 Q110 81 117 74" stroke="#3b1f5e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <ellipse cx="110" cy="48" rx="20" ry="10" fill="#d97706"/>
+    <ellipse cx="93" cy="58" rx="7" ry="12" fill="#d97706"/>
+    <ellipse cx="127" cy="58" rx="7" ry="12" fill="#d97706"/>
+    <!-- arms open wide, welcoming -->
+    <path d="M132 88 Q160 74 172 66" stroke="#fde8c8" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="175" cy="64" r="9" fill="#fde8c8"/>
+    <path d="M88 88 Q60 74 48 66" stroke="#fde8c8" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="45" cy="64" r="9" fill="#fde8c8"/>
+    <rect x="92" y="130" width="15" height="20" rx="7" fill="#ea580c"/>
+    <rect x="112" y="130" width="15" height="20" rx="7" fill="#ea580c"/>
+    <!-- right character — darker skin, long straight hair -->
+    <rect x="324" y="82" width="44" height="52" rx="18" fill="#34d399"/>
+    <circle cx="346" cy="68" r="22" fill="#c4956a"/>
+    <circle cx="339" cy="64" r="3.5" fill="#3b1f5e"/>
+    <circle cx="353" cy="64" r="3.5" fill="#3b1f5e"/>
+    <path d="M339 74 Q346 81 353 74" stroke="#3b1f5e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <!-- long straight hair -->
+    <rect x="328" y="46" width="36" height="8" rx="3" fill="#1e1a3c"/>
+    <rect x="326" y="50" width="8" height="36" rx="4" fill="#1e1a3c"/>
+    <rect x="358" y="50" width="8" height="36" rx="4" fill="#1e1a3c"/>
+    <ellipse cx="346" cy="47" rx="20" ry="9" fill="#1e1a3c"/>
+    <!-- arms open wide -->
+    <path d="M368 88 Q396 74 408 66" stroke="#c4956a" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="411" cy="64" r="9" fill="#c4956a"/>
+    <path d="M324 88 Q296 74 284 66" stroke="#c4956a" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="281" cy="64" r="9" fill="#c4956a"/>
+    <rect x="328" y="130" width="15" height="20" rx="7" fill="#059669"/>
+    <rect x="348" y="130" width="15" height="20" rx="7" fill="#059669"/>
+  </svg>`,
+
+  // Три мультяшных персонажа — доктор, повар, художник (без подписей)
+  "Словарный запас": `<svg viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+    <rect width="520" height="160" fill="#fdf4ff"/>
+    <ellipse cx="260" cy="155" rx="260" ry="18" fill="#e9d5ff" opacity="0.4"/>
+    <rect x="0" y="132" width="520" height="28" rx="0" fill="#f3e8ff" opacity="0.5"/>
+    <!-- doctor (left) -->
+    <rect x="46" y="80" width="46" height="54" rx="18" fill="white" stroke="#d8b4fe" stroke-width="2"/>
+    <!-- white coat collar -->
+    <polygon points="69,80 62,98 69,94 76,98" fill="#e9d5ff"/>
+    <!-- stethoscope -->
+    <path d="M58 86 Q52 102 58 112 Q65 118 72 112" stroke="#9333ea" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <circle cx="72" cy="112" r="6" fill="#9333ea"/>
+    <circle cx="69" cy="68" r="22" fill="#fcd9b6"/>
+    <circle cx="62" cy="64" r="3.5" fill="#3b1f5e"/>
+    <circle cx="76" cy="64" r="3.5" fill="#3b1f5e"/>
+    <path d="M62 74 Q69 80 76 74" stroke="#3b1f5e" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <!-- doctor cap / hair up -->
+    <ellipse cx="69" cy="48" rx="20" ry="9" fill="#6d28d9"/>
+    <ellipse cx="53" cy="57" rx="6" ry="10" fill="#6d28d9"/>
+    <ellipse cx="85" cy="57" rx="6" ry="10" fill="#6d28d9"/>
+    <!-- red cross on coat -->
+    <rect x="80" y="90" width="10" height="4" rx="2" fill="#dc2626"/>
+    <rect x="83" y="87" width="4" height="10" rx="2" fill="#dc2626"/>
+    <!-- arm with clipboard -->
+    <path d="M92 90 Q110 88 122 84" stroke="#fcd9b6" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <rect x="118" y="72" width="22" height="28" rx="4" fill="white" stroke="#9333ea" stroke-width="1.5"/>
+    <rect x="122" y="66" width="14" height="8" rx="3" fill="#7c3aed"/>
+    <rect x="122" y="78" width="14" height="3" rx="1.5" fill="#e9d5ff"/>
+    <rect x="122" y="84" width="10" height="3" rx="1.5" fill="#e9d5ff"/>
+    <rect x="122" y="90" width="12" height="3" rx="1.5" fill="#e9d5ff"/>
+    <rect x="50" y="130" width="14" height="22" rx="7" fill="#c4b8ff"/>
+    <rect x="74" y="130" width="14" height="22" rx="7" fill="#c4b8ff"/>
+
+    <!-- cook (center) -->
+    <rect x="218" y="82" width="46" height="52" rx="18" fill="#fde68a"/>
+    <!-- apron -->
+    <path d="M222 90 L214 134 L264 134 L256 90 Z" fill="white" stroke="#fbbf24" stroke-width="1.5"/>
+    <!-- apron pocket -->
+    <rect x="230" y="110" width="22" height="16" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+    <circle cx="241" cy="72" r="22" fill="#fcd9b6"/>
+    <circle cx="234" cy="68" r="3.5" fill="#3b1f5e"/>
+    <circle cx="248" cy="68" r="3.5" fill="#3b1f5e"/>
+    <path d="M234 78 Q241 85 248 78" stroke="#3b1f5e" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <!-- chef hat -->
+    <rect x="224" y="52" width="34" height="12" rx="4" fill="white" stroke="#fbbf24" stroke-width="1.5"/>
+    <ellipse cx="241" cy="44" rx="20" ry="16" fill="white" stroke="#fbbf24" stroke-width="1.5"/>
+    <!-- spoon in hand -->
+    <path d="M264 88 Q288 76 302 66" stroke="#fcd9b6" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <ellipse cx="308" cy="62" rx="12" ry="8" fill="#fcd9b6" stroke="#d97706" stroke-width="1.5"/>
+    <!-- other arm -->
+    <path d="M218 88 Q198 102 188 112" stroke="#fcd9b6" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <rect x="224" y="130" width="14" height="22" rx="7" fill="#d97706"/>
+    <rect x="248" y="130" width="14" height="22" rx="7" fill="#d97706"/>
+
+    <!-- artist (right) -->
+    <rect x="374" y="80" width="46" height="54" rx="18" fill="#bfdbfe"/>
+    <circle cx="397" cy="66" r="22" fill="#fcd9b6"/>
+    <circle cx="390" cy="62" r="3.5" fill="#3b1f5e"/>
+    <circle cx="404" cy="62" r="3.5" fill="#3b1f5e"/>
+    <path d="M390 72 Q397 79 404 72" stroke="#3b1f5e" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <!-- beret -->
+    <ellipse cx="397" cy="46" rx="22" ry="10" fill="#ef4444"/>
+    <circle cx="408" cy="42" r="5" fill="#dc2626"/>
+    <rect x="378" y="44" width="38" height="8" rx="4" fill="#fcd9b6"/>
+    <!-- palette in hand -->
+    <path d="M420 88 Q446 82 456 76" stroke="#fcd9b6" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <ellipse cx="462" cy="72" rx="16" ry="11" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <circle cx="455" cy="68" r="4" fill="#3b82f6"/>
+    <circle cx="464" cy="66" r="4" fill="#ef4444"/>
+    <circle cx="469" cy="74" r="4" fill="#22c55e"/>
+    <circle cx="458" cy="76" r="3" fill="#a855f7"/>
+    <!-- paintbrush -->
+    <path d="M374 88 Q352 76 340 62" stroke="#fcd9b6" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <rect x="332" y="56" width="10" height="22" rx="4" fill="#92400e" transform="rotate(-30 337 67)"/>
+    <ellipse cx="328" cy="54" rx="5" ry="8" fill="#ef4444" transform="rotate(-30 328 54)"/>
+    <rect x="376" y="130" width="14" height="22" rx="7" fill="#1d4ed8"/>
+    <rect x="400" y="130" width="14" height="22" rx="7" fill="#1d4ed8"/>
+  </svg>`,
+
+  // Два персонажа встречаются в кафе
+  "Порядок диалога": `<svg viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+    <rect width="520" height="160" fill="#fff7ed"/>
+    <ellipse cx="260" cy="155" rx="260" ry="18" fill="#fed7aa" opacity="0.4"/>
+    <!-- cafe window background -->
+    <rect x="0" y="0" width="520" height="160" fill="#fff7ed"/>
+    <!-- window frame -->
+    <rect x="20" y="8" width="120" height="90" rx="10" fill="#fef3c7" stroke="#fde68a" stroke-width="2"/>
+    <rect x="80" y="8" width="3" height="90" fill="#fde68a"/>
+    <rect x="20" y="53" width="120" height="3" fill="#fde68a"/>
+    <!-- flower in window -->
+    <rect x="73" y="80" width="6" height="20" rx="3" fill="#4ade80"/>
+    <circle cx="76" cy="78" r="8" fill="#f9a8d4"/>
+    <circle cx="68" cy="74" r="6" fill="#f472b6"/>
+    <circle cx="84" cy="74" r="6" fill="#f472b6"/>
+    <circle cx="76" cy="68" r="6" fill="#fb7185"/>
+    <!-- cafe sign -->
+    <rect x="340" y="10" width="100" height="34" rx="8" fill="#f97316"/>
+    <rect x="344" y="15" width="92" height="24" rx="5" fill="#ea580c"/>
+    <circle cx="365" cy="27" r="8" fill="#fde68a"/>
+    <circle cx="362" cy="25" r="2" fill="#92400e"/>
+    <circle cx="368" cy="25" r="2" fill="#92400e"/>
+    <path d="M362 30 Q365 33 368 30" stroke="#92400e" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <rect x="378" y="20" width="50" height="5" rx="2.5" fill="#fde68a" opacity="0.6"/>
+    <rect x="378" y="29" width="36" height="4" rx="2" fill="#fde68a" opacity="0.4"/>
+    <!-- floor -->
+    <rect x="0" y="130" width="520" height="30" fill="#fef3c7" opacity="0.6"/>
+    <!-- table -->
+    <ellipse cx="260" cy="128" rx="70" ry="12" fill="#fed7aa" stroke="#f97316" stroke-width="1.5"/>
+    <rect x="248" y="128" width="12" height="22" rx="5" fill="#fdba74"/>
+    <!-- two cups on table -->
+    <rect x="228" y="108" width="22" height="20" rx="5" fill="white" stroke="#fb923c" stroke-width="1.5"/>
+    <ellipse cx="239" cy="108" rx="11" ry="4" fill="#fed7aa"/>
+    <path d="M250 115 Q257 115 257 120 Q257 125 250 125" stroke="#fb923c" stroke-width="1.5" fill="none"/>
+    <rect x="270" y="108" width="22" height="20" rx="5" fill="white" stroke="#fb923c" stroke-width="1.5"/>
+    <ellipse cx="281" cy="108" rx="11" ry="4" fill="#fed7aa"/>
+    <path d="M292 115 Q299 115 299 120 Q299 125 292 125" stroke="#fb923c" stroke-width="1.5" fill="none"/>
+    <!-- steam from cups -->
+    <path d="M235 104 Q233 96 235 90" stroke="#fca5a5" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.7"/>
+    <path d="M243 104 Q241 94 243 88" stroke="#fca5a5" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+    <!-- left character sitting (girl) -->
+    <rect x="112" y="76" width="44" height="54" rx="18" fill="#f9a8d4"/>
+    <circle cx="134" cy="62" r="22" fill="#fcd9b6"/>
+    <path d="M126 58 Q130 54 134 58" stroke="#3b1f5e" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M134 58 Q138 54 142 58" stroke="#3b1f5e" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M126 70 Q134 78 142 70" stroke="#3b1f5e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <ellipse cx="134" cy="42" rx="21" ry="10" fill="#7c3aed"/>
+    <ellipse cx="116" cy="52" rx="8" ry="13" fill="#7c3aed"/>
+    <ellipse cx="152" cy="52" rx="8" ry="13" fill="#7c3aed"/>
+    <path d="M156 82 Q182 90 210 100" stroke="#fcd9b6" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="213" cy="101" r="9" fill="#fcd9b6"/>
+    <path d="M112 82 Q96 96 88 110" stroke="#fcd9b6" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <rect x="116" y="126" width="15" height="20" rx="7" fill="#a21caf"/>
+    <rect x="136" y="126" width="15" height="20" rx="7" fill="#a21caf"/>
+    <!-- right character sitting (boy) -->
+    <rect x="354" y="76" width="44" height="54" rx="18" fill="#6ee7b7"/>
+    <circle cx="376" cy="62" r="22" fill="#fde8c8"/>
+    <circle cx="369" cy="58" r="3.5" fill="#3b1f5e"/>
+    <circle cx="383" cy="58" r="3.5" fill="#3b1f5e"/>
+    <path d="M369 70 Q376 77 383 70" stroke="#3b1f5e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <ellipse cx="376" cy="43" rx="20" ry="9" fill="#92400e"/>
+    <rect x="358" y="41" width="36" height="9" rx="4" fill="#92400e"/>
+    <path d="M354 82 Q328 90 310 100" stroke="#fde8c8" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="307" cy="101" r="9" fill="#fde8c8"/>
+    <path d="M398 82 Q414 96 422 110" stroke="#fde8c8" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <rect x="358" y="126" width="15" height="20" rx="7" fill="#047857"/>
+    <rect x="378" y="126" width="15" height="20" rx="7" fill="#047857"/>
+  </svg>`,
+
+  // Персонаж с большим ухом слушает (не расслышал имя)
+  "Заполни пропуск_2": `<svg viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+    <rect width="520" height="160" fill="#fffbeb"/>
+    <ellipse cx="260" cy="155" rx="260" ry="18" fill="#fde68a" opacity="0.3"/>
+    <rect x="0" y="132" width="520" height="28" rx="0" fill="#fef3c7" opacity="0.5"/>
+    <!-- left speaker character -->
+    <rect x="46" y="82" width="44" height="52" rx="18" fill="#93c5fd"/>
+    <circle cx="68" cy="68" r="22" fill="#fcd9b6"/>
+    <circle cx="61" cy="64" r="3.5" fill="#3b1f5e"/>
+    <circle cx="75" cy="64" r="3.5" fill="#3b1f5e"/>
+    <path d="M61 74 Q68 81 75 74" stroke="#3b1f5e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <ellipse cx="68" cy="48" rx="20" ry="9" fill="#1e3a5f"/>
+    <rect x="50" y="46" width="36" height="9" rx="4" fill="#1e3a5f"/>
+    <!-- mouth open (speaking) -->
+    <path d="M61 74 Q68 82 75 74" stroke="#3b1f5e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <!-- speech waves from mouth -->
+    <path d="M95 72 Q115 62 115 52" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.7"/>
+    <path d="M95 76 Q122 72 128 64" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+    <path d="M95 80 Q128 82 138 78" stroke="#bfdbfe" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+    <path d="M90 88 Q74 102 68 114" stroke="#fcd9b6" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <path d="M90 90 Q118 90 142 84" stroke="#fcd9b6" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <rect x="50" y="130" width="15" height="22" rx="7" fill="#1d4ed8"/>
+    <rect x="70" y="130" width="15" height="22" rx="7" fill="#1d4ed8"/>
+    <!-- right listener character with BIG ear -->
+    <rect x="316" y="82" width="44" height="52" rx="18" fill="#fca5a5"/>
+    <circle cx="338" cy="68" r="22" fill="#fde8c8"/>
+    <circle cx="331" cy="64" r="3.5" fill="#3b1f5e"/>
+    <circle cx="345" cy="64" r="3.5" fill="#3b1f5e"/>
+    <!-- confused squiggle mouth -->
+    <path d="M331 76 Q335 80 340 76 Q345 72 348 76" stroke="#3b1f5e" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <!-- raised eyebrows (confused) -->
+    <path d="M328 60 Q331 57 334 60" stroke="#3b1f5e" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <path d="M342 60 Q345 57 348 60" stroke="#3b1f5e" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <!-- hair -->
+    <ellipse cx="338" cy="48" rx="21" ry="10" fill="#b45309"/>
+    <ellipse cx="321" cy="58" rx="7" ry="12" fill="#b45309"/>
+    <ellipse cx="355" cy="58" rx="7" ry="12" fill="#b45309"/>
+    <!-- GIANT ear -->
+    <ellipse cx="316" cy="72" rx="18" ry="24" fill="#fde8c8" stroke="#d97706" stroke-width="2"/>
+    <ellipse cx="320" cy="72" rx="10" ry="16" fill="#fcd9b6"/>
+    <!-- hand cupped to ear -->
+    <path d="M316 90 Q296 80 284 68" stroke="#fde8c8" stroke-width="13" stroke-linecap="round" fill="none"/>
+    <ellipse cx="278" cy="64" rx="13" ry="10" fill="#fde8c8"/>
+    <!-- other arm -->
+    <path d="M360 90 Q376 106 382 118" stroke="#fde8c8" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <rect x="320" y="130" width="15" height="22" rx="7" fill="#dc2626"/>
+    <rect x="340" y="130" width="15" height="22" rx="7" fill="#dc2626"/>
+    <!-- huh? bubble -->
+    <ellipse cx="420" cy="54" rx="52" ry="30" fill="white" stroke="#fbbf24" stroke-width="2"/>
+    <circle cx="374" cy="75" r="8" fill="white" stroke="#fbbf24" stroke-width="1.5"/>
+    <circle cx="362" cy="82" r="5" fill="white" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="398" y="62" font-size="28" fill="#d97706" font-family="sans-serif" font-weight="900">?!</text>
+  </svg>`,
+
+  // Персонаж рядом с тортом со свечами
+  "Возраст": `<svg viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+    <rect width="520" height="160" fill="#fff1f2"/>
+    <ellipse cx="260" cy="155" rx="260" ry="18" fill="#fecdd3" opacity="0.5"/>
+    <rect x="0" y="130" width="520" height="30" rx="0" fill="#ffe4e6" opacity="0.5"/>
+    <!-- balloons background -->
+    <ellipse cx="70" cy="38" rx="18" ry="22" fill="#a78bfa" opacity="0.7"/>
+    <line x1="70" y1="60" x2="66" y2="100" stroke="#a78bfa" stroke-width="1.5" opacity="0.7"/>
+    <ellipse cx="110" cy="28" rx="15" ry="19" fill="#34d399" opacity="0.6"/>
+    <line x1="110" y1="47" x2="107" y2="100" stroke="#34d399" stroke-width="1.5" opacity="0.6"/>
+    <ellipse cx="148" cy="38" rx="17" ry="21" fill="#fbbf24" opacity="0.65"/>
+    <line x1="148" y1="59" x2="144" y2="100" stroke="#fbbf24" stroke-width="1.5" opacity="0.65"/>
+    <ellipse cx="400" cy="32" rx="18" ry="22" fill="#f9a8d4" opacity="0.7"/>
+    <line x1="400" y1="54" x2="397" y2="100" stroke="#f9a8d4" stroke-width="1.5" opacity="0.7"/>
+    <ellipse cx="440" cy="24" rx="16" ry="20" fill="#93c5fd" opacity="0.65"/>
+    <line x1="440" y1="44" x2="436" y2="100" stroke="#93c5fd" stroke-width="1.5" opacity="0.65"/>
+    <!-- CAKE center -->
+    <!-- cake base layer -->
+    <rect x="196" y="100" width="128" height="36" rx="10" fill="#fb7185"/>
+    <rect x="196" y="100" width="128" height="8" rx="10" fill="#f43f5e"/>
+    <!-- cream squiggles on top layer edge -->
+    <ellipse cx="196" cy="100" rx="10" ry="6" fill="white"/>
+    <ellipse cx="216" cy="96" rx="10" ry="6" fill="white"/>
+    <ellipse cx="236" cy="100" rx="10" ry="6" fill="white"/>
+    <ellipse cx="256" cy="96" rx="10" ry="6" fill="white"/>
+    <ellipse cx="276" cy="100" rx="10" ry="6" fill="white"/>
+    <ellipse cx="296" cy="96" rx="10" ry="6" fill="white"/>
+    <ellipse cx="316" cy="100" rx="10" ry="6" fill="white"/>
+    <ellipse cx="324" cy="100" rx="10" ry="6" fill="white"/>
+    <!-- cake top layer -->
+    <rect x="206" y="76" width="108" height="28" rx="8" fill="#fda4af"/>
+    <!-- sprinkles -->
+    <rect x="216" y="82" width="8" height="3" rx="1.5" fill="#7c3aed" transform="rotate(30 220 83)"/>
+    <rect x="234" y="88" width="7" height="3" rx="1.5" fill="#0284c7" transform="rotate(-20 237 90)"/>
+    <rect x="258" y="80" width="8" height="3" rx="1.5" fill="#16a34a" transform="rotate(45 262 82)"/>
+    <rect x="280" y="86" width="7" height="3" rx="1.5" fill="#d97706" transform="rotate(10 284 87)"/>
+    <rect x="298" y="80" width="8" height="3" rx="1.5" fill="#dc2626" transform="rotate(-30 302 82)"/>
+    <!-- candles -->
+    <rect x="230" y="62" width="8" height="20" rx="3" fill="#fde68a" stroke="#f59e0b" stroke-width="1"/>
+    <rect x="256" y="58" width="8" height="24" rx="3" fill="#c4b8ff" stroke="#7c3aed" stroke-width="1"/>
+    <rect x="282" y="62" width="8" height="20" rx="3" fill="#bbf7d0" stroke="#059669" stroke-width="1"/>
+    <!-- flames -->
+    <ellipse cx="234" cy="60" rx="5" ry="7" fill="#fbbf24" opacity="0.9"/>
+    <ellipse cx="234" cy="59" rx="3" ry="4" fill="#ef4444"/>
+    <ellipse cx="260" cy="56" rx="5" ry="7" fill="#fbbf24" opacity="0.9"/>
+    <ellipse cx="260" cy="55" rx="3" ry="4" fill="#ef4444"/>
+    <ellipse cx="286" cy="60" rx="5" ry="7" fill="#fbbf24" opacity="0.9"/>
+    <ellipse cx="286" cy="59" rx="3" ry="4" fill="#ef4444"/>
+    <!-- character right (happy birthday kid) -->
+    <rect x="354" y="82" width="44" height="52" rx="18" fill="#fbbf24"/>
+    <!-- party hat -->
+    <polygon points="376,24 356,52 396,52" fill="#ef4444"/>
+    <line x1="376" y1="24" x2="370" y2="18" stroke="#fbbf24" stroke-width="2"/>
+    <ellipse cx="376" cy="18" rx="5" ry="4" fill="#fde68a"/>
+    <rect x="357" y="50" width="38" height="6" rx="3" fill="#fca5a5" stroke="#ef4444" stroke-width="1"/>
+    <circle cx="376" cy="68" r="22" fill="#fde8c8"/>
+    <path d="M369 64 Q373 60 377 64" stroke="#3b1f5e" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <path d="M377 64 Q381 60 385 64" stroke="#3b1f5e" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <!-- giant smile -->
+    <path d="M368 76 Q376 86 384 76" stroke="#3b1f5e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <!-- hair -->
+    <ellipse cx="376" cy="48" rx="21" ry="9" fill="#92400e"/>
+    <!-- arm pointing at cake -->
+    <path d="M354 88 Q320 86 306 88" stroke="#fde8c8" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="303" cy="88" r="9" fill="#fde8c8"/>
+    <!-- other arm -->
+    <path d="M398 88 Q414 102 420 114" stroke="#fde8c8" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <rect x="358" y="130" width="15" height="22" rx="7" fill="#d97706"/>
+    <rect x="378" y="130" width="15" height="22" rx="7" fill="#d97706"/>
+    <!-- confetti -->
+    <rect x="160" y="40" width="10" height="10" rx="2" fill="#6b54f0" opacity="0.6" transform="rotate(20 165 45)"/>
+    <rect x="450" y="60" width="8" height="8" rx="2" fill="#16a34a" opacity="0.6" transform="rotate(-15 454 64)"/>
+    <circle cx="170" cy="80" r="5" fill="#f97316" opacity="0.5"/>
+    <circle cx="460" cy="90" r="4" fill="#3b82f6" opacity="0.5"/>
+  </svg>`,
+
+  // Персонаж машет рукой на прощание, рядом чемодан
+  "Прощание": `<svg viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+    <rect width="520" height="160" fill="#f0fdf4"/>
+    <ellipse cx="260" cy="155" rx="260" ry="18" fill="#bbf7d0" opacity="0.4"/>
+    <rect x="0" y="130" width="520" height="30" rx="0" fill="#dcfce7" opacity="0.5"/>
+    <!-- road / path -->
+    <ellipse cx="320" cy="148" rx="120" ry="10" fill="#d1fae5" opacity="0.6"/>
+    <!-- car in background -->
+    <rect x="340" y="90" width="120" height="52" rx="14" fill="#4ade80"/>
+    <rect x="354" y="74" width="80" height="30" rx="10" fill="#86efac"/>
+    <!-- car windows -->
+    <rect x="360" y="78" width="30" height="22" rx="6" fill="#bfdbfe" stroke="#93c5fd" stroke-width="1"/>
+    <rect x="396" y="78" width="30" height="22" rx="6" fill="#bfdbfe" stroke="#93c5fd" stroke-width="1"/>
+    <!-- wheels -->
+    <circle cx="368" cy="142" r="14" fill="#1e3a5f"/>
+    <circle cx="368" cy="142" r="7" fill="#6b7280"/>
+    <circle cx="432" cy="142" r="14" fill="#1e3a5f"/>
+    <circle cx="432" cy="142" r="7" fill="#6b7280"/>
+    <!-- lights -->
+    <ellipse cx="460" cy="106" rx="8" ry="6" fill="#fde68a"/>
+    <ellipse cx="340" cy="106" rx="8" ry="6" fill="#fca5a5"/>
+    <!-- waving person inside car window -->
+    <circle cx="410" cy="86" r="10" fill="#fde8c8"/>
+    <circle cx="407" cy="84" r="1.8" fill="#3b1f5e"/>
+    <circle cx="413" cy="84" r="1.8" fill="#3b1f5e"/>
+    <path d="M407 89 Q410 92 413 89" stroke="#3b1f5e" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <!-- MAIN character waving goodbye -->
+    <rect x="116" y="82" width="44" height="52" rx="18" fill="#34d399"/>
+    <circle cx="138" cy="68" r="22" fill="#fcd9b6"/>
+    <circle cx="131" cy="64" r="3.5" fill="#3b1f5e"/>
+    <circle cx="145" cy="64" r="3.5" fill="#3b1f5e"/>
+    <!-- sad/wistful eyes — looking up -->
+    <path d="M128 60 Q131 57 134 60" stroke="#3b1f5e" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <path d="M142 60 Q145 57 148 60" stroke="#3b1f5e" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <!-- gentle smile -->
+    <path d="M131 74 Q138 80 145 74" stroke="#3b1f5e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <!-- hair -->
+    <ellipse cx="138" cy="48" rx="21" ry="10" fill="#1e1a3c"/>
+    <rect x="120" y="46" width="36" height="9" rx="4" fill="#1e1a3c"/>
+    <!-- BIG wave arm -->
+    <path d="M160 86 Q196 54 212 40" stroke="#fcd9b6" stroke-width="13" stroke-linecap="round" fill="none"/>
+    <circle cx="215" cy="38" r="10" fill="#fcd9b6"/>
+    <!-- suitcase -->
+    <rect x="56" y="100" width="48" height="38" rx="8" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+    <rect x="72" y="92" width="16" height="12" rx="4" fill="none" stroke="#ea580c" stroke-width="2"/>
+    <line x1="56" y1="118" x2="104" y2="118" stroke="#ea580c" stroke-width="2"/>
+    <!-- sticker on suitcase -->
+    <rect x="62" y="122" width="18" height="12" rx="3" fill="#fde68a" stroke="#d97706" stroke-width="1"/>
+    <circle cx="82" cy="108" r="4" fill="#dc2626"/>
+    <!-- wheels on suitcase -->
+    <circle cx="66" cy="138" r="5" fill="#1e3a5f"/>
+    <circle cx="94" cy="138" r="5" fill="#1e3a5f"/>
+    <!-- other arm down -->
+    <path d="M116 88 Q100 104 94 118" stroke="#fcd9b6" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <rect x="120" y="130" width="15" height="22" rx="7" fill="#065f46"/>
+    <rect x="140" y="130" width="15" height="22" rx="7" fill="#065f46"/>
+    <!-- motion lines from car -->
+    <line x1="338" y1="100" x2="316" y2="100" stroke="#bbf7d0" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+    <line x1="338" y1="110" x2="310" y2="110" stroke="#bbf7d0" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+    <line x1="338" y1="120" x2="318" y2="120" stroke="#bbf7d0" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+  </svg>`,
+
+  // Два персонажа — один в смокинге, другой расслабленный — формально vs неформально
+  "Формальность": `<svg viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+    <rect width="520" height="160" fill="#fafafa"/>
+    <ellipse cx="260" cy="155" rx="260" ry="18" fill="#e2e8f0" opacity="0.4"/>
+    <!-- dividing line with zigzag playful -->
+    <rect x="250" y="20" width="4" height="130" rx="2" fill="#e2e8f0"/>
+    <!-- left side: formal — office background -->
+    <rect x="0" y="0" width="250" height="160" fill="#f8faff" opacity="0.5"/>
+    <rect x="20" y="20" width="60" height="80" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+    <line x1="20" y1="50" x2="80" y2="50" stroke="#93c5fd" stroke-width="1"/>
+    <line x1="20" y1="70" x2="80" y2="70" stroke="#93c5fd" stroke-width="1"/>
+    <rect x="28" y="26" width="44" height="20" rx="3" fill="#bfdbfe" opacity="0.6"/>
+    <!-- formal character — suit, tie -->
+    <rect x="110" y="80" width="46" height="54" rx="18" fill="#1e3a5f"/>
+    <!-- white shirt visible -->
+    <rect x="123" y="80" width="20" height="24" rx="4" fill="white"/>
+    <!-- tie -->
+    <polygon points="133,84 128,100 133,106 138,100" fill="#dc2626"/>
+    <polygon points="130,82 136,82 133,86" fill="#dc2626"/>
+    <!-- suit lapels -->
+    <polygon points="110,80 123,80 116,100" fill="#162d4a"/>
+    <polygon points="156,80 143,80 150,100" fill="#162d4a"/>
+    <!-- buttons on shirt -->
+    <circle cx="133" cy="92" r="2" fill="#e2e8f0"/>
+    <circle cx="133" cy="98" r="2" fill="#e2e8f0"/>
+    <circle cx="133" cy="104" r="2" fill="#e2e8f0"/>
+    <circle cx="133" cy="68" r="22" fill="#fcd9b6"/>
+    <circle cx="126" cy="64" r="3.5" fill="#3b1f5e"/>
+    <circle cx="140" cy="64" r="3.5" fill="#3b1f5e"/>
+    <path d="M126 74 Q133 80 140 74" stroke="#3b1f5e" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <!-- slicked back hair -->
+    <ellipse cx="133" cy="48" rx="20" ry="8" fill="#1e1a3c"/>
+    <rect x="115" y="46" width="36" height="8" rx="4" fill="#1e1a3c"/>
+    <!-- formal handshake arm stretched out -->
+    <path d="M156 88 Q188 86 208 84" stroke="#fcd9b6" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="211" cy="84" r="9" fill="#fcd9b6"/>
+    <!-- other arm stiff by side -->
+    <path d="M110 88 Q94 108 90" stroke="#fcd9b6" stroke-width="11" stroke-linecap="round" fill="none"/>
+    <rect x="114" y="130" width="16" height="22" rx="7" fill="#162d4a"/>
+    <rect x="136" y="130" width="16" height="22" rx="7" fill="#162d4a"/>
+    <ellipse cx="122" cy="152" rx="11" ry="5" fill="#0f172a"/>
+    <ellipse cx="144" cy="152" rx="11" ry="5" fill="#0f172a"/>
+
+    <!-- right side: casual — cozy background -->
+    <rect x="254" y="0" width="266" height="160" fill="#fffbeb" opacity="0.5"/>
+    <!-- couch/sofa -->
+    <rect x="330" y="100" width="140" height="46" rx="14" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="330" y="88" width="140" height="20" rx="10" fill="#fbbf24"/>
+    <rect x="330" y="100" width="30" height="46" rx="10" fill="#f59e0b"/>
+    <rect x="440" y="100" width="30" height="46" rx="10" fill="#f59e0b"/>
+    <!-- cushion -->
+    <ellipse cx="400" cy="100" rx="40" ry="12" fill="#fde68a" opacity="0.7"/>
+    <!-- casual character lounging, cap on backwards -->
+    <rect x="358" y="72" width="44" height="54" rx="18" fill="#fb923c"/>
+    <circle cx="380" cy="58" r="22" fill="#fde8c8"/>
+    <!-- backwards cap -->
+    <rect x="362" y="46" width="36" height="10" rx="4" fill="#1e3a5f"/>
+    <ellipse cx="380" cy="47" rx="20" ry="8" fill="#1e3a5f"/>
+    <rect x="356" y="54" width="12" height="6" rx="3" fill="#1e3a5f"/>
+    <!-- cool squint eyes -->
+    <path d="M373 54 Q377 51 381 54" stroke="#3b1f5e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <path d="M381 54 Q384 51 387 54" stroke="#3b1f5e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <!-- chill smile -->
+    <path d="M373 66 Q380 73 387 66" stroke="#3b1f5e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <!-- casual wave arm -->
+    <path d="M402 78 Q426 58 436 46" stroke="#fde8c8" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="439" cy="44" r="9" fill="#fde8c8"/>
+    <!-- phone in other hand (chilling) -->
+    <path d="M358 80 Q336 80 322 88" stroke="#fde8c8" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <rect x="304" y="80" width="20" height="34" rx="6" fill="#1e3a5f"/>
+    <rect x="307" y="84" width="14" height="22" rx="3" fill="#93c5fd"/>
+    <rect x="362" y="122" width="16" height="22" rx="7" fill="#ea580c"/>
+    <rect x="384" y="122" width="16" height="22" rx="7" fill="#ea580c"/>
+    <!-- sneakers -->
+    <ellipse cx="370" cy="144" rx="14" ry="6" fill="#1e3a5f"/>
+    <ellipse cx="392" cy="144" rx="14" ry="6" fill="#1e3a5f"/>
+    <rect x="358" y="140" width="24" height="6" rx="3" fill="#f0f0f0"/>
+    <rect x="380" y="140" width="24" height="6" rx="3" fill="#f0f0f0"/>
+  </svg>`
+};
+const ILLO_DEFAULT = `<svg viewBox="0 0 520 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+  <rect width="520" height="160" fill="#faf8ff"/>
+  <circle cx="260" cy="80" r="50" fill="#ede9ff" stroke="#9080ff" stroke-width="2"/>
+  <text x="260" y="98" text-anchor="middle" font-size="44" font-family="Mulish,sans-serif">💬</text>
+</svg>`;
+
+const QUESTIONS = [
+  { tag:"Имя", text:'Как правильно ответить на вопрос «What\'s your name?»', hint:'Используй фразу My name is...', opts:["My name is Alex.","I am from Surgut.","I am sixteen.","Yes, I am."], ans:0, explain:'«My name is Alex.» — стандартный ответ на вопрос «What\'s your name?» — «Как тебя зовут?»' },
+  { tag:"Происхождение", text:'Как правильно ответить на вопрос «Where are you from?»', hint:'Используй фразу I am from...', opts:["I am sixteen.","My name is Alex.","I am from Surgut.","Yes, I am."], ans:2, explain:'«I am from Surgut.» — правильный ответ на вопрос «Where are you from?» — «Откуда ты?»' },
+  { tag:"Возраст", text:'Как правильно ответить на вопрос «How old are you?»', hint:'Используй фразу I am + число.', opts:["I have sixteen.","I am sixteen.","My age is sixteen.","I am from Surgut."], ans:1, explain:'«I am sixteen.» — правильный ответ на вопрос «How old are you?» — «Сколько тебе лет?» В английском используют глагол TO BE.' },
+  { tag:"Студент", text:'Как правильно ответить на вопрос «Are you a first-year student?»', hint:'Это вопрос с Are you...? — ответь Yes или No.', opts:["My name is Alex.","I am from Surgut.","I am sixteen.","Yes, I am."], ans:3, explain:'«Yes, I am.» — краткий утвердительный ответ на вопрос «Are you a first-year student?» — «Ты студент первого года?»' },
+  { tag:"Лучший друг", text:'Как правильно ответить на вопрос «What is the name of your best friend?»', hint:'Используй фразу My best friend\'s name is...', opts:["My best friend is Mary.","My best friend\'s name is Mary.","I have a friend Mary.","Mary is my name."], ans:1, explain:'«My best friend\'s name is Mary.» — правильный ответ. Притяжательный падеж friend\'s показывает, что имя принадлежит другу.' }
+];
+
+const LETTERS = ['A','B','C','D'];
+let order=[],cur=0,score=0,lives=3,wrong=0;
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5);}
+
+function startGame(){
+  document.getElementById('intro-screen').style.display='none';
+  const gs=document.getElementById('game-screen');
+  gs.style.display='flex';
+  order=shuffle([...Array(QUESTIONS.length).keys()]);
+  cur=0;score=0;lives=3;wrong=0;
+  document.getElementById('score-num').textContent=0;
+  renderHearts();loadQ();
+}
+function goIntro(){
+  const rs=document.getElementById('result-screen');
+  rs.classList.remove('show');rs.style.display='none';
+  document.getElementById('intro-screen').style.display='flex';
+}
+function restart(){
+  const rs=document.getElementById('result-screen');
+  rs.classList.remove('show');rs.style.display='none';
+  startGame();
+}
+function renderHearts(){
+  const el=document.getElementById('hearts');el.innerHTML='';
+  for(let i=0;i<3;i++){const s=document.createElement('span');s.className='heart-icon';s.textContent=i<lives?'❤️':'🖤';el.appendChild(s);}
+}
+function loadQ(){
+  const q=QUESTIONS[order[cur]];
+  const wrap=document.getElementById('question-wrap');
+  wrap.style.animation='none';void wrap.offsetWidth;wrap.style.animation='fadeUp 0.3s ease both';
+  const illoEl=document.getElementById('q-illustration');
+  illoEl.style.animation='none';void illoEl.offsetWidth;illoEl.style.animation='fadeUp 0.35s ease both';
+  let illoKey = q.tag;
+  if(q.tag === "Заполни пропуск" && q.text.includes("spell")) illoKey = "Заполни пропуск_2";
+  illoEl.innerHTML=ILLUSTRATIONS[illoKey]||ILLO_DEFAULT;
+  document.getElementById('q-tag').textContent=q.tag;
+  document.getElementById('q-text').textContent=q.text;
+  document.getElementById('q-hint').textContent=q.hint?'💡 '+q.hint:'';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('progress-fill').style.width=(cur/order.length*100)+'%';
+  const optEl=document.getElementById('options');optEl.innerHTML='';
+  const indexed=q.opts.map((o,i)=>({text:o,idx:i}));
+  const shuffled=shuffle(indexed);
+  shuffled.forEach((opt,pos)=>{
+    const btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML=`<span class="opt-letter">${LETTERS[pos]}</span>${opt.text}`;
+    btn.onclick=()=>choose(opt.idx,btn,shuffled,q);
+    optEl.appendChild(btn);
+  });
+  document.getElementById('next-btn').textContent=cur===order.length-1?'Посмотреть результат →':'Следующий вопрос →';
+}
+function choose(idx,btn,shuffled,q){
+  const allBtns=document.querySelectorAll('.opt');
+  allBtns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('feedback');
+  const fbTitle=document.getElementById('fb-title');
+  const fbBody=document.getElementById('fb-body');
+  if(idx===q.ans){
+    btn.classList.add('correct');score++;
+    document.getElementById('score-num').textContent=score;
+    fb.className='feedback ok show';fbTitle.textContent='✓ Верно!';fbBody.textContent=q.explain;
+  } else {
+    btn.classList.add('wrong');lives++;wrong++;lives--;
+    renderHearts();
+    allBtns.forEach(b=>{if(b.textContent.includes(q.opts[q.ans]))b.classList.add('correct');});
+    fb.className='feedback bad show';fbTitle.textContent='✗ Не совсем верно';fbBody.textContent=q.explain;
+    wrong=wrong;
+  }
+  if(lives<=0&&idx!==q.ans){setTimeout(showResult,900);return;}
+  document.getElementById('next-btn').style.display='block';
+}
+function nextQ(){cur++;if(cur>=order.length||lives<=0){showResult();return;}loadQ();}
+function showResult(){
+  document.getElementById('game-screen').style.display='none';
+  const rs=document.getElementById('result-screen');rs.style.display='flex';rs.classList.add('show');
+  document.getElementById('progress-fill').style.width='100%';
+  const total=order.length,pct=Math.round(score/total*100);
+  const actualWrong=total-score;
+  document.getElementById('r-score').innerHTML=score+' <span>/ '+total+'</span>';
+  document.getElementById('r-correct').textContent=score;
+  document.getElementById('r-wrong').textContent=actualWrong;
+  document.getElementById('r-pct').textContent=pct+'%';
+  let msg,badges=[];
+  if(pct>=90){msg='Блестяще! Ты отлично знаешь фразы знакомства на английском.';badges=['Мастер общения','Без ошибок','A1 Champion'];}
+  else if(pct>=70){msg='Хорошая работа! Немного практики — и ты станешь экспертом.';badges=['Хороший результат','Keep going!'];}
+  else if(pct>=50){msg='Неплохо! Повтори фразы знакомства и попробуй ещё раз.';badges=['Ученик'];}
+  else{msg='Не сдавайся! Повтори материал и попробуй снова — всё получится.';badges=['Начинающий'];}
+  document.getElementById('r-msg').textContent=msg;
+  document.getElementById('r-badges').innerHTML=badges.map(b=>`<span class="badge">${b}</span>`).join('');
+}
+</script>
+</body>
+</html>
