@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сортировка слов по правилам чтения</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: #f5f0e8; color: #2a2a2a; padding: 20px; }
+  h1 { text-align: center; font-size: 22px; margin-bottom: 6px; color: #1a3a5c; }
+  .subtitle { text-align: center; font-size: 13px; color: #666; margin-bottom: 16px; }
+  .score-bar { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .score-pill { background: #fff; border: 1px solid #ddd; border-radius: 20px; padding: 5px 16px; font-size: 13px; color: #555; }
+  .score-pill b { color: #1a3a5c; }
+  .level-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
+  .level-btn { background: #fff; border: 1.5px solid #ccc; border-radius: 20px; padding: 6px 16px; font-size: 13px; cursor: pointer; color: #444; font-family: Georgia, serif; transition: all 0.2s; }
+  .level-btn:hover { border-color: #1a3a5c; color: #1a3a5c; }
+  .level-btn.active { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
+  .pool-label { font-size: 12px; color: #888; margin-bottom: 8px; text-align: center; letter-spacing: 0.05em; text-transform: uppercase; }
+  .words-pool { display: flex; flex-wrap: wrap; gap: 8px; min-height: 60px; padding: 12px; background: #fff; border: 1.5px dashed #bbb; border-radius: 12px; margin-bottom: 20px; justify-content: center; }
+  .word-chip { background: #fff; border: 1.5px solid #aac; border-radius: 8px; padding: 7px 14px; font-size: 15px; cursor: grab; user-select: none; color: #1a3a5c; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .word-chip:hover { transform: translateY(-2px); box-shadow: 0 3px 8px rgba(0,0,0,0.13); }
+  .word-chip.dragging { opacity: 0.35; }
+  .word-chip.correct { background: #e6f4ea; color: #2e7d32; border-color: #81c784; cursor: default; }
+  .word-chip.wrong { background: #fdecea; color: #c62828; border-color: #e57373; animation: shake 0.35s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 30%{transform:translateX(-5px)} 70%{transform:translateX(5px)} }
+  .zones-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+  @media(max-width:600px){ .zones-grid { grid-template-columns: 1fr; } }
+  .drop-zone { border: 1.5px solid #c9d8ec; border-radius: 12px; padding: 12px; min-height: 120px; background: #fff; }
+  .drop-zone.drag-over { border-color: #1a3a5c; background: #e8f0fb; }
+  .zone-rule { font-size: 17px; font-weight: bold; color: #1a3a5c; margin-bottom: 2px; }
+  .zone-ru { font-size: 13px; color: #8b4513; font-weight: 600; margin-bottom: 2px; }
+  .zone-example { font-size: 12px; color: #888; margin-bottom: 10px; font-style: italic; }
+  .zone-words { display: flex; flex-wrap: wrap; gap: 5px; min-height: 28px; }
+  .result-msg { text-align: center; font-size: 14px; color: #2e7d32; min-height: 24px; margin-bottom: 12px; font-weight: bold; }
+  .action-row { display: flex; gap: 10px; justify-content: center; }
+  .btn { background: #fff; border: 1.5px solid #ccc; border-radius: 20px; padding: 8px 20px; font-size: 13px; cursor: pointer; font-family: Georgia, serif; }
+  .btn-primary { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
+  .btn:hover { opacity: 0.85; }
+</style>
+</head>
+<body>
+<h1>Сортировка слов по правилам</h1>
+<p class="subtitle">Rules of Reading — перетащи каждое слово в нужный столбик</p>
+
+<div class="score-bar">
+  <div class="score-pill">Очки: <b id="sc">0</b></div>
+  <div class="score-pill">Верно: <b id="corr">0</b></div>
+  <div class="score-pill">Ошибок: <b id="err">0</b></div>
+</div>
+
+<div class="level-btns">
+  <button class="level-btn active" onclick="setLevel('a',this)">A</button>
+  <button class="level-btn" onclick="setLevel('e',this)">E</button>
+  <button class="level-btn" onclick="setLevel('i',this)">I / Y</button>
+  <button class="level-btn" onclick="setLevel('o',this)">O</button>
+  <button class="level-btn" onclick="setLevel('u',this)">U</button>
+</div>
+
+<p class="pool-label">Слова для сортировки</p>
+<div class="words-pool" id="pool"></div>
+<div class="zones-grid" id="zones"></div>
+<div class="result-msg" id="msg"></div>
+<div class="action-row">
+  <button class="btn btn-primary" onclick="nextRound()">Новые слова</button>
+  <button class="btn" onclick="resetAll()">Сброс счёта</button>
+</div>
+
+<script>
+const LEVELS = {
+  a: { zones: [
+    { id:'a1', rule:'I — [eɪ]', ru:'«эй» как в слове «эй»', hint:'plate, name, cake', words:['plate','late','name','game','make','cake','face','table','paper','baker','lazy','save','brave','pale','date','race','page','state','shave','agent'] },
+    { id:'a2', rule:'II — [æ]', ru:'«э» — короткое, рот широко', hint:'bag, man, hat', words:['bag','man','map','mad','sad','hat','cap','cat','back','black','lamp','hand','stand','flag','plan','apple','happy','angry','flat','act'] },
+    { id:'a3', rule:'III — [ɑː]', ru:'«а» — длинное, как «ааа»', hint:'car, farm, park', words:['car','bar','arm','farm','park','dark','art','yard','star','mark','hard','sharp','large','march','army','garden','pardon','market','scarf','charge'] }
+  ]},
+  e: { zones: [
+    { id:'e1', rule:'I — [iː]', ru:'«и» — длинное, тянем', hint:'tree, me, sheep', words:['tree','me','he','she','see','feet','meet','week','free','green','sweet','sleep','fever','freedom','weekly','speech','feeling','recent','even','these'] },
+    { id:'e2', rule:'II — [e]', ru:'«э» — короткое, как в «это»', hint:'pen, ten, red', words:['pen','ten','men','red','bed','leg','yet','pet','tell','well','dress','spell','desk','rest','left','pencil','letter','lesson','penny','plenty'] },
+    { id:'e3', rule:'III — [ɜː]', ru:'«ё» без «й» — «ёёё» долгое', hint:'her, term, verb', words:['her','hers','term','verb','nerve','serve','person','perfect','servant','certain','clergy','berth','stern','fern','herd'] }
+  ]},
+  i: { zones: [
+    { id:'i1', rule:'I — [aɪ]', ru:'«ай» как в «айда»', hint:'nine, mine, fly', words:['nine','mine','time','nice','like','my','try','cry','dry','fly','die','ice','bye','type','title','rifle','rival','pilot','piper','private'] },
+    { id:'i2', rule:'II — [ɪ]', ru:'«и» — краткое, ненапряжённое', hint:'six, sit, big', words:['six','fix','sit','big','lip','did','milk','thick','think','drink','pink','ill','miss','kiss','rich','ship','switch','little','middle','dinner'] },
+    { id:'i3', rule:'III — [ɜː]', ru:'«ё» без «й» — «ёёё» долгое', hint:'girl, sir, firm', words:['girl','sir','fir','firm','dirt','bird','shirt','skirt','birth','thirst','third','chirp','circle','dirty','circus'] }
+  ]},
+  o: { zones: [
+    { id:'o1', rule:'I — [əʊ]', ru:'«оу» — о переходит в у', hint:'rose, go, home', words:['rose','go','so','toe','nose','bone','hope','home','note','joke','those','globe','smoke','stone','rope','sofa','open','oval','noble','moment'] },
+    { id:'o2', rule:'II — [ɒ]', ru:'«о» — короткое, тёмное', hint:'dog, hot, box', words:['dog','hot','lot','pot','top','shop','box','lock','rock','clock','stop','drop','frog','lost','soft','fond','strong','dollar','doctor','office'] },
+    { id:'o3', rule:'III — [ɔː]', ru:'«о» — длинное, округлённое', hint:'fork, or, born', words:['fork','or','nor','form','born','corn','cork','horn','lord','port','sort','horse','north','short','storm','scorn','organ','formal','normal','morning'] }
+  ]},
+  u: { zones: [
+    { id:'u1', rule:'I — [juː]', ru:'«ю» — длинное, как «юла»', hint:'tube, cube, use', words:['tube','cube','use','hue','ruler','rule','true','student','duty','human','blue','glue','clue','music','cute'] },
+    { id:'u2', rule:'II — [ʌ]', ru:'«а» — короткое, горловое', hint:'bus, up, fun', words:['bus','up','cup','run','fun','cut','hut','luck','duck','much','such','bunch','jump','dust','club','brush','drum','shut','dull','supper'] },
+    { id:'u3', rule:'III — [ɜː]', ru:'«ё» без «й» — «ёёё» долгое', hint:'church, turn, burn', words:['church','turn','burn','curl','hurt','nurse','purse','purple','turkey','murder','further','furnish','curly','burden','surge'] }
+  ]}
+};
+
+let currentLevel = 'a';
+let score = 0, correct = 0, errors = 0;
+let wordMap = {}, placed = {};
+
+function shuffle(arr) {
+  let a = [...arr];
+  for(let i=a.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+function setLevel(l, btn) {
+  currentLevel = l;
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  wordMap = {}; placed = {};
+  errors = 0; correct = 0;
+  document.getElementById('err').textContent = 0;
+  document.getElementById('corr').textContent = 0;
+  document.getElementById('msg').textContent = '';
+  buildUI();
+}
+
+function resetAll() {
+  score = 0; correct = 0; errors = 0;
+  wordMap = {}; placed = {};
+  ['sc','corr','err'].forEach(id => document.getElementById(id).textContent = 0);
+  document.getElementById('msg').textContent = '';
+  buildUI();
+}
+
+function nextRound() {
+  wordMap = {}; placed = {};
+  document.getElementById('msg').textContent = '';
+  buildUI();
+}
+
+function buildUI() {
+  const lvl = LEVELS[currentLevel];
+  const pool = document.getElementById('pool');
+  const zonesEl = document.getElementById('zones');
+  pool.innerHTML = ''; zonesEl.innerHTML = '';
+
+  const allWords = [];
+  lvl.zones.forEach(z => {
+    const sample = shuffle(z.words).slice(0, 5);
+    sample.forEach(w => { wordMap[w] = z.id; allWords.push(w); });
+  });
+
+  shuffle(allWords).forEach(w => pool.appendChild(makeChip(w)));
+
+  lvl.zones.forEach(z => {
+    const zone = document.createElement('div');
+    zone.className = 'drop-zone';
+    zone.dataset.id = z.id;
+    zone.innerHTML = `<div class="zone-rule">${z.rule}</div><div class="zone-ru">${z.ru}</div><div class="zone-example">${z.hint}</div><div class="zone-words" id="zw-${z.id}"></div>`;
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); handleDrop(e, z.id); });
+    zonesEl.appendChild(zone);
+  });
+}
+
+function makeChip(word) {
+  const chip = document.createElement('div');
+  chip.className = 'word-chip'; chip.textContent = word; chip.draggable = true; chip.dataset.word = word;
+  chip.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', word); chip.classList.add('dragging'); });
+  chip.addEventListener('dragend', () => chip.classList.remove('dragging'));
+  return chip;
+}
+
+function handleDrop(e, zoneId) {
+  const word = e.dataTransfer.getData('text/plain');
+  if(placed[word]) return;
+  const chip = [...document.querySelectorAll('.word-chip')].find(c => c.dataset.word === word && !c.classList.contains('correct'));
+  if(!chip) return;
+  if(wordMap[word] === zoneId) {
+    chip.classList.add('correct'); chip.draggable = false; placed[word] = true;
+    score += 10; correct++;
+    document.getElementById('sc').textContent = score;
+    document.getElementById('corr').textContent = correct;
+    document.getElementById('zw-'+zoneId).appendChild(chip);
+    checkWin();
+  } else {
+    chip.classList.add('wrong'); errors++;
+    score = Math.max(0, score - 3);
+    document.getElementById('sc').textContent = score;
+    document.getElementById('err').textContent = errors;
+    setTimeout(() => chip.classList.remove('wrong'), 400);
+  }
+}
+
+function checkWin() {
+  if(Object.keys(placed).length === Object.keys(wordMap).length) {
+    document.getElementById('msg').textContent = `🎉 Все слова разложены верно! Нажми «Новые слова» для продолжения.`;
+  }
+}
+
+buildUI();
+</script>
+</body>
+</html>
