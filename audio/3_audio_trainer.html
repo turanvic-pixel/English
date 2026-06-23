@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Аудио-тренажёр — Rules of Reading</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: #f5f0e8; color: #2a2a2a; min-height: 100vh; padding: 20px; }
+  h1 { text-align: center; font-size: 24px; color: #1a3a5c; margin-bottom: 4px; letter-spacing: 0.04em; }
+  .subtitle { text-align: center; font-size: 13px; color: #666; margin-bottom: 20px; }
+
+  .support-warn { background: #fdecea; border: 1px solid #e57373; border-radius: 8px; padding: 10px 16px; font-size: 13px; color: #c62828; text-align: center; margin-bottom: 16px; display: none; }
+
+  .controls-top { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+  .ctrl-group { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 8px 14px; }
+  .ctrl-label { font-size: 12px; color: #888; }
+  select { background: #fff; color: #2a2a2a; border: 1px solid #ccc; border-radius: 6px; padding: 4px 8px; font-family: Georgia, serif; font-size: 13px; cursor: pointer; }
+  input[type=range] { width: 80px; accent-color: #1a3a5c; }
+  .val { font-size: 13px; color: #1a3a5c; font-weight: bold; min-width: 28px; }
+
+  .mode-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab { background: #fff; border: 1.5px solid #ccc; border-radius: 20px; padding: 7px 18px; font-size: 13px; cursor: pointer; color: #444; font-family: Georgia, serif; transition: all 0.2s; }
+  .tab:hover { border-color: #1a3a5c; color: #1a3a5c; }
+  .tab.active { background: #1a3a5c; color: #fff; border-color: #1a3a5c; font-weight: 600; }
+
+  /* РЕЖИМ 1: Карусель слов */
+  .carousel-mode { text-align: center; }
+  .words-pool { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px; background: #fff; border: 1.5px dashed #bbb; border-radius: 12px; min-height: 80px; justify-content: center; margin-bottom: 16px; }
+  .car-chip { background: #fff; border: 1.5px solid #aac; border-radius: 8px; padding: 10px 18px; font-size: 17px; cursor: pointer; color: #1a3a5c; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.08); font-family: Georgia, serif; }
+  .car-chip:hover { transform: translateY(-2px); box-shadow: 0 3px 8px rgba(0,0,0,0.13); border-color: #1a3a5c; }
+  .car-chip.playing { border-color: #1a3a5c; background: #e8f0fb; font-weight: bold; }
+  .rule-display { font-size: 14px; color: #888; margin-bottom: 12px; min-height: 20px; }
+
+  .carousel-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .cbtn { background: #fff; border: 1.5px solid #ccc; border-radius: 20px; padding: 9px 20px; font-size: 14px; cursor: pointer; color: #444; font-family: Georgia, serif; transition: all 0.15s; }
+  .cbtn:hover { border-color: #1a3a5c; color: #1a3a5c; }
+  .cbtn.play-btn { background: #1a3a5c; color: #fff; border-color: #1a3a5c; font-weight: 600; font-size: 15px; padding: 10px 28px; }
+
+  /* РЕЖИМ 2: Список слов таблицы */
+  .table-mode { }
+  .table-selector { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
+  .tsel-btn { background: #fff; border: 1.5px solid #ccc; border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer; color: #444; font-family: Georgia, serif; transition: all 0.15s; }
+  .tsel-btn:hover { border-color: #1a3a5c; }
+  .tsel-btn.active { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
+  .word-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 16px; background: #fff; border: 1.5px dashed #bbb; border-radius: 12px; min-height: 80px; }
+  .wl-chip { background: #fff; border: 1.5px solid #aac; border-radius: 8px; padding: 7px 14px; font-size: 15px; cursor: pointer; color: #1a3a5c; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .wl-chip:hover { transform: translateY(-2px); box-shadow: 0 3px 8px rgba(0,0,0,0.13); border-color: #1a3a5c; }
+  .wl-chip.playing { border-color: #1a3a5c; background: #e8f0fb; color: #1a3a5c; font-weight: bold; }
+  .tbl-actions { display: flex; gap: 10px; justify-content: center; margin-top: 12px; }
+
+  /* РЕЖИМ 3: Диктант */
+  .dictation-mode { }
+  .dict-word { font-size: 48px; font-weight: bold; color: #1a3a5c; text-align: center; min-height: 70px; margin: 8px 0; }
+  .dict-input-row { display: flex; gap: 10px; justify-content: center; align-items: center; margin: 12px 0; }
+  .dict-input { background: #fff; border: 1.5px solid #ccc; border-radius: 8px; padding: 10px 16px; font-size: 18px; color: #2a2a2a; font-family: Georgia, serif; width: 220px; text-align: center; outline: none; }
+  .dict-input:focus { border-color: #1a3a5c; }
+  .dict-input.correct { border-color: #4caf50; background: #e6f4ea; color: #2e7d32; }
+  .dict-input.wrong { border-color: #e57373; background: #fdecea; animation: shake 0.3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 30%{transform:translateX(-5px)} 70%{transform:translateX(5px)} }
+  .dict-hint { font-size: 13px; color: #888; text-align: center; min-height: 20px; }
+  .dict-score { text-align: center; font-size: 14px; color: #555; margin: 8px 0; }
+  .dict-score b { color: #1a3a5c; }
+  .dict-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  .btn { background: #fff; border: 1.5px solid #ccc; border-radius: 20px; padding: 8px 18px; font-size: 13px; cursor: pointer; color: #444; font-family: Georgia, serif; transition: all 0.15s; }
+  .btn:hover { border-color: #1a3a5c; color: #1a3a5c; }
+  .btn-gold { background: #1a3a5c; color: #fff; border-color: #1a3a5c; font-weight: 600; }
+
+  .status { text-align: center; font-size: 13px; color: #999; min-height: 20px; margin-top: 8px; }
+  .speaking { color: #1a3a5c; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>🔊 Аудио-тренажёр</h1>
+<p class="subtitle">Rules of Reading — слушай, повторяй, тренируйся</p>
+
+<div class="support-warn" id="supportWarn">
+  Ваш браузер не поддерживает Web Speech API. Попробуйте Chrome или Edge.
+</div>
+
+<div class="controls-top">
+  <div class="ctrl-group">
+    <span class="ctrl-label">Голос:</span>
+    <select id="voiceSelect"></select>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Скорость:</span>
+    <input type="range" id="rateSlider" min="0.5" max="1.5" step="0.1" value="0.8">
+    <span class="val" id="rateVal">0.8</span>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Пауза (сек):</span>
+    <input type="range" id="pauseSlider" min="0.5" max="4" step="0.5" value="1.5">
+    <span class="val" id="pauseVal">1.5</span>
+  </div>
+</div>
+
+<div class="mode-tabs">
+  <div class="tab active" onclick="switchMode('carousel',this)">Карусель</div>
+  <div class="tab" onclick="switchMode('list',this)">Таблицы</div>
+  <div class="tab" onclick="switchMode('dictation',this)">Диктант</div>
+</div>
+
+<!-- КАРУСЕЛЬ — все слова видны, кликабельны -->
+<div id="modeCarousel" class="carousel-mode">
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
+    <select id="carLevelSel" onchange="carInit()" style="background:#fff;color:#2a2a2a;border:1px solid #ccc;border-radius:8px;padding:6px 12px;font-family:Georgia,serif;font-size:15px">
+      <option value="a">A — plate / bag / car</option>
+      <option value="e">E — tree / pen / her</option>
+      <option value="i">I — nine / six / girl</option>
+      <option value="o">O — rose / dog / fork</option>
+      <option value="u">U — tube / bus / church</option>
+      <option value="combos">Буквосочетания</option>
+      <option value="all">Всё вместе</option>
+    </select>
+  </div>
+  <div class="rule-display" id="carRule">Нажми на слово — услышишь произношение</div>
+  <div class="words-pool" id="carWordGrid"></div>
+  <div class="carousel-btns">
+    <button class="cbtn play-btn" id="carPlayBtn" onclick="carAutoPlay()">▶ Прочитать всё</button>
+    <button class="cbtn" id="carStopBtn" onclick="carStop()">■ Стоп</button>
+  </div>
+  <div class="status" id="carStatus"></div>
+</div>
+
+<!-- СПИСОК -->
+<div id="modeList" class="table-mode" style="display:none">
+  <div class="table-selector" id="tblSelector"></div>
+  <div class="word-list" id="wordListEl"></div>
+  <div class="tbl-actions">
+    <button class="btn btn-gold" onclick="playAll()">▶ Прочитать всё</button>
+    <button class="btn" onclick="stopAll()">■ Стоп</button>
+  </div>
+  <div class="status" id="listStatus"></div>
+</div>
+
+<!-- ДИКТАНТ -->
+<div id="modeDictation" class="dictation-mode" style="display:none">
+  <div style="display:flex;gap:10px;justify-content:center;margin-bottom:12px;flex-wrap:wrap">
+    <select id="dictLevelSel" onchange="dictInit()" style="background:#fff;color:#2a2a2a;border:1px solid #ccc;border-radius:8px;padding:6px 12px;font-family:Georgia,serif;font-size:14px">
+      <option value="a">A</option><option value="e">E</option><option value="i">I/Y</option>
+      <option value="o">O</option><option value="u">U</option><option value="all">Всё</option>
+    </select>
+  </div>
+  <div class="dict-score">Верно: <b id="dCorr">0</b> | Ошибок: <b id="dErr">0</b> | Очки: <b id="dScore">0</b></div>
+  <div class="dict-word" id="dictWordShow">?</div>
+  <div class="dict-input-row">
+    <input type="text" class="dict-input" id="dictInput" placeholder="напиши слово..." autocomplete="off" autocorrect="off" spellcheck="false">
+    <button class="btn btn-gold" onclick="checkDict()">✓</button>
+  </div>
+  <div class="dict-hint" id="dictHint"></div>
+  <div class="dict-btns" style="margin-top:12px">
+    <button class="btn btn-gold" onclick="dictPlay()">▶ Услышать ещё раз</button>
+    <button class="btn" onclick="dictSkip()">Пропустить →</button>
+    <button class="btn" onclick="dictInit()">Начать заново</button>
+  </div>
+</div>
+
+<script>
+const DATA = {
+  a: [
+    {w:'plate',r:'A I [eɪ]'},{w:'late',r:'A I [eɪ]'},{w:'name',r:'A I [eɪ]'},{w:'game',r:'A I [eɪ]'},{w:'make',r:'A I [eɪ]'},
+    {w:'cake',r:'A I [eɪ]'},{w:'face',r:'A I [eɪ]'},{w:'table',r:'A I [eɪ]'},{w:'baby',r:'A I [eɪ]'},{w:'lazy',r:'A I [eɪ]'},
+    {w:'bag',r:'A II [æ]'},{w:'man',r:'A II [æ]'},{w:'map',r:'A II [æ]'},{w:'hat',r:'A II [æ]'},{w:'cat',r:'A II [æ]'},
+    {w:'black',r:'A II [æ]'},{w:'hand',r:'A II [æ]'},{w:'stand',r:'A II [æ]'},{w:'happy',r:'A II [æ]'},{w:'apple',r:'A II [æ]'},
+    {w:'car',r:'A III [ɑː]'},{w:'farm',r:'A III [ɑː]'},{w:'park',r:'A III [ɑː]'},{w:'dark',r:'A III [ɑː]'},{w:'star',r:'A III [ɑː]'},
+    {w:'hard',r:'A III [ɑː]'},{w:'large',r:'A III [ɑː]'},{w:'garden',r:'A III [ɑː]'},{w:'market',r:'A III [ɑː]'},{w:'army',r:'A III [ɑː]'}
+  ],
+  e: [
+    {w:'tree',r:'E I [iː]'},{w:'me',r:'E I [iː]'},{w:'she',r:'E I [iː]'},{w:'feet',r:'E I [iː]'},{w:'meet',r:'E I [iː]'},
+    {w:'week',r:'E I [iː]'},{w:'green',r:'E I [iː]'},{w:'sweet',r:'E I [iː]'},{w:'freedom',r:'E I [iː]'},{w:'feeling',r:'E I [iː]'},
+    {w:'pen',r:'E II [e]'},{w:'ten',r:'E II [e]'},{w:'red',r:'E II [e]'},{w:'bed',r:'E II [e]'},{w:'leg',r:'E II [e]'},
+    {w:'tell',r:'E II [e]'},{w:'dress',r:'E II [e]'},{w:'desk',r:'E II [e]'},{w:'letter',r:'E II [e]'},{w:'lesson',r:'E II [e]'},
+    {w:'her',r:'E III [ɜː]'},{w:'term',r:'E III [ɜː]'},{w:'verb',r:'E III [ɜː]'},{w:'nerve',r:'E III [ɜː]'},{w:'serve',r:'E III [ɜː]'},
+    {w:'person',r:'E III [ɜː]'},{w:'perfect',r:'E III [ɜː]'},{w:'certain',r:'E III [ɜː]'}
+  ],
+  i: [
+    {w:'nine',r:'I I [aɪ]'},{w:'mine',r:'I I [aɪ]'},{w:'time',r:'I I [aɪ]'},{w:'nice',r:'I I [aɪ]'},{w:'like',r:'I I [aɪ]'},
+    {w:'my',r:'Y [aɪ]'},{w:'try',r:'Y [aɪ]'},{w:'fly',r:'Y [aɪ]'},{w:'cry',r:'Y [aɪ]'},{w:'sky',r:'Y [aɪ]'},
+    {w:'six',r:'I II [ɪ]'},{w:'fix',r:'I II [ɪ]'},{w:'sit',r:'I II [ɪ]'},{w:'big',r:'I II [ɪ]'},{w:'milk',r:'I II [ɪ]'},
+    {w:'think',r:'I II [ɪ]'},{w:'drink',r:'I II [ɪ]'},{w:'miss',r:'I II [ɪ]'},{w:'dinner',r:'I II [ɪ]'},{w:'kitchen',r:'I II [ɪ]'},
+    {w:'girl',r:'I III [ɜː]'},{w:'sir',r:'I III [ɜː]'},{w:'firm',r:'I III [ɜː]'},{w:'bird',r:'I III [ɜː]'},{w:'shirt',r:'I III [ɜː]'},
+    {w:'skirt',r:'I III [ɜː]'},{w:'birth',r:'I III [ɜː]'},{w:'circle',r:'I III [ɜː]'}
+  ],
+  o: [
+    {w:'rose',r:'O I [əʊ]'},{w:'go',r:'O I [əʊ]'},{w:'home',r:'O I [əʊ]'},{w:'bone',r:'O I [əʊ]'},{w:'hope',r:'O I [əʊ]'},
+    {w:'note',r:'O I [əʊ]'},{w:'smoke',r:'O I [əʊ]'},{w:'stone',r:'O I [əʊ]'},{w:'open',r:'O I [əʊ]'},{w:'noble',r:'O I [əʊ]'},
+    {w:'dog',r:'O II [ɒ]'},{w:'hot',r:'O II [ɒ]'},{w:'box',r:'O II [ɒ]'},{w:'clock',r:'O II [ɒ]'},{w:'shop',r:'O II [ɒ]'},
+    {w:'stop',r:'O II [ɒ]'},{w:'frog',r:'O II [ɒ]'},{w:'doctor',r:'O II [ɒ]'},{w:'pocket',r:'O II [ɒ]'},{w:'office',r:'O II [ɒ]'},
+    {w:'fork',r:'O III [ɔː]'},{w:'born',r:'O III [ɔː]'},{w:'corn',r:'O III [ɔː]'},{w:'horse',r:'O III [ɔː]'},{w:'short',r:'O III [ɔː]'},
+    {w:'storm',r:'O III [ɔː]'},{w:'morning',r:'O III [ɔː]'},{w:'normal',r:'O III [ɔː]'}
+  ],
+  u: [
+    {w:'tube',r:'U I [juː]'},{w:'cube',r:'U I [juː]'},{w:'use',r:'U I [juː]'},{w:'rule',r:'U I [juː]'},{w:'true',r:'U I [juː]'},
+    {w:'student',r:'U I [juː]'},{w:'human',r:'U I [juː]'},{w:'blue',r:'U I [juː]'},{w:'music',r:'U I [juː]'},
+    {w:'bus',r:'U II [ʌ]'},{w:'fun',r:'U II [ʌ]'},{w:'cup',r:'U II [ʌ]'},{w:'run',r:'U II [ʌ]'},{w:'much',r:'U II [ʌ]'},
+    {w:'duck',r:'U II [ʌ]'},{w:'jump',r:'U II [ʌ]'},{w:'club',r:'U II [ʌ]'},{w:'summer',r:'U II [ʌ]'},{w:'husband',r:'U II [ʌ]'},
+    {w:'church',r:'U III [ɜː]'},{w:'turn',r:'U III [ɜː]'},{w:'burn',r:'U III [ɜː]'},{w:'nurse',r:'U III [ɜː]'},{w:'purple',r:'U III [ɜː]'},
+    {w:'turkey',r:'U III [ɜː]'},{w:'further',r:'U III [ɜː]'},{w:'burden',r:'U III [ɜː]'}
+  ],
+  combos: [
+    {w:'rain',r:'ai [eɪ]'},{w:'tail',r:'ai [eɪ]'},{w:'day',r:'ay [eɪ]'},{w:'say',r:'ay [eɪ]'},{w:'stay',r:'ay [eɪ]'},
+    {w:'tea',r:'ea [iː]'},{w:'sea',r:'ea [iː]'},{w:'meat',r:'ea [iː]'},{w:'read',r:'ea [iː]'},{w:'teacher',r:'ea [iː]'},
+    {w:'spoon',r:'oo [uː]'},{w:'moon',r:'oo [uː]'},{w:'book',r:'oo [ʊ]'},{w:'look',r:'oo [ʊ]'},{w:'good',r:'oo [ʊ]'},
+    {w:'boy',r:'oy [ɔɪ]'},{w:'toy',r:'oy [ɔɪ]'},{w:'oil',r:'oi [ɔɪ]'},{w:'coin',r:'oi [ɔɪ]'},{w:'voice',r:'oi [ɔɪ]'},
+    {w:'house',r:'ou [aʊ]'},{w:'out',r:'ou [aʊ]'},{w:'town',r:'ow [aʊ]'},{w:'brown',r:'ow [aʊ]'},{w:'show',r:'-ow [əʊ]'},
+    {w:'window',r:'-ow [əʊ]'},{w:'yellow',r:'-ow [əʊ]'},{w:'saucer',r:'au [ɔː]'},{w:'law',r:'aw [ɔː]'},{w:'ball',r:'al [ɔːl]'},
+    {w:'tights',r:'igh [aɪ]'},{w:'night',r:'igh [aɪ]'},{w:'light',r:'igh [aɪ]'},{w:'cold',r:'old [əʊld]'},{w:'gold',r:'old [əʊld]'}
+  ]
+};
+
+let voices = [];
+let synth = window.speechSynthesis;
+let carWords = [], carPlaying = false;
+let listData = [], listPlaying = false;
+let dictWords = [], dictIdx = 0, dictCorrect = 0, dictErrors = 0, dictScore = 0;
+let currentMode = 'carousel';
+
+function getVoice() {
+  const sel = document.getElementById('voiceSelect');
+  return voices.find(v => v.name === sel.value) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+}
+function getRate() { return parseFloat(document.getElementById('rateSlider').value); }
+function getPause() { return parseFloat(document.getElementById('pauseSlider').value) * 1000; }
+
+function speak(text, onEnd) {
+  synth.cancel();
+  if(!synth) return;
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.voice = getVoice();
+  utt.rate = getRate();
+  utt.lang = 'en-US';
+  if(onEnd) utt.onend = onEnd;
+  synth.speak(utt);
+}
+
+function loadVoices() {
+  voices = synth.getVoices().filter(v => v.lang.startsWith('en'));
+  if(!voices.length) { voices = synth.getVoices(); }
+  const sel = document.getElementById('voiceSelect');
+  sel.innerHTML = '';
+  voices.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v.name;
+    opt.textContent = v.name + (v.lang ? ` (${v.lang})` : '');
+    sel.appendChild(opt);
+  });
+  const preferred = voices.find(v => v.name.includes('Google') && v.lang === 'en-US') ||
+                    voices.find(v => v.lang === 'en-US') || voices[0];
+  if(preferred) sel.value = preferred.name;
+}
+
+if(synth) {
+  synth.onvoiceschanged = loadVoices;
+  loadVoices();
+} else {
+  document.getElementById('supportWarn').style.display = 'block';
+}
+
+document.getElementById('rateSlider').oninput = e => document.getElementById('rateVal').textContent = parseFloat(e.target.value).toFixed(1);
+document.getElementById('pauseSlider').oninput = e => document.getElementById('pauseVal').textContent = parseFloat(e.target.value).toFixed(1);
+
+function getAllWords() {
+  return Object.values(DATA).flat();
+}
+
+// ── КАРУСЕЛЬ (все слова в сетке) ──
+let carAutoTimer = null;
+
+function carInit() {
+  const lv = document.getElementById('carLevelSel').value;
+  carWords = lv === 'all' ? getAllWords() : DATA[lv];
+  synth.cancel(); clearTimeout(carAutoTimer);
+  document.getElementById('carRule').textContent = 'Нажми на слово — услышишь произношение';
+  document.getElementById('carStatus').textContent = '';
+  document.getElementById('carPlayBtn').textContent = '▶ Прочитать всё';
+  renderCarGrid();
+}
+
+function renderCarGrid() {
+  const grid = document.getElementById('carWordGrid');
+  grid.innerHTML = '';
+  carWords.forEach(item => {
+    const chip = document.createElement('div');
+    chip.className = 'car-chip';
+    chip.textContent = item.w;
+    chip.dataset.word = item.w;
+    chip.onclick = () => {
+      document.querySelectorAll('.car-chip').forEach(c => c.classList.remove('playing'));
+      chip.classList.add('playing');
+      document.getElementById('carRule').textContent = `Правило: ${item.r}`;
+      speak(item.w, () => chip.classList.remove('playing'));
+    };
+    grid.appendChild(chip);
+  });
+}
+
+function carAutoPlay() {
+  if(carAutoTimer) { carStop(); return; }
+  const chips = [...document.getElementById('carWordGrid').querySelectorAll('.car-chip')];
+  let i = 0;
+  document.getElementById('carPlayBtn').textContent = '■ Остановить';
+  function step() {
+    if(i >= chips.length) {
+      carStop();
+      document.getElementById('carStatus').textContent = 'Список завершён!';
+      return;
+    }
+    chips.forEach(c => c.classList.remove('playing'));
+    chips[i].classList.add('playing');
+    chips[i].scrollIntoView({block:'nearest', behavior:'smooth'});
+    const word = chips[i].dataset.word;
+    document.getElementById('carRule').textContent = `Правило: ${carWords[i].r}`;
+    speak(word, () => { chips[i] && chips[i].classList.remove('playing'); i++; carAutoTimer = setTimeout(step, getPause()); });
+  }
+  step();
+}
+
+function carStop() {
+  synth.cancel(); clearTimeout(carAutoTimer); carAutoTimer = null;
+  document.querySelectorAll('.car-chip').forEach(c => c.classList.remove('playing'));
+  document.getElementById('carPlayBtn').textContent = '▶ Прочитать всё';
+  document.getElementById('carStatus').textContent = '';
+}
+
+carInit();
+
+// ── ТАБЛИЦЫ ──
+const TABLE_GROUPS = [
+  { label:'A I', words:DATA.a.filter(x=>x.r.includes('A I')) },
+  { label:'A II', words:DATA.a.filter(x=>x.r.includes('A II')) },
+  { label:'A III', words:DATA.a.filter(x=>x.r.includes('A III')) },
+  { label:'E I', words:DATA.e.filter(x=>x.r.includes('E I')) },
+  { label:'E II', words:DATA.e.filter(x=>x.r.includes('E II')) },
+  { label:'E III', words:DATA.e.filter(x=>x.r.includes('E III')) },
+  { label:'I I', words:DATA.i.filter(x=>x.r.includes('I I')) },
+  { label:'I II', words:DATA.i.filter(x=>x.r.includes('I II')) },
+  { label:'I III', words:DATA.i.filter(x=>x.r.includes('I III')) },
+  { label:'O I', words:DATA.o.filter(x=>x.r.includes('O I')) },
+  { label:'O II', words:DATA.o.filter(x=>x.r.includes('O II')) },
+  { label:'O III', words:DATA.o.filter(x=>x.r.includes('O III')) },
+  { label:'U I', words:DATA.u.filter(x=>x.r.includes('U I')) },
+  { label:'U II', words:DATA.u.filter(x=>x.r.includes('U II')) },
+  { label:'U III', words:DATA.u.filter(x=>x.r.includes('U III')) },
+  { label:'Combos', words:DATA.combos }
+];
+let activeGroup = 0;
+
+function initTableMode() {
+  const sel = document.getElementById('tblSelector');
+  sel.innerHTML = '';
+  TABLE_GROUPS.forEach((g,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tsel-btn' + (i===0?' active':'');
+    btn.textContent = g.label;
+    btn.onclick = () => { activeGroup = i; document.querySelectorAll('.tsel-btn').forEach((b,j)=>b.className='tsel-btn'+(j===i?' active':'')); renderWordList(); };
+    sel.appendChild(btn);
+  });
+  renderWordList();
+}
+
+function renderWordList() {
+  const el = document.getElementById('wordListEl');
+  el.innerHTML = '';
+  TABLE_GROUPS[activeGroup].words.forEach(item => {
+    const chip = document.createElement('div');
+    chip.className = 'wl-chip'; chip.textContent = item.w; chip.dataset.word = item.w;
+    chip.onclick = () => {
+      document.querySelectorAll('.wl-chip').forEach(c=>c.classList.remove('playing'));
+      chip.classList.add('playing');
+      speak(item.w, () => chip.classList.remove('playing'));
+      document.getElementById('listStatus').textContent = `Правило: ${item.r}`;
+      document.getElementById('listStatus').className = 'status speaking';
+    };
+    el.appendChild(chip);
+  });
+}
+
+let playAllTimer = null;
+function playAll() {
+  stopAll();
+  const chips = [...document.querySelectorAll('.wl-chip')];
+  let i = 0;
+  function next() {
+    if(i >= chips.length) { document.getElementById('listStatus').textContent = 'Готово!'; return; }
+    chips.forEach(c=>c.classList.remove('playing'));
+    chips[i].classList.add('playing');
+    chips[i].scrollIntoView({block:'nearest'});
+    const word = chips[i].dataset.word;
+    document.getElementById('listStatus').textContent = `Читает: "${word}"...`;
+    speak(word, () => { chips[i] && chips[i].classList.remove('playing'); i++; playAllTimer = setTimeout(next, getPause()); });
+  }
+  next();
+}
+
+function stopAll() {
+  synth.cancel(); clearTimeout(playAllTimer);
+  document.querySelectorAll('.wl-chip').forEach(c=>c.classList.remove('playing'));
+  document.getElementById('listStatus').textContent = '';
+}
+
+// ── ДИКТАНТ ──
+function dictInit() {
+  const lv = document.getElementById('dictLevelSel').value;
+  const src = lv === 'all' ? getAllWords() : DATA[lv];
+  dictWords = [...src].sort(() => Math.random()-0.5);
+  dictIdx = 0; dictCorrect = 0; dictErrors = 0; dictScore = 0;
+  updateDictScore();
+  document.getElementById('dictInput').value = '';
+  document.getElementById('dictInput').className = 'dict-input';
+  document.getElementById('dictHint').textContent = '';
+  document.getElementById('dictWordShow').textContent = '?';
+  setTimeout(dictPlay, 300);
+}
+
+function updateDictScore() {
+  document.getElementById('dCorr').textContent = dictCorrect;
+  document.getElementById('dErr').textContent = dictErrors;
+  document.getElementById('dScore').textContent = dictScore;
+}
+
+function dictPlay() {
+  if(!dictWords.length) return;
+  const item = dictWords[dictIdx % dictWords.length];
+  document.getElementById('dictWordShow').textContent = '?';
+  document.getElementById('dictHint').textContent = 'Слушай внимательно...';
+  document.getElementById('dictInput').className = 'dict-input';
+  document.getElementById('dictInput').value = '';
+  document.getElementById('dictInput').focus();
+  speak(item.w, () => { document.getElementById('dictHint').textContent = 'Напиши слово и нажми ✓'; });
+}
+
+function checkDict() {
+  const item = dictWords[dictIdx % dictWords.length];
+  const val = document.getElementById('dictInput').value.trim().toLowerCase();
+  if(!val) return;
+  if(val === item.w.toLowerCase()) {
+    document.getElementById('dictWordShow').textContent = item.w;
+    document.getElementById('dictInput').className = 'dict-input correct';
+    document.getElementById('dictHint').textContent = `✓ Верно! Правило: ${item.r}`;
+    dictCorrect++; dictScore += 10; updateDictScore();
+    setTimeout(() => { dictIdx++; dictPlay(); }, 1200);
+  } else {
+    document.getElementById('dictInput').className = 'dict-input wrong';
+    dictErrors++; dictScore = Math.max(0, dictScore-3); updateDictScore();
+    document.getElementById('dictHint').textContent = `Попробуй ещё раз... (${dictErrors} ошибок)`;
+    setTimeout(() => { document.getElementById('dictInput').className = 'dict-input'; document.getElementById('dictInput').value = ''; document.getElementById('dictInput').focus(); }, 600);
+  }
+}
+
+function dictSkip() {
+  const item = dictWords[dictIdx % dictWords.length];
+  document.getElementById('dictWordShow').textContent = item.w;
+  document.getElementById('dictHint').textContent = `Пропущено. Правило: ${item.r}`;
+  dictErrors++; updateDictScore();
+  setTimeout(() => { dictIdx++; dictPlay(); }, 1500);
+}
+
+document.getElementById('dictInput').addEventListener('keydown', e => { if(e.key === 'Enter') checkDict(); });
+
+// ── ПЕРЕКЛЮЧЕНИЕ РЕЖИМОВ ──
+function switchMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('modeCarousel').style.display = mode==='carousel' ? 'block' : 'none';
+  document.getElementById('modeList').style.display = mode==='list' ? 'block' : 'none';
+  document.getElementById('modeDictation').style.display = mode==='dictation' ? 'block' : 'none';
+  synth.cancel();
+  if(mode === 'list') initTableMode();
+  if(mode === 'dictation') dictInit();
+}
+</script>
+</body>
+</html>
