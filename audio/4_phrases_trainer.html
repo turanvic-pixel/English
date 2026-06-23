@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фразы повседневного общения</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: #f5f0e8; color: #2a2a2a; min-height: 100vh; padding: 20px; }
+  h1 { text-align: center; font-size: 22px; color: #1a3a5c; margin-bottom: 4px; }
+  .subtitle { text-align: center; font-size: 13px; color: #666; margin-bottom: 20px; }
+
+  .support-warn { background: #fdecea; border: 1px solid #e57373; border-radius: 8px; padding: 10px 16px; font-size: 13px; color: #c62828; text-align: center; margin-bottom: 16px; display: none; }
+
+  .controls-top { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+  .ctrl-group { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 8px 14px; }
+  .ctrl-label { font-size: 12px; color: #888; }
+  select { background: #fff; color: #2a2a2a; border: 1px solid #ccc; border-radius: 6px; padding: 4px 8px; font-family: Georgia, serif; font-size: 13px; cursor: pointer; }
+  input[type=range] { width: 80px; accent-color: #1a3a5c; }
+  .val { font-size: 13px; color: #1a3a5c; font-weight: bold; min-width: 28px; }
+
+  .mode-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab { background: #fff; border: 1.5px solid #ccc; border-radius: 20px; padding: 7px 18px; font-size: 13px; cursor: pointer; color: #444; font-family: Georgia, serif; transition: all 0.2s; }
+  .tab:hover { border-color: #1a3a5c; color: #1a3a5c; }
+  .tab.active { background: #1a3a5c; color: #fff; border-color: #1a3a5c; font-weight: 600; }
+
+  .cat-tabs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .cat-btn { background: #fff; border: 1.5px solid #ccc; border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer; color: #444; font-family: Georgia, serif; transition: all 0.15s; }
+  .cat-btn:hover { border-color: #1a3a5c; }
+  .cat-btn.active { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
+
+  /* РЕЖИМ 1 — Карточки (все фразы) */
+  .phrases-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .phrase-card { background: #fff; border: 1.5px solid #c9d8ec; border-radius: 12px; padding: 14px 16px; cursor: pointer; transition: all 0.15s; }
+  .phrase-card:hover { border-color: #1a3a5c; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+  .phrase-card.playing { border-color: #1a3a5c; background: #e8f0fb; }
+  .phrase-en { font-size: 17px; color: #1a3a5c; font-weight: bold; margin-bottom: 5px; line-height: 1.4; }
+  .phrase-ru { font-size: 14px; color: #555; line-height: 1.4; }
+  .phrase-num { font-size: 11px; color: #aaa; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* РЕЖИМ 2 — Флэшкарты */
+  .flashcard-wrap { text-align: center; }
+  .flashcard { background: #fff; border: 1.5px solid #c9d8ec; border-radius: 16px; padding: 30px 20px; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; margin-bottom: 16px; transition: all 0.2s; }
+  .flashcard:hover { border-color: #1a3a5c; }
+  .flashcard.flipped { background: #e8f0fb; border-color: #1a3a5c; }
+  .fc-hint { font-size: 12px; color: #aaa; margin-bottom: 12px; }
+  .fc-en { font-size: 22px; font-weight: bold; color: #1a3a5c; line-height: 1.4; margin-bottom: 8px; }
+  .fc-ru { font-size: 16px; color: #555; line-height: 1.4; display: none; }
+  .flashcard.flipped .fc-ru { display: block; }
+  .fc-counter { font-size: 12px; color: #999; margin-bottom: 10px; }
+  .progress-bar { background: #e0dbd0; border-radius: 10px; height: 6px; margin: 0 auto 8px; max-width: 400px; }
+  .progress-fill { background: #1a3a5c; height: 6px; border-radius: 10px; transition: width 0.3s; }
+  .fc-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+
+  /* РЕЖИМ 3 — Диктант фраз */
+  .dict-phrase { font-size: 16px; color: #555; text-align: center; margin: 8px 0 16px; line-height: 1.5; min-height: 48px; font-style: italic; }
+  .dict-input { background: #fff; border: 1.5px solid #ccc; border-radius: 8px; padding: 10px 14px; font-size: 15px; color: #2a2a2a; font-family: Georgia, serif; width: 100%; max-width: 500px; display: block; margin: 0 auto 8px; outline: none; }
+  .dict-input:focus { border-color: #1a3a5c; }
+  .dict-input.correct { border-color: #4caf50; background: #e6f4ea; color: #2e7d32; }
+  .dict-input.wrong { border-color: #e57373; background: #fdecea; animation: shake 0.3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 30%{transform:translateX(-5px)} 70%{transform:translateX(5px)} }
+  .dict-hint { font-size: 13px; color: #888; text-align: center; min-height: 20px; margin-bottom: 10px; }
+  .dict-score { text-align: center; font-size: 14px; color: #555; margin: 8px 0; }
+  .dict-score b { color: #1a3a5c; }
+
+  .action-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+  .btn { background: #fff; border: 1.5px solid #ccc; border-radius: 20px; padding: 8px 20px; font-size: 13px; cursor: pointer; font-family: Georgia, serif; color: #444; transition: all 0.15s; }
+  .btn:hover { border-color: #1a3a5c; color: #1a3a5c; }
+  .btn-primary { background: #1a3a5c; color: #fff; border-color: #1a3a5c; font-weight: 600; }
+  .status { text-align: center; font-size: 13px; color: #999; min-height: 20px; margin-top: 6px; }
+  .speaking { color: #1a3a5c; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>🗣 Фразы повседневного общения</h1>
+<p class="subtitle">Everyday Phrases — слушай, запоминай, говори</p>
+
+<div class="support-warn" id="supportWarn">
+  Ваш браузер не поддерживает Web Speech API. Попробуйте Chrome или Edge.
+</div>
+
+<div class="controls-top">
+  <div class="ctrl-group">
+    <span class="ctrl-label">Голос:</span>
+    <select id="voiceSelect"></select>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Скорость:</span>
+    <input type="range" id="rateSlider" min="0.5" max="1.5" step="0.1" value="0.8">
+    <span class="val" id="rateVal">0.8</span>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Пауза (сек):</span>
+    <input type="range" id="pauseSlider" min="1" max="5" step="0.5" value="2.5">
+    <span class="val" id="pauseVal">2.5</span>
+  </div>
+</div>
+
+<div class="mode-tabs">
+  <div class="tab active" onclick="switchMode('list',this)">Все фразы</div>
+  <div class="tab" onclick="switchMode('flash',this)">Флэшкарты</div>
+  <div class="tab" onclick="switchMode('dict',this)">Диктант</div>
+</div>
+
+<div class="cat-tabs" id="catTabs"></div>
+
+<!-- РЕЖИМ 1: Все фразы -->
+<div id="modeList">
+  <div class="phrases-list" id="phrasesList"></div>
+  <div class="action-row">
+    <button class="btn btn-primary" onclick="playAll()">▶ Прочитать всё</button>
+    <button class="btn" onclick="stopAll()">■ Стоп</button>
+  </div>
+  <div class="status" id="listStatus"></div>
+</div>
+
+<!-- РЕЖИМ 2: Флэшкарты -->
+<div id="modeFlash" style="display:none">
+  <div class="flashcard-wrap">
+    <div class="fc-counter"><span id="fcIdx">1</span> / <span id="fcTotal">1</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="fcProgress" style="width:0%"></div></div>
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="fc-hint" id="fcHint">Нажми — услышишь фразу. Ещё раз — увидишь перевод</div>
+      <div class="fc-en" id="fcEn"></div>
+      <div class="fc-ru" id="fcRu"></div>
+    </div>
+    <div class="fc-btns">
+      <button class="btn" onclick="fcPrev()">← Назад</button>
+      <button class="btn btn-primary" onclick="fcSpeak()">▶ Слушать</button>
+      <button class="btn" onclick="fcNext()">Далее →</button>
+    </div>
+    <div class="fc-btns">
+      <button class="btn btn-primary" onclick="fcAutoPlay()" id="fcAutoBtn">⏯ Авто-режим</button>
+      <button class="btn" onclick="fcShuffle()">🔀 Перемешать</button>
+    </div>
+    <div class="status" id="flashStatus"></div>
+  </div>
+</div>
+
+<!-- РЕЖИМ 3: Диктант -->
+<div id="modeDict" style="display:none">
+  <div class="dict-score">Верно: <b id="dCorr">0</b> | Ошибок: <b id="dErr">0</b> | Очки: <b id="dScore">0</b></div>
+  <div class="dict-phrase" id="dictPhrase">Нажми «Слушать» — напиши услышанную фразу</div>
+  <input type="text" class="dict-input" id="dictInput" placeholder="напиши фразу по-английски..." autocomplete="off" autocorrect="off" spellcheck="false">
+  <div class="dict-hint" id="dictHint"></div>
+  <div class="action-row">
+    <button class="btn btn-primary" onclick="dictPlay()">▶ Слушать</button>
+    <button class="btn btn-primary" onclick="checkDict()">✓ Проверить</button>
+    <button class="btn" onclick="dictSkip()">Пропустить →</button>
+  </div>
+  <div class="action-row">
+    <button class="btn" onclick="dictInit()">Начать заново</button>
+  </div>
+  <div class="status" id="dictStatus"></div>
+</div>
+
+<script>
+const CATEGORIES = {
+  'На уроке': [
+    { en:'I am sorry. I am late. May I come in?', ru:'Простите, я опоздал(а). Можно зайти?' },
+    { en:'May I go out?', ru:'Можно выйти?' },
+    { en:'Could you give me a pen, please?', ru:'Вы могли бы дать мне ручку?' },
+    { en:'May I ask you a question?', ru:'Можно задать вопрос?' },
+    { en:'Sorry, I am not ready today, because I forgot my copybook at home.', ru:'Простите, я не готов(а) сегодня, потому что забыл(а) тетрадь дома.' },
+    { en:'Sorry, I am not ready today because I was absent and I didn\'t know the home task.', ru:'Простите, я не готов(а) сегодня, потому что отсутствовал(а) и не знал(а) домашнее задание.' },
+    { en:'I didn\'t have time to do the home work.', ru:'У меня не было времени делать домашнюю работу.' },
+    { en:'Could you repeat that, please?', ru:'Не могли бы вы повторить?' },
+    { en:'I don\'t understand. Could you explain?', ru:'Я не понимаю. Могли бы вы объяснить?' },
+    { en:'How do you spell it?', ru:'Как это пишется?' },
+    { en:'What does this word mean?', ru:'Что означает это слово?' },
+    { en:'May I open the window?', ru:'Можно открыть окно?' },
+  ],
+  'Приветствия': [
+    { en:'Good morning!', ru:'Доброе утро!' },
+    { en:'Good afternoon!', ru:'Добрый день!' },
+    { en:'Good evening!', ru:'Добрый вечер!' },
+    { en:'Hello! How are you?', ru:'Привет! Как дела?' },
+    { en:'I\'m fine, thank you. And you?', ru:'Хорошо, спасибо. А ты?' },
+    { en:'Nice to meet you!', ru:'Приятно познакомиться!' },
+    { en:'See you tomorrow!', ru:'До завтра!' },
+    { en:'Goodbye! Have a nice day!', ru:'До свидания! Хорошего дня!' },
+    { en:'Take care!', ru:'Береги себя!' },
+    { en:'Good luck!', ru:'Удачи!' },
+  ],
+  'Просьбы': [
+    { en:'Could you help me, please?', ru:'Не могли бы вы помочь мне?' },
+    { en:'Can I borrow your pencil?', ru:'Можно взять твой карандаш?' },
+    { en:'Please speak more slowly.', ru:'Пожалуйста, говорите медленнее.' },
+    { en:'Could you say that again?', ru:'Не могли бы вы повторить это?' },
+    { en:'Can you open the door, please?', ru:'Открой дверь, пожалуйста.' },
+    { en:'Could you pass me the book?', ru:'Не могли бы вы передать мне книгу?' },
+    { en:'Please wait a moment.', ru:'Пожалуйста, подождите минуту.' },
+  ],
+  'Эмоции': [
+    { en:'That\'s great!', ru:'Отлично!' },
+    { en:'Well done!', ru:'Молодец!' },
+    { en:'I\'m not sure.', ru:'Я не уверен(а).' },
+    { en:'I think so.', ru:'Я думаю, да.' },
+    { en:'I agree with you.', ru:'Я согласен(а) с вами.' },
+    { en:'I disagree.', ru:'Я не согласен(а).' },
+    { en:'That\'s interesting!', ru:'Это интересно!' },
+    { en:'I don\'t know.', ru:'Я не знаю.' },
+    { en:'I\'m sorry, I made a mistake.', ru:'Прошу прощения, я сделал(а) ошибку.' },
+    { en:'You are right.', ru:'Вы правы.' },
+  ],
+};
+
+let currentCat = 'На уроке';
+let currentMode = 'list';
+let voices = [];
+let synth = window.speechSynthesis;
+let playTimer = null;
+let fcWords = [], fcIdx = 0, fcAutoTimer = null, fcFlipped = false;
+let dictWords = [], dictIdx = 0, dictCorrect = 0, dictErrors = 0, dictScore = 0;
+
+function getVoice() {
+  const sel = document.getElementById('voiceSelect');
+  return voices.find(v => v.name === sel.value) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+}
+function getRate() { return parseFloat(document.getElementById('rateSlider').value); }
+function getPause() { return parseFloat(document.getElementById('pauseSlider').value) * 1000; }
+
+function speak(text, onEnd) {
+  synth.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.voice = getVoice();
+  utt.rate = getRate();
+  utt.lang = 'en-US';
+  if(onEnd) utt.onend = onEnd;
+  synth.speak(utt);
+}
+
+function loadVoices() {
+  voices = synth.getVoices().filter(v => v.lang.startsWith('en'));
+  if(!voices.length) voices = synth.getVoices();
+  const sel = document.getElementById('voiceSelect');
+  sel.innerHTML = '';
+  voices.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v.name;
+    opt.textContent = v.name + (v.lang ? ` (${v.lang})` : '');
+    sel.appendChild(opt);
+  });
+  const preferred = voices.find(v => v.name.includes('Google') && v.lang === 'en-US') ||
+                    voices.find(v => v.lang === 'en-US') || voices[0];
+  if(preferred) sel.value = preferred.name;
+}
+
+if(synth) { synth.onvoiceschanged = loadVoices; loadVoices(); }
+else document.getElementById('supportWarn').style.display = 'block';
+
+document.getElementById('rateSlider').oninput = e => document.getElementById('rateVal').textContent = parseFloat(e.target.value).toFixed(1);
+document.getElementById('pauseSlider').oninput = e => document.getElementById('pauseVal').textContent = parseFloat(e.target.value).toFixed(1);
+
+// ── КАТЕГОРИИ ──
+function buildCatTabs() {
+  const el = document.getElementById('catTabs');
+  el.innerHTML = '';
+  Object.keys(CATEGORIES).forEach((cat, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn' + (cat === currentCat ? ' active' : '');
+    btn.textContent = cat;
+    btn.onclick = () => {
+      currentCat = cat;
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      stopAll(); synth.cancel(); clearTimeout(fcAutoTimer); clearTimeout(playTimer);
+      refreshMode();
+    };
+    el.appendChild(btn);
+  });
+}
+
+function getCurrent() { return CATEGORIES[currentCat]; }
+
+function refreshMode() {
+  if(currentMode === 'list') renderList();
+  else if(currentMode === 'flash') fcInit();
+  else dictInit();
+}
+
+// ── РЕЖИМ 1: СПИСОК ──
+function renderList() {
+  const el = document.getElementById('phrasesList');
+  el.innerHTML = '';
+  getCurrent().forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'phrase-card';
+    card.dataset.idx = i;
+    card.innerHTML = `<div class="phrase-num">Фраза ${i+1}</div><div class="phrase-en">${item.en}</div><div class="phrase-ru">${item.ru}</div>`;
+    card.onclick = () => {
+      document.querySelectorAll('.phrase-card').forEach(c => c.classList.remove('playing'));
+      card.classList.add('playing');
+      document.getElementById('listStatus').textContent = '';
+      speak(item.en, () => card.classList.remove('playing'));
+    };
+    el.appendChild(card);
+  });
+}
+
+let playAllTimer = null;
+function playAll() {
+  stopAll();
+  const cards = [...document.querySelectorAll('.phrase-card')];
+  const data = getCurrent();
+  let i = 0;
+  function next() {
+    if(i >= cards.length) { document.getElementById('listStatus').textContent = 'Все фразы прочитаны!'; return; }
+    cards.forEach(c => c.classList.remove('playing'));
+    cards[i].classList.add('playing');
+    cards[i].scrollIntoView({block:'nearest', behavior:'smooth'});
+    document.getElementById('listStatus').textContent = `Читает фразу ${i+1}...`;
+    document.getElementById('listStatus').className = 'status speaking';
+    speak(data[i].en, () => { cards[i] && cards[i].classList.remove('playing'); i++; playAllTimer = setTimeout(next, getPause()); });
+  }
+  next();
+}
+
+function stopAll() {
+  synth.cancel(); clearTimeout(playAllTimer);
+  document.querySelectorAll('.phrase-card').forEach(c => c.classList.remove('playing'));
+  document.getElementById('listStatus').textContent = '';
+}
+
+// ── РЕЖИМ 2: ФЛЭШКАРТЫ ──
+function fcInit() {
+  fcWords = [...getCurrent()];
+  fcIdx = 0; fcFlipped = false;
+  clearTimeout(fcAutoTimer);
+  document.getElementById('fcAutoBtn').textContent = '⏯ Авто-режим';
+  document.getElementById('flashStatus').textContent = '';
+  fcShow();
+}
+
+function fcShow() {
+  const item = fcWords[fcIdx];
+  fcFlipped = false;
+  const card = document.getElementById('flashcard');
+  card.classList.remove('flipped');
+  document.getElementById('fcEn').textContent = item.en;
+  document.getElementById('fcRu').textContent = item.ru;
+  document.getElementById('fcHint').textContent = 'Нажми — услышишь фразу. Ещё раз — увидишь перевод';
+  document.getElementById('fcIdx').textContent = fcIdx + 1;
+  document.getElementById('fcTotal').textContent = fcWords.length;
+  const pct = ((fcIdx + 1) / fcWords.length * 100).toFixed(0);
+  document.getElementById('fcProgress').style.width = pct + '%';
+}
+
+function flipCard() {
+  const card = document.getElementById('flashcard');
+  if(!fcFlipped) {
+    fcSpeak();
+    fcFlipped = true;
+  } else {
+    card.classList.toggle('flipped');
+  }
+}
+
+function fcSpeak() {
+  const item = fcWords[fcIdx];
+  document.getElementById('flashStatus').textContent = 'Читает...';
+  document.getElementById('flashStatus').className = 'status speaking';
+  speak(item.en, () => { document.getElementById('flashStatus').textContent = ''; document.getElementById('flashStatus').className = 'status'; });
+}
+
+function fcNext() { if(fcIdx < fcWords.length - 1){ fcIdx++; fcShow(); } }
+function fcPrev() { if(fcIdx > 0){ fcIdx--; fcShow(); } }
+
+function fcShuffle() {
+  for(let i=fcWords.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1));[fcWords[i],fcWords[j]]=[fcWords[j],fcWords[i]]; }
+  fcIdx = 0; fcShow();
+}
+
+function fcAutoPlay() {
+  if(fcAutoTimer) {
+    clearTimeout(fcAutoTimer); fcAutoTimer = null; synth.cancel();
+    document.getElementById('fcAutoBtn').textContent = '⏯ Авто-режим'; return;
+  }
+  document.getElementById('fcAutoBtn').textContent = '⏹ Остановить';
+  function step() {
+    fcShow(); fcSpeak();
+    if(fcIdx < fcWords.length - 1) {
+      fcIdx++;
+      fcAutoTimer = setTimeout(step, getPause() + 2000);
+    } else {
+      fcAutoTimer = null;
+      document.getElementById('fcAutoBtn').textContent = '⏯ Авто-режим';
+      document.getElementById('flashStatus').textContent = 'Все фразы пройдены!';
+    }
+  }
+  step();
+}
+
+// ── РЕЖИМ 3: ДИКТАНТ ──
+function dictInit() {
+  dictWords = [...getCurrent()].sort(() => Math.random() - 0.5);
+  dictIdx = 0; dictCorrect = 0; dictErrors = 0; dictScore = 0;
+  updateDictScore();
+  document.getElementById('dictInput').value = '';
+  document.getElementById('dictInput').className = 'dict-input';
+  document.getElementById('dictHint').textContent = '';
+  document.getElementById('dictPhrase').textContent = 'Нажми «Слушать» — напиши услышанную фразу';
+  document.getElementById('dictStatus').textContent = '';
+}
+
+function updateDictScore() {
+  document.getElementById('dCorr').textContent = dictCorrect;
+  document.getElementById('dErr').textContent = dictErrors;
+  document.getElementById('dScore').textContent = dictScore;
+}
+
+function dictPlay() {
+  if(!dictWords.length) return;
+  const item = dictWords[dictIdx % dictWords.length];
+  document.getElementById('dictPhrase').textContent = '🔊 Слушай внимательно...';
+  document.getElementById('dictInput').className = 'dict-input';
+  document.getElementById('dictInput').value = '';
+  document.getElementById('dictHint').textContent = '';
+  document.getElementById('dictInput').focus();
+  speak(item.en, () => { document.getElementById('dictPhrase').textContent = 'Напиши фразу и нажми «Проверить»'; });
+}
+
+function normalize(s) {
+  return s.toLowerCase().replace(/[',\.!\?]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function checkDict() {
+  const item = dictWords[dictIdx % dictWords.length];
+  const val = document.getElementById('dictInput').value.trim();
+  if(!val) return;
+  if(normalize(val) === normalize(item.en)) {
+    document.getElementById('dictPhrase').textContent = item.en;
+    document.getElementById('dictInput').className = 'dict-input correct';
+    document.getElementById('dictHint').textContent = `✓ Верно! Перевод: ${item.ru}`;
+    dictCorrect++; dictScore += 15; updateDictScore();
+    setTimeout(() => { dictIdx++; dictPlay(); }, 1800);
+  } else {
+    document.getElementById('dictInput').className = 'dict-input wrong';
+    dictErrors++; dictScore = Math.max(0, dictScore - 5); updateDictScore();
+    document.getElementById('dictHint').textContent = `Попробуй ещё раз... (${dictErrors} ошибок)`;
+    setTimeout(() => { document.getElementById('dictInput').className = 'dict-input'; document.getElementById('dictInput').value = ''; document.getElementById('dictInput').focus(); }, 700);
+  }
+}
+
+function dictSkip() {
+  const item = dictWords[dictIdx % dictWords.length];
+  document.getElementById('dictPhrase').textContent = item.en;
+  document.getElementById('dictHint').textContent = `Пропущено. Перевод: ${item.ru}`;
+  dictErrors++; updateDictScore();
+  setTimeout(() => { dictIdx++; dictPlay(); }, 2000);
+}
+
+document.getElementById('dictInput').addEventListener('keydown', e => { if(e.key === 'Enter') checkDict(); });
+
+// ── ПЕРЕКЛЮЧЕНИЕ РЕЖИМОВ ──
+function switchMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('modeList').style.display = mode === 'list' ? 'block' : 'none';
+  document.getElementById('modeFlash').style.display = mode === 'flash' ? 'block' : 'none';
+  document.getElementById('modeDict').style.display = mode === 'dict' ? 'block' : 'none';
+  synth.cancel(); clearTimeout(fcAutoTimer); clearTimeout(playAllTimer);
+  refreshMode();
+}
+
+// ── СТАРТ ──
+buildCatTabs();
+renderList();
+</script>
+</body>
+</html>
