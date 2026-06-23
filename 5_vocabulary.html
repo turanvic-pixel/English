@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vocabulary</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+:root {
+  --bg: #f5f0e8;
+  --card: #fffdf7;
+  --blue: #1a3a5c;
+  --blue-light: #e8f0fb;
+  --brown: #8b4513;
+  --green: #2e7d32;
+  --green-bg: #e6f4ea;
+  --red: #c62828;
+  --red-bg: #fdecea;
+  --gold: #c9a84c;
+  --border: #d4c9a8;
+  --text: #2a2a2a;
+  --muted: #888;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Source Sans 3', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* ── HEADER ── */
+.header { background: var(--blue); color: #fff; padding: 18px 20px 14px; text-align: center; }
+.header h1 { font-family: 'Playfair Display', serif; font-size: 26px; letter-spacing: 0.03em; margin-bottom: 2px; }
+.header p { font-size: 13px; opacity: 0.7; }
+
+/* ── TABS ── */
+.nav-tabs { display: flex; background: #fff; border-bottom: 2px solid var(--border); overflow-x: auto; }
+.nav-tab { flex: 1; min-width: 80px; padding: 12px 8px; font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 500; color: var(--muted); background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.nav-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+.nav-tab:hover:not(.active) { color: var(--blue); background: var(--blue-light); }
+
+/* ── PAGES ── */
+.page { display: none; padding: 16px; max-width: 700px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* ── ADD WORD FORM ── */
+.add-form { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 20px; box-shadow: var(--shadow); }
+.form-title { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--blue); margin-bottom: 14px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+@media(max-width:480px){ .form-grid { grid-template-columns: 1fr; } }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group label { font-size: 12px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+.form-input { background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: 15px; font-family: 'Source Sans 3', sans-serif; color: var(--text); outline: none; }
+.form-input:focus { border-color: var(--blue); background: #fff; }
+.topic-select { background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: 14px; font-family: 'Source Sans 3', sans-serif; color: var(--text); cursor: pointer; width: 100%; }
+.form-row { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; margin-top: 4px; }
+.btn { font-family: 'Source Sans 3', sans-serif; border-radius: 20px; padding: 9px 20px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid var(--border); background: var(--card); color: var(--text); transition: all 0.15s; }
+.btn:hover { border-color: var(--blue); color: var(--blue); }
+.btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+.btn-primary:hover { opacity: 0.88; color: #fff; }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+.btn-danger { border-color: var(--red); color: var(--red); }
+.btn-danger:hover { background: var(--red-bg); }
+.btn-success { border-color: var(--green); color: var(--green); }
+.btn-success:hover { background: var(--green-bg); }
+
+/* ── FILTERS ── */
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+.filter-chip { background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; padding: 5px 14px; font-size: 12px; cursor: pointer; color: var(--muted); transition: all 0.15s; }
+.filter-chip.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+.search-box { background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-family: 'Source Sans 3', sans-serif; outline: none; min-width: 160px; flex: 1; }
+.search-box:focus { border-color: var(--blue); }
+
+/* ── WORD CARDS ── */
+.words-count { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.words-grid { display: flex; flex-direction: column; gap: 8px; }
+.word-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 14px; box-shadow: var(--shadow); transition: all 0.15s; }
+.word-card:hover { border-color: #aac; box-shadow: var(--shadow-lg); }
+.word-card.learned { border-left: 4px solid var(--green); }
+.word-card.hard { border-left: 4px solid var(--red); }
+.wc-top { display: flex; align-items: flex-start; gap: 10px; }
+.wc-main { flex: 1; }
+.wc-en { font-size: 18px; font-weight: 600; color: var(--blue); }
+.wc-ru { font-size: 14px; color: #555; margin-top: 2px; }
+.wc-example { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 4px; }
+.wc-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--blue-light); color: var(--blue); font-weight: 500; }
+.tag.learned { background: var(--green-bg); color: var(--green); }
+.tag.hard { background: var(--red-bg); color: var(--red); }
+.wc-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+.icon-btn { background: none; border: 1.5px solid var(--border); border-radius: 8px; padding: 5px 9px; font-size: 14px; cursor: pointer; transition: all 0.15s; }
+.icon-btn:hover { border-color: var(--blue); background: var(--blue-light); }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+.empty-state .emoji { font-size: 40px; margin-bottom: 10px; }
+
+/* ── TRAIN MODE ── */
+.train-wrap { text-align: center; }
+.train-select-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+.train-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 30px 20px; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 16px; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow); }
+.train-card:hover { border-color: var(--blue); box-shadow: var(--shadow-lg); }
+.train-card.flipped { background: var(--blue-light); border-color: var(--blue); }
+.tc-hint { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.tc-front { font-size: 26px; font-weight: 700; color: var(--blue); font-family: 'Playfair Display', serif; }
+.tc-back { font-size: 18px; color: #555; margin-top: 10px; display: none; }
+.train-card.flipped .tc-back { display: block; }
+.tc-example { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 8px; display: none; }
+.train-card.flipped .tc-example { display: block; }
+.tc-counter { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.train-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+.btn-know { background: var(--green-bg); color: var(--green); border-color: var(--green); font-weight: 600; }
+.btn-hard { background: var(--red-bg); color: var(--red); border-color: var(--red); font-weight: 600; }
+.train-progress { background: #e0dbd0; border-radius: 10px; height: 8px; margin: 0 auto 8px; max-width: 400px; }
+.train-fill { background: var(--blue); height: 8px; border-radius: 10px; transition: width 0.3s; }
+.train-score { font-size: 14px; color: var(--muted); }
+.train-score b { color: var(--blue); }
+
+/* ── PROGRESS PAGE ── */
+.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+@media(max-width:400px){ .stats-grid { grid-template-columns: 1fr; } }
+.stat-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; box-shadow: var(--shadow); }
+.stat-num { font-family: 'Playfair Display', serif; font-size: 38px; color: var(--blue); font-weight: 700; line-height: 1; margin-bottom: 4px; }
+.stat-label { font-size: 13px; color: var(--muted); }
+.topic-progress { background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
+.tp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.tp-name { font-size: 15px; font-weight: 600; color: var(--blue); }
+.tp-count { font-size: 12px; color: var(--muted); }
+.tp-bar { background: #e0dbd0; border-radius: 6px; height: 10px; }
+.tp-fill { background: var(--green); height: 10px; border-radius: 6px; transition: width 0.5s; }
+.section-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--blue); margin-bottom: 12px; }
+
+/* ── VOICE CONTROLS ── */
+.voice-bar { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
+.voice-bar label { font-size: 12px; color: var(--muted); }
+.voice-bar select { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 13px; }
+.voice-bar input[type=range] { width: 70px; accent-color: var(--blue); }
+.voice-bar .val { font-size: 13px; color: var(--blue); font-weight: 600; }
+
+/* ── WORD IMAGE ── */
+.wc-img { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: var(--bg); border: 1px solid var(--border); }
+.wc-img-wrap { width: 64px; height: 64px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Vocabulary</h1>
+  <p>My Vocabulary — добавляй, тренируй, запоминай</p>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showPage('words',this)">📚 Слова</button>
+  <button class="nav-tab" onclick="showPage('add',this)">➕ Добавить</button>
+  <button class="nav-tab" onclick="showPage('train',this)">🎯 Тренировка</button>
+  <button class="nav-tab" onclick="showPage('progress',this)">📊 Прогресс</button>
+</div>
+
+<!-- ── СТРАНИЦА: ДОБАВИТЬ ── -->
+<div class="page" id="pageAdd">
+  <div class="add-form">
+    <div class="form-title">Новое слово</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Слово (English)</label>
+        <input class="form-input" id="inEn" placeholder="dog" autocomplete="off" autocorrect="off" onblur="autoFillPronunciation()">
+      </div>
+      <div class="form-group">
+        <label>Перевод (Русский)</label>
+        <input class="form-input" id="inRu" placeholder="собака" autocomplete="off">
+      </div>
+      <div class="form-group" style="position:relative">
+        <label>Транскрипция</label>
+        <input class="form-input" id="inTr" placeholder="[dɒg]" autocomplete="off" autocorrect="off">
+      </div>
+      <div class="form-group">
+        <label>Произношение по-русски</label>
+        <input class="form-input" id="inPron" placeholder="дог" autocomplete="off">
+      </div>
+    </div>
+    <div class="form-row">
+      <button class="btn btn-primary" onclick="addWord()">➕ Добавить слово</button>
+      <button class="btn" onclick="clearForm()">Очистить</button>
+    </div>
+    <div id="addMsg" style="font-size:13px;margin-top:8px;min-height:18px;color:var(--green)"></div>
+  </div>
+
+  <div class="add-form">
+    <div class="form-title">Быстрый импорт</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:6px">Форматы (каждое слово с новой строки):</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:4px">• <b>слово = перевод</b> — транскрипция добавится автоматически</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">• <b>слово = перевод = [транскрипция] = произношение</b> — вручную</p>
+    <textarea id="importArea" style="width:100%;min-height:100px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:10px;font-size:14px;font-family:'Source Sans 3',sans-serif;outline:none;resize:vertical" placeholder="cat = кот&#10;dog = собака&#10;house = дом = [haʊs] = хаус"></textarea>
+    <div class="form-row" style="margin-top:8px">
+      <button class="btn btn-primary" id="importBtn" onclick="importWords()">📥 Импортировать</button>
+    </div>
+    <div id="importMsg" style="font-size:13px;margin-top:8px;min-height:18px;color:var(--green)"></div>
+  </div>
+</div>
+
+<!-- ── СТРАНИЦА: СЛОВА ── -->
+<div class="page active" id="pageWords">
+  <div class="filters">
+    <input class="search-box" id="searchBox" placeholder="🔍 Поиск..." type="text" autocomplete="off">
+    <button class="btn btn-sm" id="fillAllBtn" onclick="fillAllMissing()" style="white-space:nowrap">🤖 Заполнить произношение у всех</button>
+  </div>
+  <div class="filters">
+    <div class="filter-chip active" onclick="setStatusFilter('all',this)">Все</div>
+    <div class="filter-chip" onclick="setStatusFilter('new',this)">Новые</div>
+    <div class="filter-chip" onclick="setStatusFilter('hard',this)">Сложные</div>
+    <div class="filter-chip" onclick="setStatusFilter('learned',this)">Выученные</div>
+  </div>
+  <div id="letterTabsWrap" style="padding:4px 0 6px">
+    <div id="letterTabs" style="display:flex;flex-wrap:wrap;gap:6px;padding:0 2px"></div>
+  </div>
+  <div class="words-count" id="wordsCount"></div>
+  <div class="words-grid" id="wordsList"></div>
+</div>
+
+<!-- ── СТРАНИЦА: ТРЕНИРОВКА ── -->
+<div class="page" id="pageTrain">
+  <div class="voice-bar">
+    <label>Голос:</label>
+    <select id="voiceSelect"></select>
+    <label>Скорость:</label>
+    <input type="range" id="rateSlider" min="0.5" max="1.5" step="0.1" value="0.8">
+    <span class="val" id="rateVal">0.8</span>
+  </div>
+  <div class="train-wrap">
+    <div class="train-select-row">
+      <select class="topic-select" id="trainTopic" style="width:auto" onchange="trainInit()">
+        <option value="all">Все слова</option>
+        <option value="new">Новые</option>
+        <option value="hard">Сложные</option>
+      </select>
+      <select class="topic-select" id="trainMode" style="width:auto" onchange="trainInit()">
+        <option value="en-ru">Английский → Русский</option>
+        <option value="ru-en">Русский → Английский</option>
+      </select>
+    </div>
+    <div id="trainEmpty" style="display:none" class="empty-state">
+      <div class="emoji">📭</div>
+      <div>Нет слов для тренировки.<br>Сначала добавь слова в словарик!</div>
+    </div>
+    <div id="trainContent">
+      <div class="tc-counter"><span id="tcIdx">0</span> / <span id="tcTotal">0</span></div>
+      <div class="train-progress"><div class="train-fill" id="trainFill" style="width:0%"></div></div>
+      <div class="train-card" id="trainCard" onclick="flipTrain()">
+        <div class="tc-hint" id="tcHint">Нажми — увидишь перевод</div>
+        <div class="tc-front" id="tcFront"></div>
+        <div class="tc-back" id="tcBack"></div>
+        <div class="tc-example" id="tcEx"></div>
+      </div>
+      <div class="train-btns" id="trainRateRow" style="display:none">
+        <button class="btn btn-hard" onclick="rateWord('hard')">😓 Сложно</button>
+        <button class="btn" onclick="rateWord('skip')">⏭ Пропустить</button>
+        <button class="btn btn-know" onclick="rateWord('learned')">✓ Знаю!</button>
+      </div>
+      <div class="train-btns" id="trainFlipRow">
+        <button class="btn" onclick="trainPrev()">← Назад</button>
+        <button class="btn btn-primary" onclick="speakCurrent()">🔊 Слушать</button>
+        <button class="btn btn-primary" onclick="flipTrain()">Показать →</button>
+      </div>
+      <div class="train-score">Знаю: <b id="tsKnow">0</b> | Сложно: <b id="tsHard">0</b></div>
+      <div id="trainDone" style="display:none;text-align:center;padding:20px;color:var(--green);font-size:16px;font-weight:600"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── СТРАНИЦА: ПРОГРЕСС ── -->
+<div class="page" id="pageProgress">
+  <div class="stats-grid" id="statsGrid"></div>
+  <div class="section-title">По темам</div>
+  <div id="topicStats"></div>
+  <div style="margin-top:16px;text-align:center;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="btn btn-danger btn-sm" onclick="if(confirm('Удалить ВСЕ слова?')) clearAll()">🗑 Очистить словарик</button>
+    <button class="btn btn-sm" onclick="if(confirm('Сбросить к словам из теста?')){ localStorage.removeItem('vocab_v1'); words=[]; load(); renderWords(); renderProgress(); }">↺ Сбросить к словам из теста</button>
+  </div>
+</div>
+
+<script>
+// ── ДАННЫЕ ──
+let words = [];
+let statusFilter = 'all';
+let letterFilter = 'all';
+function sortKey(en) { return en.toLowerCase().replace(/^(a |an |the )/,''); }
+function firstLetter(en) { return sortKey(en)[0].toUpperCase(); }
+let synth = window.speechSynthesis;
+let voices = [];
+let trainWords = [], trainIdx = 0, trainFlipped = false, trainKnow = 0, trainHard = 0;
+
+function save() { try { localStorage.setItem('vocab_v1', JSON.stringify(words)); } catch(e){} }
+
+const SEED_WORDS = [
+  {en:'ball',ru:'мяч',tr:'[bɔːl]',pron:'<b>бол</b>'},
+  {en:'book',ru:'книга',tr:'[bʊk]',pron:'<b>бук</b>'},
+  {en:'boy',ru:'мальчик',tr:'[ˈbɔɪ]',pron:'<b>бой</b>'},
+  {en:'cat',ru:'кот / кошка',tr:'[kæt]',pron:'<b>кэт</b>'},
+  {en:'child',ru:'ребёнок',tr:'[ˈtʃaɪld]',pron:'<b>чайлд</b>'},
+  {en:'city',ru:'город',tr:'[ˈsɪtɪ]',pron:'<b>си</b>ти'},
+  {en:'day',ru:'день',tr:'[ˈdeɪ]',pron:'<b>дэй</b>'},
+  {en:'dog',ru:'собака',tr:'[dɒɡ]',pron:'<b>дог</b>'},
+  {en:'girl',ru:'девочка',tr:'[ɡɜːl]',pron:'<b>гёл</b>'},
+  {en:'man',ru:'мужчина',tr:'[mæn]',pron:'<b>мэн</b>'},
+  {en:'sister',ru:'сестра',tr:'[ˈsɪstə]',pron:'<b>сис</b>тэ'},
+  {en:'student',ru:'студент',tr:'[ˈstjuːdnt]',pron:'<b>стью</b>днт'},
+  {en:'table',ru:'стол',tr:'[ˈteɪbl]',pron:'<b>тэй</b>бл'},
+  {en:'teacher',ru:'учитель',tr:'[ˈtiːtʃə]',pron:'<b>ти</b>чэ'},
+  {en:'woman',ru:'женщина',tr:'[ˈwʊmən]',pron:'<b>ву</b>ман'},
+  {en:'balls',ru:'мячи',tr:'[bɔːlz]',pron:'<b>болз</b>'},
+  {en:'basketball',ru:'баскетбол',tr:'[ˈbɑːskɪtbɔːl]',pron:'<b>бас</b>китбол'},
+  {en:'books',ru:'книги',tr:'[bʊks]',pron:'<b>букс</b>'},
+  {en:'brother',ru:'брат',tr:'[ˈbrʌðə]',pron:'<b>бра</b>зэ'},
+  {en:'chair',ru:'стул',tr:'[ˈtʃeə]',pron:'<b>чэ</b>а'},
+  {en:'children',ru:'дети',tr:'[ˈtʃɪldrən]',pron:'<b>чил</b>дрэн'},
+  {en:'class',ru:'класс',tr:'[klɑːs]',pron:'<b>клас</b>'},
+  {en:'English',ru:'английский язык',tr:'[ˈɪŋɡlɪʃ]',pron:'<b>инг</b>лиш'},
+  {en:'father',ru:'папа / отец',tr:'[ˈfɑːðə]',pron:'<b>фа</b>зэ'},
+  {en:'football',ru:'футбол',tr:'[ˈfʊtbɔːl]',pron:'<b>фут</b>бол'},
+  {en:'friend',ru:'друг / подруга',tr:'[frend]',pron:'<b>фрэнд</b>'},
+  {en:'girls',ru:'девочки',tr:'[ɡɜːlz]',pron:'<b>гёлз</b>'},
+  {en:'he',ru:'он',tr:'[hiː]',pron:'<b>хи</b>'},
+  {en:'I',ru:'я',tr:'[ˈaɪ]',pron:'<b>ай</b>'},
+  {en:'it',ru:'оно / это',tr:'[ɪt]',pron:'<b>ит</b>'},
+  {en:'men',ru:'мужчины',tr:'[men]',pron:'<b>мэн</b>'},
+  {en:'Moscow',ru:'Москва',tr:'[ˈmɒskəʊ]',pron:'<b>мос</b>коу'},
+  {en:'mother',ru:'мама / мать',tr:'[ˈmʌðə]',pron:'<b>ма</b>зэ'},
+  {en:'pen',ru:'ручка',tr:'[pen]',pron:'<b>пэн</b>'},
+  {en:'rain',ru:'дождь',tr:'[ˈreɪn]',pron:'<b>рэйн</b>'},
+  {en:'Russia',ru:'Россия',tr:'[ˈrʌʃə]',pron:'<b>ра</b>шэ'},
+  {en:'she',ru:'она',tr:'[ʃiː]',pron:'<b>ши</b>'},
+  {en:'snow',ru:'снег',tr:'[ˈsnəʊ]',pron:'<b>сно</b>у'},
+  {en:'students',ru:'студенты / студентки',tr:'[ˈstjuːdnts]',pron:'<b>стью</b>днтс'},
+  {en:'Surgut',ru:'Сургут',tr:'[ˈsɜːɡut]',pron:'<b>сёг</b>ут'},
+  {en:'teachers',ru:'учителя',tr:'[ˈtiːtʃəz]',pron:'<b>ти</b>чэз'},
+  {en:'they',ru:'они',tr:'[ˈðeɪ]',pron:'<b>зэй</b>'},
+  {en:'we',ru:'мы',tr:'[wiː]',pron:'<b>ви</b>'},
+  {en:'window',ru:'окно',tr:'[ˈwɪndəʊ]',pron:'<b>вин</b>доу'},
+  {en:'windows',ru:'окна',tr:'[ˈwɪndəʊz]',pron:'<b>вин</b>доуз'},
+  {en:'women',ru:'женщины',tr:'[ˈwɪmɪn]',pron:'<b>ви</b>мин'},
+  {en:'you',ru:'ты / вы',tr:'[juː]',pron:'<b>ю</b>'},
+  {en:'building',ru:'здание',tr:'[ˈbɪldɪŋ]',pron:'<b>бил</b>дин'},
+  {en:'car',ru:'машина',tr:'[kɑː]',pron:'<b>ка</b>'},
+  {en:'finger',ru:'палец',tr:'[ˈfɪŋɡə]',pron:'<b>фи</b>нгэ'},
+  {en:'hand',ru:'рука (кисть)',tr:'[hænd]',pron:'<b>хэнд</b>'},
+  {en:'park',ru:'парк',tr:'[pɑːk]',pron:'<b>пак</b>'},
+  {en:'sofa',ru:'диван',tr:'[ˈsəʊfə]',pron:'<b>соу</b>фэ'},
+  {en:'street',ru:'улица',tr:'[striːt]',pron:'<b>стрит</b>'},
+  {en:'tree',ru:'дерево',tr:'[triː]',pron:'<b>три</b>'},
+  {en:'bedroom',ru:'спальня',tr:'[ˈbedrʊm]',pron:'<b>бэд</b>рум'},
+  {en:'bedrooms',ru:'спальни',tr:'[ˈbedrʊmz]',pron:'<b>бэд</b>румз'},
+  {en:'buildings',ru:'здания',tr:'[ˈbɪldɪŋz]',pron:'<b>бил</b>динз'},
+  {en:'cars',ru:'машины',tr:'[kɑːz]',pron:'<b>каз</b>'},
+  {en:'fingers',ru:'пальцы',tr:'[ˈfɪŋɡəz]',pron:'<b>фи</b>нгэз'},
+  {en:'flat',ru:'квартира',tr:'[flæt]',pron:'<b>флэт</b>'},
+  {en:'hungry',ru:'голодный',tr:'[ˈhʌŋɡrɪ]',pron:'<b>хан</b>гри'},
+  {en:'Internet',ru:'Интернет',tr:'[ˈɪntənet]',pron:'<b>ин</b>тэнэт'},
+  {en:'old',ru:'старый',tr:'[əˈʊld]',pron:'о<b>улд</b>'},
+  {en:'trees',ru:'деревья',tr:'[triːz]',pron:'<b>триз</b>'},
+  {en:'upstairs',ru:'наверху / на верхнем этаже',tr:'[ˌʌpˈsteəz]',pron:'ап<b>стэа</b>з'},
+  {en:'biscuit',ru:'печенье',tr:'[ˈbɪskɪt]',pron:'<b>бис</b>кит'},
+  {en:'corn flake',ru:'кукурузные хлопья',tr:'[ˈkɔːn fleɪk]',pron:'<b>кон</b> флэйк'},
+  {en:'mutton chop',ru:'отбивная из баранины',tr:'[ˈmʌtn tʃɒp]',pron:'<b>мат</b>н чоп'},
+  {en:'nut',ru:'орех',tr:'[nʌt]',pron:'<b>нат</b>'},
+  {en:'pickle',ru:'маринованный овощ',tr:'[ˈpɪkl]',pron:'<b>пик</b>л'},
+  {en:'roll',ru:'булочка',tr:'[ˈrəʊl]',pron:'<b>ро</b>ул'},
+  {en:'beer',ru:'пиво',tr:'[bɪˈə]',pron:'би<b>э</b>'},
+  {en:'boiled',ru:'варёный',tr:'[ˈbɔɪld]',pron:'<b>бойлд</b>'},
+  {en:'buttered',ru:'намазанный маслом',tr:'[ˈbʌtəd]',pron:'<b>ба</b>тэд'},
+  {en:'chips',ru:'жареный картофель',tr:'[tʃɪps]',pron:'<b>чипс</b>'},
+  {en:'cream',ru:'сливки / крем',tr:'[kriːm]',pron:'<b>крим</b>'},
+  {en:'ham',ru:'ветчина',tr:'[hæm]',pron:'<b>хэм</b>'},
+  {en:'knit',ru:'вязать',tr:'[nɪt]',pron:'<b>нит</b>'},
+  {en:'light',ru:'светлый / лёгкий',tr:'[ˈlaɪt]',pron:'<b>лайт</b>'},
+  {en:'marmalade',ru:'апельсиновый джем',tr:'[ˈmɑːməleɪd]',pron:'<b>ма</b>мэлэйд'},
+  {en:'porridge',ru:'овсяная каша',tr:'[ˈpɒrɪdʒ]',pron:'<b>по</b>ридж'},
+  {en:'roast',ru:'жареный (в духовке)',tr:'[ˈrəʊst]',pron:'<b>ро</b>уст'},
+  {en:'sociable',ru:'общительный',tr:'[ˈsəʊʃəbl]',pron:'<b>соу</b>шэбл'},
+  {en:'anything',ru:'что-нибудь / ничто',tr:'[ˈenɪθɪŋ]',pron:'<b>эни</b>син'},
+  {en:'either',ru:'или / тоже (отриц.)',tr:'[ˈaɪðə]',pron:'<b>ай</b>зэ'},
+  {en:'happy',ru:'счастливый / довольный',tr:'[ˈhæpɪ]',pron:'<b>хэ</b>пи'},
+  {en:'neither',ru:'ни тот ни другой',tr:'[ˈnaɪðə]',pron:'<b>най</b>зэ'},
+  {en:'nobody',ru:'никто',tr:'[ˈnəʊbɒdɪ]',pron:'<b>ноу</b>бади'},
+  {en:'nor',ru:'и не / ни',tr:'[nɔː]',pron:'<b>но</b>'},
+  {en:'nothing',ru:'ничто / ничего',tr:'[ˈnʌθɪŋ]',pron:'<b>на</b>син'},
+  {en:'possible',ru:'возможный',tr:'[ˈpɒsɪbl]',pron:'<b>по</b>сибл'},
+  {en:'something',ru:'что-то / кое-что',tr:'[ˈsʌmθɪŋ]',pron:'<b>сам</b>син'},
+  {en:'agriculture',ru:'сельское хозяйство',tr:'[ˈæɡrɪkʌltʃə]',pron:'<b>эгри</b>калчэ'},
+  {en:'annoyed',ru:'раздражённый',tr:'[əˈnɔɪd]',pron:'э<b>нойд</b>'},
+  {en:'bad',ru:'плохой',tr:'[bæd]',pron:'<b>бэд</b>'},
+  {en:'become',ru:'становиться',tr:'[bɪˈkʌm]',pron:'би<b>кам</b>'},
+  {en:'boring',ru:'скучный',tr:'[ˈbɔːrɪŋ]',pron:'<b>бо</b>рин'},
+  {en:'bright',ru:'яркий / умный',tr:'[ˈbraɪt]',pron:'<b>брайт</b>'},
+  {en:'careful',ru:'осторожный / внимательный',tr:'[ˈkeəfl]',pron:'<b>кэа</b>фл'},
+  {en:'changeable',ru:'изменчивый',tr:'[ˈtʃeɪndʒəbl]',pron:'<b>чэйндж</b>эбл'},
+  {en:'coast',ru:'побережье',tr:'[ˈkəʊst]',pron:'<b>ко</b>уст'},
+  {en:'creepy',ru:'жуткий',tr:'[ˈkriːpɪ]',pron:'<b>кри</b>пи'},
+  {en:'crossroads',ru:'перекрёсток',tr:'[ˈkrɒsrəʊdz]',pron:'<b>крос</b>роудз'},
+  {en:'crowded',ru:'переполненный',tr:'[ˈkraʊdɪd]',pron:'<b>крауд</b>ид'},
+  {en:'dangerous',ru:'опасный',tr:'[ˈdeɪndʒərəs]',pron:'<b>дэй</b>нджэрэс'},
+  {en:'dark',ru:'тёмный',tr:'[dɑːk]',pron:'<b>дак</b>'},
+  {en:'dictation',ru:'диктант',tr:'[dɪkˈteɪʃn]',pron:'дик<b>тэй</b>шн'},
+  {en:'difficult',ru:'трудный',tr:'[ˈdɪfɪklt]',pron:'<b>ди</b>фиклт'},
+  {en:'dirty',ru:'грязный',tr:'[ˈdɜːtɪ]',pron:'<b>дё</b>ти'},
+  {en:'draw',ru:'рисовать',tr:'[drɔː]',pron:'<b>дро</b>'},
+  {en:'energetic',ru:'энергичный',tr:'[ˌenəˈdʒetɪk]',pron:'энэ<b>джэ</b>тик'},
+  {en:'exercise',ru:'упражнение / тренироваться',tr:'[ˈeksəsaɪz]',pron:'<b>эк</b>сэсайз'},
+  {en:'expensive',ru:'дорогой',tr:'[ɪkˈspensɪv]',pron:'ик<b>спэн</b>сив'},
+  {en:'false',ru:'ложный / неверный',tr:'[fɔːls]',pron:'<b>фолс</b>'},
+  {en:'fat',ru:'толстый',tr:'[fæt]',pron:'<b>фэт</b>'},
+  {en:'generous',ru:'щедрый',tr:'[ˈdʒenərəs]',pron:'<b>джэ</b>нэрэс'},
+  {en:'good',ru:'хороший',tr:'[ɡʊd]',pron:'<b>гуд</b>'},
+  {en:'grandparent',ru:'дедушка или бабушка',tr:'[ˈɡrænpeərənt]',pron:'<b>грэн</b>пэарэнт'},
+  {en:'grey',ru:'серый',tr:'[ˈɡreɪ]',pron:'<b>грэй</b>'},
+  {en:'handsome',ru:'красивый (о мужчине)',tr:'[ˈhænsəm]',pron:'<b>хэн</b>сэм'},
+  {en:'hard',ru:'тяжёлый / усердно',tr:'[hɑːd]',pron:'<b>хад</b>'},
+  {en:'help',ru:'помогать',tr:'[help]',pron:'<b>хэлп</b>'},
+  {en:'intelligent',ru:'умный',tr:'[ɪnˈtelɪdʒənt]',pron:'ин<b>тэ</b>лиджэнт'},
+  {en:'interesting',ru:'интересный',tr:'[ˈɪntrɪstɪŋ]',pron:'<b>ин</b>тристин'},
+  {en:'jog',ru:'бегать трусцой',tr:'[dʒɒɡ]',pron:'<b>джог</b>'},
+  {en:'juicy',ru:'сочный',tr:'[ˈdʒuːsɪ]',pron:'<b>джу</b>си'},
+  {en:'kind',ru:'добрый',tr:'[ˈkaɪnd]',pron:'<b>кайнд</b>'},
+  {en:'lazy',ru:'ленивый',tr:'[ˈleɪzɪ]',pron:'<b>лэй</b>зи'},
+  {en:'leave',ru:'уходить / уезжать',tr:'[liːv]',pron:'<b>лив</b>'},
+  {en:'lemon',ru:'лимон',tr:'[ˈlemən]',pron:'<b>лэ</b>мэн'},
+  {en:'lucky',ru:'удачливый',tr:'[ˈlʌkɪ]',pron:'<b>ла</b>ки'},
+  {en:'manager',ru:'менеджер / руководитель',tr:'[ˈmænɪdʒə]',pron:'<b>мэ</b>ниджэ'},
+  {en:'polite',ru:'вежливый',tr:'[pəˈlaɪt]',pron:'пэ<b>лайт</b>'},
+  {en:'run',ru:'бегать',tr:'[rʌn]',pron:'<b>ран</b>'},
+  {en:'safe',ru:'безопасный',tr:'[ˈseɪf]',pron:'<b>сэйф</b>'},
+  {en:'sail',ru:'плыть на парусе',tr:'[ˈseɪl]',pron:'<b>сэйл</b>'},
+  {en:'salad',ru:'салат',tr:'[ˈsæləd]',pron:'<b>сэ</b>лэд'},
+  {en:'shopping',ru:'шопинг',tr:'[ˈʃɒpɪŋ]',pron:'<b>шо</b>пин'},
+  {en:'stale',ru:'несвежий / устаревший',tr:'[ˈsteɪl]',pron:'<b>стэйл</b>'},
+  {en:'strong',ru:'сильный',tr:'[strɒŋ]',pron:'<b>стронг</b>'},
+  {en:'talented',ru:'талантливый',tr:'[ˈtæləntɪd]',pron:'<b>тэ</b>лэнтид'},
+  {en:'talkative',ru:'разговорчивый',tr:'[ˈtɔːkətɪv]',pron:'<b>то</b>кэтив'},
+  {en:'taxi',ru:'такси',tr:'[ˈtæksɪ]',pron:'<b>тэ</b>кси'},
+  {en:'thin',ru:'тонкий / худой',tr:'[θɪn]',pron:'<b>син</b>'},
+  {en:'uncle',ru:'дядя',tr:'[ʌŋkl]',pron:'<b>анкл</b>'},
+  {en:'watch',ru:'смотреть / наблюдать',tr:'[wɒtʃ]',pron:'<b>воч</b>'},
+  {en:'wet',ru:'мокрый',tr:'[wet]',pron:'<b>вэт</b>'},
+  {en:'abbey',ru:'аббатство',tr:'[ˈæbɪ]',pron:'<b>э</b>би'},
+  {en:'abundant',ru:'обильный / богатый',tr:'[əˈbʌndənt]',pron:'э<b>бан</b>дэнт'},
+  {en:'adopt',ru:'принимать / усыновлять',tr:'[əˈdɒpt]',pron:'э<b>допт</b>'},
+  {en:'area',ru:'площадь / район',tr:'[ˈeərɪə]',pron:'<b>эа</b>риэ'},
+  {en:'assembly',ru:'собрание',tr:'[əˈsemblɪ]',pron:'э<b>сэм</b>бли'},
+  {en:'eagle',ru:'орёл',tr:'[ˈiːɡl]',pron:'<b>игл</b>'},
+  {en:'emblem',ru:'эмблема / символ',tr:'[ˈembləm]',pron:'<b>эм</b>блэм'},
+  {en:'ocean',ru:'океан',tr:'[ˈəʊʃn]',pron:'<b>оуш</b>н'},
+  {en:'appoint',ru:'назначать',tr:'[əˈpɔɪnt]',pron:'э<b>пойнт</b>'},
+  {en:'approve',ru:'одобрять',tr:'[əˈpruːv]',pron:'э<b>прув</b>'},
+  {en:'arctic',ru:'арктический',tr:'[ˈɑːktɪk]',pron:'<b>ак</b>тик'},
+  {en:'armour',ru:'доспехи / броня',tr:'[ˈɑːmə]',pron:'<b>а</b>мэ'},
+  {en:'assemble',ru:'собираться',tr:'[əˈsembl]',pron:'э<b>сэмбл</b>'},
+  {en:'border',ru:'граница / граничить',tr:'[ˈbɔːdə]',pron:'<b>бод</b>э'},
+  {en:'burial',ru:'похороны / захоронение',tr:'[ˈberɪəl]',pron:'<b>бэ</b>риэл'},
+  {en:'capital',ru:'столица',tr:'[ˈkæpɪtl]',pron:'<b>кэ</b>питл'},
+  {en:'chain',ru:'цепь / горная цепь',tr:'[ˈtʃeɪn]',pron:'<b>чэйн</b>'},
+  {en:'channel',ru:'пролив / канал',tr:'[ˈtʃænl]',pron:'<b>чэн</b>л'},
+  {en:'citizen',ru:'гражданин',tr:'[ˈsɪtɪzn]',pron:'<b>си</b>тизэн'},
+  {en:'climate',ru:'климат',tr:'[ˈklaɪmɪt]',pron:'<b>клай</b>мит'},
+  {en:'coal',ru:'уголь',tr:'[ˈkəʊl]',pron:'<b>ко</b>ул'},
+  {en:'consist',ru:'состоять',tr:'[kənˈsɪst]',pron:'кэн<b>сист</b>'},
+  {en:'continental',ru:'континентальный',tr:'[ˌkɒntɪˈnentl]',pron:'конти<b>нэн</b>тл'},
+  {en:'coronation',ru:'коронация',tr:'[ˌkɒrəˈneɪʃn]',pron:'корэ<b>нэй</b>шн'},
+  {en:'crown',ru:'корона',tr:'[ˈkraʊn]',pron:'<b>кра</b>ун'},
+  {en:'daffodil',ru:'нарцисс',tr:'[ˈdæfədɪl]',pron:'<b>дэ</b>фэдил'},
+  {en:'densely',ru:'густо / плотно',tr:'[ˈdenslɪ]',pron:'<b>дэ</b>нсли'},
+  {en:'deposit',ru:'месторождение / залежи',tr:'[dɪˈpɒzɪt]',pron:'ди<b>по</b>зит'},
+  {en:'extend',ru:'простираться / протягиваться',tr:'[ɪkˈstend]',pron:'ик<b>стэнд</b>'},
+  {en:'favourite',ru:'любимый',tr:'[ˈfeɪvərɪt]',pron:'<b>фэй</b>врит'},
+  {en:'federation',ru:'федерация',tr:'[ˌfedəˈreɪʃn]',pron:'фэдэ<b>рэй</b>шн'},
+  {en:'fertile',ru:'плодородный',tr:'[ˈfɜːtaɪl]',pron:'<b>фёт</b>айл'},
+  {en:'flag',ru:'флаг',tr:'[flæɡ]',pron:'<b>флэг</b>'},
+  {en:'forest',ru:'лес',tr:'[ˈfɒrɪst]',pron:'<b>фо</b>рист'},
+  {en:'fortress',ru:'крепость',tr:'[ˈfɔːtrɪs]',pron:'<b>фот</b>рис'},
+  {en:'freedom',ru:'свобода',tr:'[ˈfriːdəm]',pron:'<b>фри</b>дэм'},
+  {en:'gift',ru:'подарок',tr:'[ɡɪft]',pron:'<b>гифт</b>'},
+  {en:'Gothic',ru:'готический',tr:'[ˈɡɒθɪk]',pron:'<b>го</b>зик'},
+  {en:'government',ru:'правительство',tr:'[ˈɡʌvənmənt]',pron:'<b>га</b>вэнмэнт'},
+  {en:'grandfather',ru:'дедушка',tr:'[ˈɡrænfɑːðə]',pron:'<b>грэн</b>фазэ'},
+  {en:'grassland',ru:'степь / луг',tr:'[ˈɡrɑːslænd]',pron:'<b>грас</b>ланд'},
+  {en:'hereditary',ru:'наследственный',tr:'[hɪˈredɪtrɪ]',pron:'хи<b>рэ</b>дитри'},
+  {en:'highland',ru:'нагорье / горная местность',tr:'[ˈhaɪlənd]',pron:'<b>хай</b>лэнд'},
+  {en:'horizontal',ru:'горизонтальный',tr:'[ˌhɒrɪˈzɒntl]',pron:'хори<b>зон</b>тл'},
+  {en:'iconic',ru:'культовый / символический',tr:'[aɪˈkɒnɪk]',pron:'ай<b>ко</b>ник'},
+  {en:'island',ru:'остров',tr:'[ˈaɪlənd]',pron:'<b>ай</b>лэнд'},
+  {en:'jewel',ru:'драгоценность',tr:'[ˈdʒuːəl]',pron:'<b>джуэ</b>л'},
+  {en:'kingdom',ru:'королевство',tr:'[ˈkɪŋdəm]',pron:'<b>кинг</b>дэм'},
+  {en:'knowledge',ru:'знание',tr:'[ˈnɒlɪdʒ]',pron:'<b>но</b>ледж'},
+  {en:'lake',ru:'озеро',tr:'[ˈleɪk]',pron:'<b>лэйк</b>'},
+  {en:'language',ru:'язык',tr:'[ˈlæŋɡwɪdʒ]',pron:'<b>лэнг</b>видж'},
+  {en:'law',ru:'закон',tr:'[lɔː]',pron:'<b>ло</b>'},
+  {en:'lowland',ru:'низменность',tr:'[ˈləʊlənd]',pron:'<b>лоу</b>лэнд'},
+  {en:'magazine',ru:'журнал',tr:'[ˌmæɡəˈziːn]',pron:'мэгэ<b>зин</b>'},
+  {en:'mild',ru:'мягкий (о климате)',tr:'[ˈmaɪld]',pron:'<b>майлд</b>'},
+  {en:'mineral',ru:'минерал / полезное ископаемое',tr:'[ˈmɪnərəl]',pron:'<b>ми</b>нэрэл'},
+  {en:'minister',ru:'министр',tr:'[ˈmɪnɪstə]',pron:'<b>ми</b>нистэ'},
+  {en:'monarch',ru:'монарх',tr:'[ˈmɒnək]',pron:'<b>мо</b>нэк'},
+  {en:'monarchy',ru:'монархия',tr:'[ˈmɒnəkɪ]',pron:'<b>мо</b>нэки'},
+  {en:'monument',ru:'памятник',tr:'[ˈmɒnjəmənt]',pron:'<b>мо</b>нюмэнт'},
+  {en:'mountain',ru:'гора',tr:'[ˈmaʊntɪn]',pron:'<b>маун</b>тин'},
+  {en:'natural',ru:'природный / естественный',tr:'[ˈnætʃrəl]',pron:'<b>нэч</b>рэл'},
+  {en:'official',ru:'официальный',tr:'[əˈfɪʃl]',pron:'э<b>фишл</b>'},
+  {en:'parliament',ru:'парламент',tr:'[ˈpɑːləmənt]',pron:'<b>пар</b>лэмэнт'},
+  {en:'plain',ru:'равнина',tr:'[ˈpleɪn]',pron:'<b>плэйн</b>'},
+  {en:'political',ru:'политический',tr:'[pəˈlɪtɪkl]',pron:'пэ<b>ли</b>тикл'},
+  {en:'population',ru:'население',tr:'[ˌpɒpjəˈleɪʃn]',pron:'попью<b>лэй</b>шн'},
+  {en:'president',ru:'президент',tr:'[ˈprezɪdənt]',pron:'<b>прэ</b>зидэнт'},
+  {en:'resource',ru:'ресурс',tr:'[rɪˈzɔːs]',pron:'ри<b>зос</b>'},
+  {en:'river',ru:'река',tr:'[ˈrɪvə]',pron:'<b>ри</b>вэ'},
+  {en:'rose',ru:'роза',tr:'[ˈrəʊz]',pron:'<b>ро</b>уз'},
+  {en:'sacred',ru:'священный',tr:'[ˈseɪkrɪd]',pron:'<b>сэй</b>крид'},
+  {en:'sea',ru:'море',tr:'[siː]',pron:'<b>си</b>'},
+  {en:'shamrock',ru:'трилистник / клевер',tr:'[ˈʃæmrɒk]',pron:'<b>шэм</b>рок'},
+  {en:'soil',ru:'почва',tr:'[ˈsɔɪl]',pron:'<b>сойл</b>'},
+  {en:'solidarity',ru:'солидарность',tr:'[ˌsɒlɪˈdærɪtɪ]',pron:'соли<b>дэ</b>рити'},
+  {en:'spring',ru:'весна',tr:'[sprɪŋ]',pron:'<b>сприн</b>'},
+  {en:'stripe',ru:'полоса',tr:'[ˈstraɪp]',pron:'<b>страйп</b>'},
+  {en:'surface',ru:'поверхность',tr:'[ˈsɜːfɪs]',pron:'<b>сёф</b>ис'},
+  {en:'symbol',ru:'символ',tr:'[ˈsɪmbl]',pron:'<b>сим</b>бл'},
+  {en:'symbolize',ru:'символизировать',tr:'[ˈsɪmbəlaɪz]',pron:'<b>сим</b>бэлайз'},
+  {en:'take part',ru:'принимать участие',tr:'[ˈteɪk pɑːt]',pron:'<b>тэ</b>йк пат'},
+  {en:'thankful',ru:'благодарный',tr:'[θæŋkfl]',pron:'<b>сэнкфл</b>'},
+  {en:'thistle',ru:'чертополох',tr:'[ˈθɪsl]',pron:'<b>сис</b>л'},
+  {en:'tomb',ru:'гробница / могила',tr:'[tuːm]',pron:'<b>тум</b>'},
+  {en:'unknown',ru:'неизвестный',tr:'[ˈʌnnəʊn]',pron:'<b>а</b>ннноун'},
+  {en:'vast',ru:'огромный / обширный',tr:'[vɑːst]',pron:'<b>васт</b>'},
+  {en:'wealth',ru:'богатство',tr:'[welθ]',pron:'<b>вэлс</b>'},
+  {en:'wreath',ru:'венок',tr:'[riːθ]',pron:'<b>рис</b>'},
+  {en:'zone',ru:'зона',tr:'[ˈzəʊn]',pron:'<b>зо</b>ун'},
+  {en:'bank',ru:'берег реки / банк',tr:'[bæŋk]',pron:'<b>бэнк</b>'},
+  {en:'king',ru:'король',tr:'[kɪŋ]',pron:'<b>кин</b>'},
+  {en:'lord',ru:'лорд',tr:'[lɔːd]',pron:'<b>лод</b>'},
+  {en:'state',ru:'государство / штат',tr:'[ˈsteɪt]',pron:'<b>стэйт</b>'},
+  {en:'territory',ru:'территория',tr:'[ˈterɪtrɪ]',pron:'<b>тэ</b>ритри'},
+  {en:'centre',ru:'центр',tr:'[ˈsentə]',pron:'<b>сэ</b>нтэ'},
+  {en:'concentrate',ru:'концентрироваться',tr:'[ˈkɒnsntreɪt]',pron:'<b>кон</b>сэнтрэйт'},
+  {en:'consider',ru:'считать / рассматривать',tr:'[kənˈsɪdə]',pron:'кэн<b>си</b>дэ'},
+  {en:'deep',ru:'глубокий',tr:'[diːp]',pron:'<b>дип</b>'},
+  {en:'found',ru:'основывать',tr:'[faʊnd]',pron:'<b>фаунд</b>'},
+  {en:'located',ru:'расположенный',tr:'[ləʊˈkeɪtɪd]',pron:'лоу<b>кэй</b>тид'},
+  {en:'military',ru:'военный',tr:'[ˈmɪlɪtrɪ]',pron:'<b>ми</b>литри'},
+  {en:'ore',ru:'руда',tr:'[ɔː]',pron:'<b>о</b>'},
+  {en:'populate',ru:'населять',tr:'[ˈpɒpjəleɪt]',pron:'<b>по</b>пьюлэйт'},
+  {en:'situated',ru:'расположенный',tr:'[ˈsɪtʃueɪtɪd]',pron:'<b>сить</b>юэйтид'},
+  {en:'supply',ru:'снабжение / запас',tr:'[səˈplaɪ]',pron:'сэ<b>плай</b>'},
+  {en:'warm',ru:'тёплый',tr:'[wɔːm]',pron:'<b>вом</b>'},
+  {en:'washed',ru:'омываемый',tr:'[wɒʃt]',pron:'<b>вошт</b>'},
+  {en:'bell',ru:'колокол / звонок',tr:'[bel]',pron:'<b>бэл</b>'},
+  {en:'bench',ru:'скамейка',tr:'[bentʃ]',pron:'<b>бэнч</b>'},
+  {en:'celebration',ru:'праздник / торжество',tr:'[ˌselɪˈbreɪʃn]',pron:'сэли<b>брэй</b>шн'},
+  {en:'chime',ru:'бой часов',tr:'[ˈtʃaɪm]',pron:'<b>чайм</b>'},
+  {en:'church',ru:'церковь',tr:'[tʃɜːtʃ]',pron:'<b>чёч</b>'},
+  {en:'collection',ru:'коллекция',tr:'[kəˈlekʃn]',pron:'кэ<b>лэк</b>шн'},
+  {en:'commander',ru:'командир',tr:'[kəˈmɑːndə]',pron:'кэ<b>ман</b>дэ'},
+  {en:'continent',ru:'континент',tr:'[ˈkɒntɪnənt]',pron:'<b>ко</b>нтинэнт'},
+  {en:'culture',ru:'культура',tr:'[ˈkʌltʃə]',pron:'<b>кал</b>чэ'},
+  {en:'decoration',ru:'украшение',tr:'[ˌdekəˈreɪʃn]',pron:'дэкэ<b>рэй</b>шн'},
+  {en:'defender',ru:'защитник',tr:'[dɪˈfendə]',pron:'ди<b>фэн</b>дэ'},
+  {en:'duty',ru:'долг / обязанность',tr:'[ˈdjuːtɪ]',pron:'<b>дью</b>ти'},
+  {en:'guard',ru:'охрана / стражник',tr:'[ɡɑːd]',pron:'<b>гад</b>'},
+  {en:'guest',ru:'гость',tr:'[ɡest]',pron:'<b>гэст</b>'},
+  {en:'history',ru:'история',tr:'[ˈhɪstrɪ]',pron:'<b>хис</b>три'},
+  {en:'holiday',ru:'праздник / выходной',tr:'[ˈhɒlɪdeɪ]',pron:'<b>хо</b>лидэй'},
+  {en:'museum',ru:'музей',tr:'[mjuːˈzɪəm]',pron:'мью<b>зи</b>эм'},
+  {en:'palace',ru:'дворец',tr:'[ˈpælɪs]',pron:'<b>пэ</b>лис'},
+  {en:'parade',ru:'парад',tr:'[pəˈreɪd]',pron:'пэ<b>рэйд</b>'},
+  {en:'poem',ru:'стихотворение',tr:'[ˈpəʊɪm]',pron:'<b>по</b>уим'},
+  {en:'property',ru:'собственность',tr:'[ˈprɒpətɪ]',pron:'<b>про</b>пэти'},
+  {en:'residence',ru:'резиденция',tr:'[ˈrezɪdəns]',pron:'<b>рэ</b>зидэнс'},
+  {en:'service',ru:'служба / богослужение',tr:'[ˈsɜːvɪs]',pron:'<b>сёв</b>ис'},
+  {en:'song',ru:'песня',tr:'[sɒŋ]',pron:'<b>сон</b>'},
+  {en:'square',ru:'площадь / квадрат',tr:'[ˈskweə]',pron:'<b>сквэ</b>а'},
+  {en:'statue',ru:'статуя',tr:'[ˈstætʃuː]',pron:'<b>стэ</b>тью'},
+  {en:'tower',ru:'башня',tr:'[ˈtaʊə]',pron:'<b>та</b>уэ'},
+  {en:'tradition',ru:'традиция',tr:'[trəˈdɪʃn]',pron:'трэ<b>диш</b>н'},
+  {en:'veteran',ru:'ветеран',tr:'[ˈvetərən]',pron:'<b>вэ</b>тэрэн'},
+  {en:'broadcast',ru:'передавать в эфир',tr:'[ˈbrɔːdkɑːst]',pron:'<b>брод</b>каст'},
+  {en:'celebrate',ru:'праздновать',tr:'[ˈselɪbreɪt]',pron:'<b>сэ</b>либрэйт'},
+  {en:'chamber',ru:'палата / зал',tr:'[ˈtʃeɪmbə]',pron:'<b>чэ</b>ймбэ'},
+  {en:'Christmas',ru:'Рождество',tr:'[ˈkrɪsməs]',pron:'<b>крис</b>мэс'},
+  {en:'collect',ru:'собирать',tr:'[kəˈlekt]',pron:'кэ<b>лэкт</b>'},
+  {en:'come',ru:'приходить / приезжать',tr:'[kʌm]',pron:'<b>кам</b>'},
+  {en:'cook',ru:'готовить еду',tr:'[kʊk]',pron:'<b>кук</b>'},
+  {en:'cost',ru:'стоить',tr:'[kɒst]',pron:'<b>кост</b>'},
+  {en:'dance',ru:'танцевать',tr:'[dɑːns]',pron:'<b>данс</b>'},
+  {en:'do',ru:'делать',tr:'[duː]',pron:'<b>ду</b>'},
+  {en:'early',ru:'рано / ранний',tr:'[ˈɜːlɪ]',pron:'<b>ёл</b>и'},
+  {en:'Easter',ru:'Пасха',tr:'[ˈiːstə]',pron:'<b>ис</b>тэ'},
+  {en:'elect',ru:'избирать',tr:'[ɪˈlekt]',pron:'и<b>лэкт</b>'},
+  {en:'finish',ru:'заканчивать',tr:'[ˈfɪnɪʃ]',pron:'<b>фи</b>ниш'},
+  {en:'gather',ru:'собираться',tr:'[ˈɡæðə]',pron:'<b>гэ</b>зэ'},
+  {en:'get up',ru:'вставать',tr:'[ˈɡet ʌp]',pron:'<b>гэ</b>т ап'},
+  {en:'give',ru:'давать',tr:'[ɡɪv]',pron:'<b>гив</b>'},
+  {en:'glitter',ru:'сверкать / блестеть',tr:'[ˈɡlɪtə]',pron:'<b>гли</b>тэ'},
+  {en:'guitar',ru:'гитара',tr:'[ɡɪˈtɑː]',pron:'ги<b>та</b>'},
+  {en:'Halloween',ru:'Хэллоуин',tr:'[ˌhæləˈwiːn]',pron:'хэлоу<b>ин</b>'},
+  {en:'hear',ru:'слышать',tr:'[ˈhɪə]',pron:'<b>хи</b>э'},
+  {en:'hockey',ru:'хоккей',tr:'[ˈhɒkɪ]',pron:'<b>хо</b>ки'},
+  {en:'independence',ru:'независимость',tr:'[ˌɪndɪˈpendəns]',pron:'инди<b>пэн</b>дэнс'},
+  {en:'jeans',ru:'джинсы',tr:'[dʒiːnz]',pron:'<b>джинз</b>'},
+  {en:'labour',ru:'труд',tr:'[ˈleɪbə]',pron:'<b>лэй</b>бэ'},
+  {en:'learn',ru:'учить / учиться',tr:'[lɜːn]',pron:'<b>лён</b>'},
+  {en:'listen',ru:'слушать',tr:'[ˈlɪsn]',pron:'<b>лис</b>эн'},
+  {en:'live',ru:'жить',tr:'[lɪv]',pron:'<b>лив</b>'},
+  {en:'make',ru:'делать / создавать',tr:'[ˈmeɪk]',pron:'<b>мэйк</b>'},
+  {en:'meal',ru:'трапеза / еда',tr:'[miːl]',pron:'<b>мил</b>'},
+  {en:'midnight',ru:'полночь',tr:'[ˈmɪdnaɪt]',pron:'<b>мид</b>ниэт'},
+  {en:'national',ru:'национальный',tr:'[ˈnæʃnəl]',pron:'<b>нэш</b>нэл'},
+  {en:'naval',ru:'морской / военно-морской',tr:'[ˈneɪvəl]',pron:'<b>нэй</b>вэл'},
+  {en:'object',ru:'предмет / объект',tr:'[ˈɒbdʒɪkt]',pron:'<b>о</b>бджикт'},
+  {en:'open',ru:'открывать',tr:'[ˈəʊpən]',pron:'<b>оу</b>пэн'},
+  {en:'participate',ru:'участвовать',tr:'[pɑːˈtɪsɪpeɪt]',pron:'па<b>тиси</b>пэйт'},
+  {en:'play',ru:'играть',tr:'[ˈpleɪ]',pron:'<b>плэй</b>'},
+  {en:'prefer',ru:'предпочитать',tr:'[prɪˈfɜː]',pron:'при<b>фё</b>'},
+  {en:'present',ru:'подарок / настоящее',tr:'[preznt]',pron:'<b>прэзнт</b>'},
+  {en:'read',ru:'читать',tr:'[riːd]',pron:'<b>рид</b>'},
+  {en:'rebuild',ru:'перестраивать',tr:'[ˌriːˈbɪld]',pron:'ри<b>билд</b>'},
+  {en:'relative',ru:'родственник',tr:'[ˈrelətɪv]',pron:'<b>рэ</b>лэтив'},
+  {en:'relax',ru:'отдыхать / расслабляться',tr:'[rɪˈlæks]',pron:'ри<b>лэкс</b>'},
+  {en:'religious',ru:'религиозный',tr:'[rɪˈlɪdʒəs]',pron:'ри<b>лид</b>жэс'},
+  {en:'royal',ru:'королевский',tr:'[ˈrɔɪəl]',pron:'<b>рой</b>эл'},
+  {en:'sing',ru:'петь',tr:'[sɪŋ]',pron:'<b>син</b>'},
+  {en:'study',ru:'учиться / изучать',tr:'[ˈstʌdɪ]',pron:'<b>ста</b>ди'},
+  {en:'tolerate',ru:'терпимо относиться',tr:'[ˈtɒləreɪt]',pron:'<b>то</b>лэрэйт'},
+  {en:'travel',ru:'путешествовать',tr:'[ˈtrævl]',pron:'<b>трэв</b>л'},
+  {en:'university',ru:'университет',tr:'[juːˌnɪˈvɜːsɪtɪ]',pron:'юни<b>вё</b>сити'},
+  {en:'victory',ru:'победа',tr:'[ˈvɪktərɪ]',pron:'<b>вик</b>тэри'},
+  {en:'visit',ru:'навещать / посещать',tr:'[ˈvɪzɪt]',pron:'<b>ви</b>зит'},
+  {en:'wake',ru:'просыпаться',tr:'[ˈweɪk]',pron:'<b>вэйк</b>'},
+  {en:'wear',ru:'носить (одежду)',tr:'[ˈweə]',pron:'<b>вэ</b>а'},
+  {en:'write',ru:'писать',tr:'[ˈraɪt]',pron:'<b>райт</b>'},
+  {en:'advice',ru:'совет',tr:'[ədˈvaɪs]',pron:'эд<b>вайс</b>'},
+  {en:'apple',ru:'яблоко',tr:'[æpl]',pron:'<b>эпл</b>'},
+  {en:'iron',ru:'утюг / железо',tr:'[ˈaɪən]',pron:'<b>а</b>йэн'},
+  {en:'ox',ru:'вол',tr:'[ɒks]',pron:'<b>окс</b>'},
+  {en:'around',ru:'вокруг',tr:'[əˈraʊnd]',pron:'э<b>раунд</b>'},
+  {en:'back',ru:'назад / обратно',tr:'[bæk]',pron:'<b>бэк</b>'},
+  {en:'beauty',ru:'красота',tr:'[ˈbjuːtɪ]',pron:'<b>бью</b>ти'},
+  {en:'before',ru:'перед / до',tr:'[bɪˈfɔː]',pron:'би<b>фо</b>'},
+  {en:'behaviour',ru:'поведение',tr:'[bɪˈheɪvjə]',pron:'би<b>хэй</b>вьэ'},
+  {en:'carton',ru:'упаковка (картонная)',tr:'[ˈkɑːtən]',pron:'<b>ка</b>тэн'},
+  {en:'cheese',ru:'сыр',tr:'[tʃiːz]',pron:'<b>чиз</b>'},
+  {en:'cotton',ru:'хлопок',tr:'[kɒtn]',pron:'<b>ко</b>тэн'},
+  {en:'deer',ru:'олень',tr:'[dɪˈə]',pron:'ди<b>э</b>'},
+  {en:'document',ru:'документ',tr:'[ˈdɒkjəmənt]',pron:'<b>до</b>кьюмэнт'},
+  {en:'down',ru:'вниз',tr:'[ˈdaʊn]',pron:'<b>да</b>ун'},
+  {en:'far',ru:'далеко',tr:'[fɑː]',pron:'<b>фа</b>'},
+  {en:'feet',ru:'ступни (мн.ч. от foot)',tr:'[fiːt]',pron:'<b>фит</b>'},
+  {en:'few',ru:'мало (исч.)',tr:'[fjuː]',pron:'<b>фью</b>'},
+  {en:'fish',ru:'рыба',tr:'[fɪʃ]',pron:'<b>фиш</b>'},
+  {en:'foot',ru:'ступня',tr:'[fʊt]',pron:'<b>фут</b>'},
+  {en:'fruit',ru:'фрукт / фрукты',tr:'[fruːt]',pron:'<b>фрут</b>'},
+  {en:'furniture',ru:'мебель',tr:'[ˈfɜːnɪtʃə]',pron:'<b>фё</b>ничэ'},
+  {en:'geese',ru:'гуси (мн.ч. от goose)',tr:'[ɡiːs]',pron:'<b>гис</b>'},
+  {en:'goose',ru:'гусь',tr:'[ɡuːs]',pron:'<b>гус</b>'},
+  {en:'in front of',ru:'перед (спереди)',tr:'[ˈɪn frʌnt əv]',pron:'<b>и</b>н франт эв'},
+  {en:'information',ru:'информация',tr:'[ˌɪnfəˈmeɪʃn]',pron:'инфэ<b>мэй</b>шн'},
+  {en:'kilogramme',ru:'килограмм',tr:'[ˈkɪləɡræm]',pron:'<b>ки</b>лэгрэм'},
+  {en:'left',ru:'левый / налево',tr:'[left]',pron:'<b>лэфт</b>'},
+  {en:'little',ru:'мало (неисч.)',tr:'[ˈlɪtl]',pron:'<b>лит</b>л'},
+  {en:'loaf',ru:'буханка',tr:'[ˈləʊf]',pron:'<b>ло</b>уф'},
+  {en:'luggage',ru:'багаж',tr:'[ˈlʌɡɪdʒ]',pron:'<b>ла</b>гидж'},
+  {en:'mice',ru:'мыши (мн.ч. от mouse)',tr:'[ˈmaɪs]',pron:'<b>майс</b>'},
+  {en:'money',ru:'деньги',tr:'[ˈmʌnɪ]',pron:'<b>ма</b>ни'},
+  {en:'mouse',ru:'мышь',tr:'[ˈmaʊs]',pron:'<b>ма</b>ус'},
+  {en:'much',ru:'много (неисч.)',tr:'[mʌtʃ]',pron:'<b>мач</b>'},
+  {en:'near',ru:'рядом / близко',tr:'[ˈnɪə]',pron:'<b>ни</b>э'},
+  {en:'news',ru:'новости',tr:'[njuːz]',pron:'<b>ньюз</b>'},
+  {en:'oxen',ru:'волы (мн.ч. от ox)',tr:'[ˈɒksən]',pron:'<b>о</b>ксэн'},
+  {en:'packet',ru:'пачка / пакет',tr:'[ˈpækɪt]',pron:'<b>пэ</b>кит'},
+  {en:'paint',ru:'краска',tr:'[ˈpeɪnt]',pron:'<b>пэйнт</b>'},
+  {en:'pence',ru:'пенсы (мн.ч. от penny)',tr:'[pens]',pron:'<b>пэнс</b>'},
+  {en:'penny',ru:'пенни',tr:'[ˈpenɪ]',pron:'<b>пэ</b>ни'},
+  {en:'person',ru:'человек / личность',tr:'[ˈpɜːsn]',pron:'<b>пёс</b>эн'},
+  {en:'piece',ru:'кусок',tr:'[piːs]',pron:'<b>пис</b>'},
+  {en:'right',ru:'правый / направо',tr:'[ˈraɪt]',pron:'<b>райт</b>'},
+  {en:'sheep',ru:'овца / овцы',tr:'[ʃiːp]',pron:'<b>шип</b>'},
+  {en:'slice',ru:'ломтик',tr:'[ˈslaɪs]',pron:'<b>слайс</b>'},
+  {en:'straight',ru:'прямо',tr:'[ˈstreɪt]',pron:'<b>стрэйт</b>'},
+  {en:'sugar',ru:'сахар',tr:'[ˈʃʊɡə]',pron:'<b>шу</b>гэ'},
+  {en:'teeth',ru:'зубы (мн.ч. от tooth)',tr:'[tiːθ]',pron:'<b>тис</b>'},
+  {en:'tin',ru:'жестяная банка',tr:'[tɪn]',pron:'<b>тин</b>'},
+  {en:'tooth',ru:'зуб',tr:'[tuːθ]',pron:'<b>тус</b>'},
+  {en:'traffic',ru:'движение / трафик',tr:'[ˈtræfɪk]',pron:'<b>трэ</b>фик'},
+  {en:'up',ru:'вверх',tr:'[ʌp]',pron:'<b>ап</b>'},
+  {en:'bus',ru:'автобус',tr:'[bʌs]',pron:'<b>бас</b>'},
+  {en:'bush',ru:'куст',tr:'[bʊʃ]',pron:'<b>буш</b>'},
+  {en:'chief',ru:'начальник / вождь',tr:'[tʃiːf]',pron:'<b>чиф</b>'},
+  {en:'coach',ru:'тренер / автобус (дальний)',tr:'[ˈkəʊtʃ]',pron:'<b>ко</b>уч'},
+  {en:'copy',ru:'копия',tr:'[ˈkɒpɪ]',pron:'<b>ко</b>пи'},
+  {en:'designer',ru:'дизайнер',tr:'[dɪˈzaɪnə]',pron:'ди<b>зай</b>нэ'},
+  {en:'horse',ru:'лошадь',tr:'[hɔːs]',pron:'<b>хос</b>'},
+  {en:'menu',ru:'меню',tr:'[ˈmenjuː]',pron:'<b>мэ</b>нью'},
+  {en:'photo',ru:'фотография',tr:'[ˈfəʊtəʊ]',pron:'<b>фоу</b>тоу'},
+  {en:'piano',ru:'пианино',tr:'[pɪˈænəʊ]',pron:'пи<b>эн</b>оу'},
+  {en:'place',ru:'место',tr:'[ˈpleɪs]',pron:'<b>плэйс</b>'},
+  {en:'prize',ru:'приз',tr:'[ˈpraɪz]',pron:'<b>прайз</b>'},
+  {en:'road',ru:'дорога',tr:'[ˈrəʊd]',pron:'<b>ро</b>уд'},
+  {en:'roof',ru:'крыша',tr:'[ruːf]',pron:'<b>руф</b>'},
+  {en:'tomato',ru:'помидор',tr:'[təˈmɑːtəʊ]',pron:'тэ<b>ма</b>тоу'},
+  {en:'wolf',ru:'волк',tr:'[wʊlf]',pron:'<b>вулф</b>'},
+  {en:'abroad',ru:'за рубежом',tr:'[əˈbrɔːd]',pron:'э<b>брод</b>'},
+  {en:'across',ru:'через / напротив',tr:'[əˈkrɒs]',pron:'э<b>крос</b>'},
+  {en:'acquaintance',ru:'знакомый',tr:'[əˈkweɪntəns]',pron:'э<b>квэй</b>нтэнс'},
+  {en:'always',ru:'всегда',tr:'[ˈɔːlweɪz]',pron:'<b>о</b>лвэйз'},
+  {en:'beautiful',ru:'красивый',tr:'[ˈbjuːtɪfl]',pron:'<b>бью</b>тифл'},
+  {en:'behind',ru:'за (позади)',tr:'[bɪˈhaɪnd]',pron:'би<b>хайнд</b>'},
+  {en:'blonde',ru:'блондинка / светловолосый',tr:'[blɒnd]',pron:'<b>блонд</b>'},
+  {en:'email',ru:'электронная почта',tr:'[ˈiːmeɪl]',pron:'<b>и</b>мэйл'},
+  {en:'exchange',ru:'обмениваться',tr:'[ɪkˈstʃeɪndʒ]',pron:'ик<b>стчэй</b>ндж'},
+  {en:'fond of',ru:'любить / увлекаться',tr:'[ˈfɒnd ɒv]',pron:'<b>фо</b>нд ов'},
+  {en:'gate',ru:'ворота',tr:'[ˈɡeɪt]',pron:'<b>гэйт</b>'},
+  {en:'into',ru:'в (направление)',tr:'[ˈɪntə]',pron:'<b>и</b>нтэ'},
+  {en:'look',ru:'смотреть',tr:'[lʊk]',pron:'<b>лук</b>'},
+  {en:'married',ru:'женатый / замужем',tr:'[ˈmærɪd]',pron:'<b>мэ</b>рид'},
+  {en:'next to',ru:'рядом с',tr:'[ˈnekst tə]',pron:'<b>нэ</b>кст тэ'},
+  {en:'occasionally',ru:'иногда / время от времени',tr:'[əˈkeɪʒənəlɪ]',pron:'э<b>кэй</b>жэнэли'},
+  {en:'often',ru:'часто',tr:'[ˈɒfn]',pron:'<b>оф</b>эн'},
+  {en:'out of',ru:'из (направление)',tr:'[ˈaʊt əv]',pron:'<b>а</b>ут эв'},
+  {en:'over',ru:'над',tr:'[əˈʊvə]',pron:'о<b>у</b>вэ'},
+  {en:'seldom',ru:'редко',tr:'[ˈseldəm]',pron:'<b>сэл</b>дэм'},
+  {en:'short',ru:'короткий / невысокий',tr:'[ʃɔːt]',pron:'<b>шот</b>'},
+  {en:'Skype',ru:'Скайп',tr:'[ˈskaɪp]',pron:'<b>скайп</b>'},
+  {en:'sociology',ru:'социология',tr:'[ˌsəʊsɪˈɒlədʒɪ]',pron:'соуси<b>о</b>лэджи'},
+  {en:'tall',ru:'высокий',tr:'[tɔːl]',pron:'<b>тол</b>'},
+  {en:'through',ru:'через (сквозь)',tr:'[θruː]',pron:'<b>сру</b>'},
+  {en:'travelling',ru:'путешествие',tr:'[ˈtrævəlɪŋ]',pron:'<b>трэ</b>вэлин'},
+  {en:'under',ru:'под',tr:'[ˈʌndə]',pron:'<b>а</b>ндэ'},
+  {en:'alarm',ru:'будильник',tr:'[əˈlɑːm]',pron:'э<b>лам</b>'},
+  {en:'break',ru:'перерыв',tr:'[ˈbreɪk]',pron:'<b>брэйк</b>'},
+  {en:'canteen',ru:'столовая',tr:'[kænˈtiːn]',pron:'кэн<b>тин</b>'},
+  {en:'college',ru:'колледж',tr:'[ˈkɒlɪdʒ]',pron:'<b>ко</b>лидж'},
+  {en:'groupmate',ru:'одногруппник',tr:'[ˈɡruːpmeɪt]',pron:'<b>груп</b>мэйт'},
+  {en:'hair',ru:'волосы',tr:'[ˈheə]',pron:'<b>хэ</b>а'},
+  {en:'homework',ru:'домашнее задание',tr:'[ˈhəʊmwɜːk]',pron:'<b>хоум</b>вёк'},
+  {en:'radio',ru:'радио',tr:'[ˈreɪdɪəʊ]',pron:'<b>рэй</b>диоу'},
+  {en:'shower',ru:'душ',tr:'[ˈʃaʊə]',pron:'<b>шау</b>э'},
+  {en:'walk',ru:'прогулка',tr:'[wɔːk]',pron:'<b>вок</b>'},
+  {en:'brush',ru:'чистить / расчёсывать',tr:'[brʌʃ]',pron:'<b>браш</b>'},
+  {en:'busy',ru:'занятой',tr:'[ˈbɪzɪ]',pron:'<b>би</b>зи'},
+  {en:'dress',ru:'одеваться',tr:'[dres]',pron:'<b>дрэс</b>'},
+  {en:'during',ru:'во время',tr:'[ˈdjʊərɪŋ]',pron:'<b>дью</b>эрин'},
+  {en:'each',ru:'каждый',tr:'[iːtʃ]',pron:'<b>ич</b>'},
+  {en:'evening',ru:'вечер',tr:'[ˈiːvnɪŋ]',pron:'<b>ив</b>нин'},
+  {en:'exactly',ru:'ровно / точно',tr:'[ɪɡˈzæktlɪ]',pron:'иг<b>зэк</b>тли'},
+  {en:'free',ru:'свободный',tr:'[friː]',pron:'<b>фри</b>'},
+  {en:'get dressed',ru:'одеваться',tr:'[ˈɡet drest]',pron:'<b>гэ</b>т дрэст'},
+  {en:'go for a walk',ru:'идти гулять',tr:'[ˈɡəʊ fər ə wɔːk]',pron:'<b>го</b>у фэ э вок'},
+  {en:'last',ru:'длиться',tr:'[lɑːst]',pron:'<b>ласт</b>'},
+  {en:'middle',ru:'середина',tr:'[ˈmɪdl]',pron:'<b>мид</b>л'},
+  {en:'morning',ru:'утро',tr:'[ˈmɔːnɪŋ]',pron:'<b>мо</b>нин'},
+  {en:'sometimes',ru:'иногда',tr:'[ˈsʌmtaɪmz]',pron:'<b>сам</b>таймз'},
+  {en:'sport',ru:'спорт',tr:'[spɔːt]',pron:'<b>спот</b>'},
+  {en:'start',ru:'начинаться',tr:'[stɑːt]',pron:'<b>стат</b>'},
+  {en:'stay',ru:'оставаться',tr:'[ˈsteɪ]',pron:'<b>стэй</b>'},
+  {en:'usually',ru:'обычно',tr:'[ˈjuːʒuəlɪ]',pron:'<b>юж</b>уэли'},
+  {en:'working day',ru:'рабочий день',tr:'[ˈwɜːkɪŋ deɪ]',pron:'<b>вёк</b>ин дэй'},
+  {en:'bedside table',ru:'тумбочка',tr:'[ˈbedsaɪd teɪbl]',pron:'<b>бэд</b>сайд тэйбл'},
+  {en:'bird',ru:'птица',tr:'[bɜːd]',pron:'<b>бёд</b>'},
+  {en:'bottle',ru:'бутылка',tr:'[ˈbɒtl]',pron:'<b>бот</b>л'},
+  {en:'cage',ru:'клетка',tr:'[ˈkeɪdʒ]',pron:'<b>кэйдж</b>'},
+  {en:'cloud',ru:'облако',tr:'[ˈklaʊd]',pron:'<b>кла</b>уд'},
+  {en:'coffee-table',ru:'журнальный столик',tr:'[ˈkɒfɪ teɪbl]',pron:'<b>ко</b>фи тэйбл'},
+  {en:'cup',ru:'чашка',tr:'[kʌp]',pron:'<b>кап</b>'},
+  {en:'dish',ru:'блюдо / тарелка',tr:'[dɪʃ]',pron:'<b>диш</b>'},
+  {en:'distance',ru:'расстояние',tr:'[ˈdɪstəns]',pron:'<b>дис</b>тэнс'},
+  {en:'family',ru:'семья',tr:'[ˈfæmɪlɪ]',pron:'<b>фэ</b>мили'},
+  {en:'flower',ru:'цветок',tr:'[ˈflaʊə]',pron:'<b>флауэ</b>'},
+  {en:'fridge',ru:'холодильник',tr:'[frɪdʒ]',pron:'<b>фридж</b>'},
+  {en:'garage',ru:'гараж',tr:'[ˈɡærɑːʒ]',pron:'<b>гэ</b>раж'},
+  {en:'hall',ru:'прихожая / зал',tr:'[hɔːl]',pron:'<b>хол</b>'},
+  {en:'hour',ru:'час',tr:'[ˈaʊə]',pron:'<b>а</b>уэ'},
+  {en:'kilometre',ru:'километр',tr:'[kɪˈlɒmɪtə]',pron:'ки<b>ло</b>митэ'},
+  {en:'landing',ru:'лестничная площадка',tr:'[ˈlændɪŋ]',pron:'<b>лэн</b>дин'},
+  {en:'letter',ru:'письмо / буква',tr:'[ˈletə]',pron:'<b>лэт</b>э'},
+  {en:'number',ru:'номер / число',tr:'[ˈnʌmbə]',pron:'<b>нам</b>бэ'},
+  {en:'orange',ru:'апельсин',tr:'[ˈɒrɪndʒ]',pron:'<b>о</b>риндж'},
+  {en:'page',ru:'страница',tr:'[ˈpeɪdʒ]',pron:'<b>пэйдж</b>'},
+  {en:'pear',ru:'груша',tr:'[ˈpeə]',pron:'<b>пэ</b>а'},
+  {en:'sky',ru:'небо',tr:'[ˈskaɪ]',pron:'<b>скай</b>'},
+  {en:'telephone',ru:'телефон',tr:'[ˈtelɪfəʊn]',pron:'<b>тэ</b>лифоун'},
+  {en:'vase',ru:'ваза',tr:'[vɑːz]',pron:'<b>ваз</b>'},
+  {en:'watermelon',ru:'арбуз',tr:'[ˈwɔːtəmelən]',pron:'<b>во</b>тэмэлэн'},
+  {en:'birthday',ru:'день рождения',tr:'[ˈbɜːθdeɪ]',pron:'<b>бёс</b>дэй'},
+  {en:'central',ru:'центральный',tr:'[ˈsentrəl]',pron:'<b>сэн</b>трэл'},
+  {en:'cold',ru:'холодный',tr:'[ˈkəʊld]',pron:'<b>ко</b>улд'},
+  {en:'Earth',ru:'Земля',tr:'[ɜːθ]',pron:'<b>ёс</b>'},
+  {en:'electricity',ru:'электричество',tr:'[ɪˌlekˈtrɪsɪtɪ]',pron:'илэк<b>три</b>сити'},
+  {en:'gas',ru:'газ',tr:'[ɡæs]',pron:'<b>гэс</b>'},
+  {en:'glad',ru:'рад / довольный',tr:'[ɡlæd]',pron:'<b>глэд</b>'},
+  {en:'happiness',ru:'счастье',tr:'[ˈhæpɪnəs]',pron:'<b>хэ</b>пинэс'},
+  {en:'hot',ru:'горячий / жаркий',tr:'[hɒt]',pron:'<b>хот</b>'},
+  {en:'ill',ru:'больной',tr:'[ɪl]',pron:'<b>ил</b>'},
+  {en:'January',ru:'январь',tr:'[ˈdʒænjuərɪ]',pron:'<b>джэ</b>нюэри'},
+  {en:'juice',ru:'сок',tr:'[dʒuːs]',pron:'<b>джус</b>'},
+  {en:'milk',ru:'молоко',tr:'[mɪlk]',pron:'<b>милк</b>'},
+  {en:'nice',ru:'приятный / хороший',tr:'[ˈnaɪs]',pron:'<b>найс</b>'},
+  {en:'somebody',ru:'кто-то',tr:'[ˈsʌmbɒdɪ]',pron:'<b>сам</b>бади'},
+  {en:'Sun',ru:'Солнце',tr:'[sʌn]',pron:'<b>сан</b>'},
+  {en:'test',ru:'контрольная работа / тест',tr:'[test]',pron:'<b>тэст</b>'},
+  {en:'tired',ru:'усталый',tr:'[ˈtaɪəd]',pron:'<b>та</b>йэд'},
+  {en:'wallpaper',ru:'обои',tr:'[ˈwɔːlpeɪpə]',pron:'<b>вол</b>пэйпэ'},
+  {en:'water',ru:'вода',tr:'[ˈwɔːtə]',pron:'<b>во</b>тэ'},
+  {en:'bicycle',ru:'велосипед',tr:'[ˈbaɪsɪkl]',pron:'<b>бай</b>сикл'},
+  {en:'boat',ru:'лодка',tr:'[ˈbəʊt]',pron:'<b>бо</b>ут'},
+  {en:'bookcase',ru:'книжный шкаф',tr:'[ˈbʊkkeɪs]',pron:'<b>бук</b>кэйс'},
+  {en:'box',ru:'коробка',tr:'[bɒks]',pron:'<b>бокс</b>'},
+  {en:'cake',ru:'торт / пирог',tr:'[ˈkeɪk]',pron:'<b>кэйк</b>'},
+  {en:'carpet',ru:'ковёр',tr:'[ˈkɑːpɪt]',pron:'<b>ка</b>пит'},
+  {en:'concert',ru:'концерт',tr:'[ˈkɒnsət]',pron:'<b>ко</b>нсэт'},
+  {en:'corner',ru:'угол',tr:'[ˈkɔːnə]',pron:'<b>ко</b>нэ'},
+  {en:'glass',ru:'стакан',tr:'[ɡlɑːs]',pron:'<b>глас</b>'},
+  {en:'group',ru:'группа',tr:'[ɡruːp]',pron:'<b>груп</b>'},
+  {en:'minute',ru:'минута',tr:'[ˈmɪnɪt]',pron:'<b>ми</b>нит'},
+  {en:'month',ru:'месяц',tr:'[mʌnθ]',pron:'<b>манс</b>'},
+  {en:'painting',ru:'картина',tr:'[ˈpeɪntɪŋ]',pron:'<b>пэйн</b>тин'},
+  {en:'picture',ru:'картинка / рисунок',tr:'[ˈpɪktʃə]',pron:'<b>пик</b>чэ'},
+  {en:'reason',ru:'причина',tr:'[ˈriːzn]',pron:'<b>риз</b>эн'},
+  {en:'rule',ru:'правило',tr:'[ruːl]',pron:'<b>рул</b>'},
+  {en:'second',ru:'секунда',tr:'[ˈsekənd]',pron:'<b>сэ</b>кэнд'},
+  {en:'sweet',ru:'конфета',tr:'[swiːt]',pron:'<b>свит</b>'},
+  {en:'wall',ru:'стена',tr:'[wɔːl]',pron:'<b>вол</b>'},
+  {en:'week',ru:'неделя',tr:'[wiːk]',pron:'<b>вик</b>'},
+  {en:'year',ru:'год',tr:'[ˈjɪə]',pron:'<b>йи</b>э'},
+  {en:'anybody',ru:'кто-нибудь / никто',tr:'[ˈenɪbɒdɪ]',pron:'<b>эни</b>бади'},
+  {en:'arrive',ru:'приезжать / прибывать',tr:'[əˈraɪv]',pron:'э<b>райв</b>'},
+  {en:'big',ru:'большой',tr:'[bɪɡ]',pron:'<b>биг</b>'},
+  {en:'block of flats',ru:'многоквартирный дом',tr:'[ˈblɒk əv flæts]',pron:'<b>бло</b>к эв флэтс'},
+  {en:'convenience',ru:'удобство',tr:'[kənˈviːnɪəns]',pron:'кэн<b>ви</b>нэнс'},
+  {en:'floor',ru:'этаж / пол',tr:'[flɔː]',pron:'<b>фло</b>'},
+  {en:'foreign',ru:'иностранный',tr:'[ˈfɒrɪn]',pron:'<b>фо</b>рин'},
+  {en:'fourth',ru:'четвёртый',tr:'[fɔːθ]',pron:'<b>фос</b>'},
+  {en:'game',ru:'игра',tr:'[ˈɡeɪm]',pron:'<b>гэйм</b>'},
+  {en:'modern',ru:'современный',tr:'[ˈmɒdən]',pron:'<b>мо</b>дэн'},
+  {en:'new',ru:'новый',tr:'[njuː]',pron:'<b>ньу</b>'},
+  {en:'outskirts',ru:'окраина',tr:'[ˈaʊtskɜːts]',pron:'<b>а</b>утскётс'},
+  {en:'sad',ru:'грустный',tr:'[sæd]',pron:'<b>сэд</b>'}
+].sort((a,b) => sortKey(a.en).localeCompare(sortKey(b.en)));
+
+function load() {
+  try {
+    const d = localStorage.getItem('vocab_v1');
+    if(d) words = JSON.parse(d); else words = [];
+  } catch(e) { words = []; }
+  // Миграция: исправляем артикль 'a' перед гласными на 'an'
+  const vowels = /^[aeiouAEIOU]/;
+  let migrated = false;
+  words.forEach(w => {
+    // strip article from en
+    const stripped = w.en.replace(/^(an?|the) /i, '');
+    if(stripped !== w.en) { w.en = stripped; migrated = true; }
+    // Sync tr and pron from SEED_WORDS
+    const sw = SEED_WORDS.find(s => s.en.toLowerCase() === w.en.toLowerCase());
+    if(sw) {
+      if(sw.tr && w.tr !== sw.tr) { w.tr = sw.tr; migrated = true; }
+      if(sw.pron && w.pron !== sw.pron) { w.pron = sw.pron; migrated = true; }
+    }
+  });
+  if(migrated) save();
+  // Всегда добавляем слова из теста, которых ещё нет
+  let added = false;
+  SEED_WORDS.forEach(sw => {
+    if(!words.find(w => w.en.toLowerCase() === sw.en.toLowerCase())) {
+      words.push({ id: uid(), ...sw, status: 'new', added: Date.now() });
+      added = true;
+    }
+  });
+  if(added) save();
+}
+
+load();
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+// ── VOICE ──
+function loadVoices() {
+  voices = synth.getVoices().filter(v => v.lang.startsWith('en'));
+  if(!voices.length) voices = synth.getVoices();
+  const sel = document.getElementById('voiceSelect');
+  if(!sel) return;
+  sel.innerHTML = '';
+  voices.forEach(v => { const o = document.createElement('option'); o.value = v.name; o.textContent = v.name + (v.lang ? ` (${v.lang})` : ''); sel.appendChild(o); });
+  const pref = voices.find(v => v.name.includes('Google') && v.lang === 'en-US') || voices.find(v => v.lang === 'en-US') || voices[0];
+  if(pref) sel.value = pref.name;
+}
+if(synth) { synth.onvoiceschanged = loadVoices; loadVoices(); }
+document.getElementById('rateSlider').oninput = e => document.getElementById('rateVal').textContent = parseFloat(e.target.value).toFixed(1);
+
+function speak(text) {
+  synth.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  const sel = document.getElementById('voiceSelect');
+  utt.voice = voices.find(v => v.name === sel.value) || voices[0];
+  utt.rate = parseFloat(document.getElementById('rateSlider').value);
+  utt.lang = 'en-US';
+  synth.speak(utt);
+}
+
+// ── PAGES ──
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page' + id.charAt(0).toUpperCase() + id.slice(1)).classList.add('active');
+  btn.classList.add('active');
+  if(id === 'words') renderWords();
+  if(id === 'train') trainInit();
+  if(id === 'progress') renderProgress();
+}
+
+// ── ЛОКАЛЬНЫЙ ГЕНЕРАТОР ПРОИЗНОШЕНИЯ (без сети) ──
+const TR_DICT = {
+  // Самые частые слова начального уровня
+  'the':['[ðə]','зэ'],'a':['[ə]','э'],'an':['[æn]','эн'],'is':['[ɪz]','из'],'are':['[ɑː]','а'],
+  'am':['[æm]','эм'],'was':['[wɒz]','воз'],'were':['[wɜː]','вё'],'be':['[biː]','би'],
+  'have':['[hæv]','хэв'],'has':['[hæz]','хэз'],'had':['[hæd]','хэд'],'do':['[duː]','ду'],
+  'does':['[dʌz]','даз'],'did':['[dɪd]','дид'],'will':['[wɪl]','вил'],'would':['[wʊd]','вуд'],
+  'can':['[kæn]','кэн'],'could':['[kʊd]','куд'],'may':['[meɪ]','мэй'],'might':['[maɪt]','майт'],
+  'should':['[ʃʊd]','шуд'],'must':['[mʌst]','маст'],
+  'i':['[aɪ]','ай'],'you':['[juː]','ю'],'he':['[hiː]','хи'],'she':['[ʃiː]','ши'],
+  'it':['[ɪt]','ит'],'we':['[wiː]','ви'],'they':['[ðeɪ]','зэй'],'me':['[miː]','ми'],
+  'him':['[hɪm]','хим'],'her':['[hɜː]','хё'],'us':['[ʌs]','ас'],'them':['[ðem]','зэм'],
+  'my':['[maɪ]','май'],'your':['[jɔː]','йо'],'his':['[hɪz]','хиз'],'its':['[ɪts]','итс'],
+  'our':['[aʊə]','ауэ'],'their':['[ðeə]','зэа'],
+  'this':['[ðɪs]','зис'],'that':['[ðæt]','зэт'],'these':['[ðiːz]','зиз'],'those':['[ðəʊz]','зоуз'],
+  'what':['[wɒt]','вот'],'who':['[huː]','ху'],'where':['[weə]','вэа'],'when':['[wen]','вэн'],
+  'why':['[waɪ]','вай'],'how':['[haʊ]','хау'],'which':['[wɪtʃ]','витч'],
+  'here':['[hɪə]','хиэ'],'there':['[ðeə]','зэа'],'now':['[naʊ]','нау'],'then':['[ðen]','зэн'],
+  'yes':['[jes]','йес'],'no':['[nəʊ]','ноу'],'not':['[nɒt]','нот'],'also':['[ɔːlsəʊ]','олсоу'],
+  'and':['[ænd]','энд'],'but':['[bʌt]','бат'],'or':['[ɔː]','о'],'so':['[səʊ]','соу'],
+  'if':['[ɪf]','иф'],'because':['[bɪkɒz]','бикоз'],'please':['[pliːz]','плиз'],
+  'thank':['[θæŋk]','сэнк'],'thanks':['[θæŋks]','сэнкс'],'sorry':['[sɒrɪ]','сори'],
+  'excuse':['[ɪkskjuːz]','иксКьюз'],'hello':['[həˈləʊ]','хэлоу'],'hi':['[haɪ]','хай'],
+  'bye':['[baɪ]','бай'],'good':['[ɡʊd]','гуд'],'bad':['[bæd]','бэд'],
+  'morning':['[mɔːnɪŋ]','монинг'],'evening':['[iːvnɪŋ]','ивнинг'],'night':['[naɪt]','найт'],
+  'day':['[deɪ]','дэй'],'today':['[təˈdeɪ]','тудэй'],'tomorrow':['[təˈmɒrəʊ]','тумороу'],
+  'yesterday':['[jestədeɪ]','йестэдэй'],'time':['[taɪm]','тайм'],'year':['[jɪə]','йиэ'],
+  'week':['[wiːk]','вик'],'month':['[mʌnθ]','манс'],
+  'home':['[həʊm]','хоум'],'house':['[haʊs]','хаус'],'school':['[skuːl]','скул'],
+  'class':['[klɑːs]','клас'],'lesson':['[lesn]','лесн'],'book':['[bʊk]','бук'],
+  'pen':['[pen]','пэн'],'pencil':['[pensl]','пэнсл'],'table':['[teɪbl]','тэйбл'],
+  'chair':['[tʃeə]','чэа'],'door':['[dɔː]','до'],'window':['[wɪndəʊ]','виндоу'],
+  'room':['[ruːm]','рум'],'bag':['[bæg]','бэг'],'notebook':['[nəʊtbʊk]','ноутбук'],
+  'board':['[bɔːd]','бод'],'desk':['[desk]','дэск'],'teacher':['[tiːtʃə]','тичэ'],
+  'student':['[stjuːdnt]','стьюднт'],'pupil':['[pjuːpl]','пьюпл'],
+  'name':['[neɪm]','нэйм'],'family':['[fæmɪlɪ]','фэмили'],'mother':['[mʌðə]','мазэ'],
+  'father':['[fɑːðə]','фазэ'],'sister':['[sɪstə]','систэ'],'brother':['[brʌðə]','бразэ'],
+  'friend':['[frend]','фрэнд'],'boy':['[bɔɪ]','бой'],'girl':['[ɡɜːl]','гёл'],
+  'man':['[mæn]','мэн'],'woman':['[wʊmən]','вуман'],'child':['[tʃaɪld]','чайлд'],
+  'people':['[piːpl]','пипл'],
+  'cat':['[kæt]','кэт'],'dog':['[dɒɡ]','дог'],'bird':['[bɜːd]','бёд'],'fish':['[fɪʃ]','фиш'],
+  'cow':['[kaʊ]','кау'],'horse':['[hɔːs]','хос'],'pig':['[pɪɡ]','пиг'],
+  'apple':['[æpl]','эпл'],'banana':['[bəˈnɑːnə]','бэнана'],'bread':['[bred]','брэд'],
+  'milk':['[mɪlk]','милк'],'water':['[wɔːtə]','вотэ'],'tea':['[tiː]','ти'],
+  'coffee':['[kɒfɪ]','кофи'],'food':['[fuːd]','фуд'],'eat':['[iːt]','ит'],
+  'drink':['[drɪŋk]','дринк'],'cook':['[kʊk]','кук'],
+  'red':['[red]','рэд'],'blue':['[bluː]','блу'],'green':['[ɡriːn]','грин'],
+  'yellow':['[jeləʊ]','йэлоу'],'white':['[waɪt]','вайт'],'black':['[blæk]','блэк'],
+  'big':['[bɪɡ]','биг'],'small':['[smɔːl]','смол'],'long':['[lɒŋ]','лонг'],
+  'short':['[ʃɔːt]','шот'],'new':['[njuː]','ню'],'old':['[əʊld]','оулд'],
+  'young':['[jʌŋ]','янг'],'nice':['[naɪs]','найс'],'beautiful':['[bjuːtɪfl]','бьютифл'],
+  'happy':['[hæpɪ]','хэпи'],'sad':['[sæd]','сэд'],'hot':['[hɒt]','хот'],
+  'cold':['[kəʊld]','коулд'],'fast':['[fɑːst]','фаст'],'slow':['[sləʊ]','слоу'],
+  'easy':['[iːzɪ]','изи'],'hard':['[hɑːd]','хад'],'right':['[raɪt]','райт'],
+  'wrong':['[rɒŋ]','ронг'],'free':['[friː]','фри'],'late':['[leɪt]','лэйт'],
+  'early':['[ɜːlɪ]','ёли'],'ready':['[redɪ]','рэди'],'absent':['[æbsnt]','эбснт'],
+  'go':['[ɡəʊ]','гоу'],'come':['[kʌm]','кам'],'see':['[siː]','си'],
+  'look':['[lʊk]','лук'],'listen':['[lɪsn]','лисн'],'speak':['[spiːk]','спик'],
+  'say':['[seɪ]','сэй'],'tell':['[tel]','тэл'],'ask':['[ɑːsk]','аск'],
+  'answer':['[ɑːnsə]','ансэ'],'read':['[riːd]','рид'],'write':['[raɪt]','райт'],
+  'know':['[nəʊ]','ноу'],'think':['[θɪŋk]','синк'],'want':['[wɒnt]','вонт'],
+  'like':['[laɪk]','лайк'],'love':['[lʌv]','лав'],'help':['[help]','хэлп'],
+  'open':['[əʊpən]','оупэн'],'close':['[kləʊz]','клоуз'],'give':['[ɡɪv]','гив'],
+  'take':['[teɪk]','тэйк'],'make':['[meɪk]','мэйк'],'put':['[pʊt]','пут'],
+  'sit':['[sɪt]','сит'],'stand':['[stænd]','стэнд'],'run':['[rʌn]','ран'],
+  'play':['[pleɪ]','плэй'],'work':['[wɜːk]','вёк'],'study':['[stʌdɪ]','стади'],
+  'live':['[lɪv]','лив'],'sleep':['[sliːp]','слип'],'wake':['[weɪk]','вэйк'],
+  'forget':['[fəɡet]','фогэт'],'remember':['[rɪmembə]','римэмбэ'],
+  'understand':['[ʌndəstænd]','андэстэнд'],'repeat':['[rɪpiːt]','рипит'],
+  'one':['[wʌn]','ван'],'two':['[tuː]','ту'],'three':['[θriː]','сри'],
+  'four':['[fɔː]','фо'],'five':['[faɪv]','файв'],'six':['[sɪks]','сикс'],
+  'seven':['[sevn]','сэвн'],'eight':['[eɪt]','эйт'],'nine':['[naɪn]','найн'],
+  'ten':['[ten]','тэн'],'hundred':['[hʌndrəd]','хандрэд'],'number':['[nʌmbə]','намбэ'],
+  'many':['[menɪ]','мэни'],'much':['[mʌtʃ]','мач'],'few':['[fjuː]','фью'],
+  'little':['[lɪtl]','литл'],'very':['[verɪ]','вэри'],'too':['[tuː]','ту'],
+  'quite':['[kwaɪt]','квайт'],'really':['[rɪəlɪ]','риэли'],
+  'monday':['[mʌndeɪ]','мандэй'],'tuesday':['[tjuːzdeɪ]','тьюздэй'],
+  'wednesday':['[wenzdeɪ]','вэнздэй'],'thursday':['[θɜːzdeɪ]','сёздэй'],
+  'friday':['[fraɪdeɪ]','фрайдэй'],'saturday':['[sætədeɪ]','сэтэдэй'],
+  'sunday':['[sʌndeɪ]','сандэй'],
+  'january':['[dʒænjuərɪ]','джэньюэри'],'february':['[februərɪ]','фэбруэри'],
+  'march':['[mɑːtʃ]','мач'],'april':['[eɪprəl]','эйпрэл'],'june':['[dʒuːn]','джун'],
+  'july':['[dʒuːlaɪ]','джулай'],'august':['[ɔːɡəst]','огэст'],
+  'september':['[sepˈtembə]','сэптэмбэ'],'october':['[ɒkˈtəʊbə]','октоубэ'],
+  'november':['[nəʊˈvembə]','ноувэмбэ'],'december':['[dɪˈsembə]','дисэмбэ'],
+  'city':['[sɪtɪ]','сити'],'country':['[kʌntrɪ]','кантри'],'world':['[wɜːld]','вёлд'],
+  'street':['[striːt]','стрит'],'park':['[pɑːk]','пак'],'shop':['[ʃɒp]','шоп'],
+  'hospital':['[hɒspɪtl]','хоспитл'],'bank':['[bæŋk]','бэнк'],
+  'phone':['[fəʊn]','фоун'],'computer':['[kəmˈpjuːtə]','компьютэ'],
+  'internet':['[ɪntənet]','интэнэт'],'music':['[mjuːzɪk]','мьюзик'],
+  'sport':['[spɔːt]','спот'],'game':['[ɡeɪm]','гэйм'],'film':['[fɪlm]','филм'],
+  'money':['[mʌnɪ]','мани'],'price':['[praɪs]','прайс'],
+  'clothes':['[kləʊðz]','клоузз'],'shirt':['[ʃɜːt]','шёт'],'dress':['[dres]','дрэс'],
+  'shoes':['[ʃuːz]','шуз'],'hat':['[hæt]','хэт'],'coat':['[kəʊt]','коут'],
+  'late':['[leɪt]','лэйт'],'come in':['[kʌm ɪn]','кам ин'],
+  'go out':['[ɡəʊ aʊt]','гоу аут'],'task':['[tɑːsk]','таск'],
+  'homework':['[həʊmwɜːk]','хоумвёк'],'copybook':['[kɒpɪbʊk]','копибук'],
+  'absent':['[æbsənt]','эбсэнт'],'ready':['[redɪ]','рэди'],
+};
+
+// Алгоритм транслитерации для незнакомых слов
+function guessTranslit(word) {
+  const map = [
+    ['tion','шн'],['sion','жн'],['ture','чэ'],['th','с'],['ch','ч'],['sh','ш'],
+    ['ph','ф'],['wh','в'],['ck','к'],['ng','нг'],['nk','нк'],['qu','кв'],
+    ['wr','р'],['kn','н'],['gh',''],['oo','у'],['ee','и'],['ea','и'],
+    ['ai','эй'],['ay','эй'],['oi','ой'],['oy','ой'],['ou','ау'],['ow','оу'],
+    ['au','о'],['aw','о'],['igh','ай'],['ew','ью'],
+    ['a','э'],['e','э'],['i','и'],['o','о'],['u','а'],
+    ['b','б'],['c','к'],['d','д'],['f','ф'],['g','г'],['h','х'],['j','дж'],
+    ['k','к'],['l','л'],['m','м'],['n','н'],['p','п'],['r','р'],['s','с'],
+    ['t','т'],['v','в'],['w','в'],['x','кс'],['y','й'],['z','з'],
+  ];
+  let result = word.toLowerCase();
+  for(const [en, ru] of map) {
+    result = result.split(en).join(ru);
+  }
+  return result;
+}
+
+function getPronunciation(word) {
+  const key = word.toLowerCase().trim();
+  if(TR_DICT[key]) return { tr: TR_DICT[key][0], pron: TR_DICT[key][1] };
+  // для неизвестных — делаем примерную транслитерацию
+  return { tr: '', pron: guessTranslit(key) };
+}
+
+// ── AUTOFILL при потере фокуса ──
+let lastAutoFillWord = '';
+function autoFillPronunciation() {
+  const en = document.getElementById('inEn').value.trim();
+  if(!en || en === lastAutoFillWord) return;
+  if(document.getElementById('inTr').value.trim()) return;
+  lastAutoFillWord = en;
+  const result = getPronunciation(en);
+  if(result.tr && !document.getElementById('inTr').value.trim()) document.getElementById('inTr').value = result.tr;
+  if(result.pron && !document.getElementById('inPron').value.trim()) document.getElementById('inPron').value = result.pron;
+}
+
+// ── ADD ──
+function addWord() {
+  const en = document.getElementById('inEn').value.trim();
+  const ru = document.getElementById('inRu').value.trim();
+  const tr = document.getElementById('inTr').value.trim();
+  const pron = document.getElementById('inPron').value.trim();
+  if(!en || !ru) { showMsg('addMsg', 'Заполни английское слово и перевод', 'var(--red)'); return; }
+  if(words.find(w => w.en.toLowerCase() === en.toLowerCase())) { showMsg('addMsg', 'Это слово уже есть в словарике', 'var(--brown)'); return; }
+  words.push({ id: uid(), en, ru, tr, pron, status: 'new', added: Date.now() });
+  save();
+  showMsg('addMsg', `✓ «${en}» добавлено!`, 'var(--green)');
+  clearForm();
+}
+
+function clearForm() {
+  ['inEn','inRu','inTr','inPron'].forEach(id => document.getElementById(id).value = '');
+}
+
+function importWords() {
+  const lines = document.getElementById('importArea').value.split('\n').filter(l => l.trim());
+  let count = 0;
+
+  lines.forEach(line => {
+    const parts = line.split('=').map(s => s.trim());
+    if(parts.length >= 2) {
+      const en = parts[0]; const ru = parts[1];
+      if(!en || !ru) return;
+      if(words.find(w => w.en.toLowerCase() === en.toLowerCase())) return;
+      let tr = '', pron = '';
+      if(parts.length >= 4) { tr = parts[2]; pron = parts[3]; }
+      else if(parts.length === 3) { pron = parts[2]; }
+      else { const r = getPronunciation(en); tr = r.tr; pron = r.pron; }
+      words.push({ id: uid(), en, ru, tr, pron, status: 'new', added: Date.now() });
+      count++;
+      return;
+    }
+    const idx = line.indexOf('-');
+    if(idx > 0) {
+      const en = line.slice(0, idx).trim(); const ru = line.slice(idx+1).trim();
+      if(!en || !ru || words.find(w => w.en.toLowerCase() === en.toLowerCase())) return;
+      const r = getPronunciation(en);
+      words.push({ id: uid(), en, ru, tr: r.tr, pron: r.pron, status: 'new', added: Date.now() });
+      count++;
+    }
+  });
+
+  if(!count) { showMsg('importMsg', 'Нет новых слов', 'var(--brown)'); return; }
+  save();
+  document.getElementById('importArea').value = '';
+  showMsg('importMsg', `✓ Добавлено ${count} слов!`, 'var(--green)');
+}
+
+function showMsg(id, text, color) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.style.color = color;
+  setTimeout(() => el.textContent = '', 3000);
+}
+
+// ── EMOJI MAP ──
+const EMOJI_MAP = {
+  'ball':'⚽','balls':'⚽','basketball':'🏀','football':'⚽',
+  'book':'📖','books':'📚','pen':'🖊️','pencil':'✏️','notebook':'📓',
+  'bag':'🎒','table':'🪑','chair':'🪑','desk':'🖥️','board':'📋',
+  'window':'🪟','door':'🚪','room':'🏠','house':'🏠','home':'🏠',
+  'school':'🏫','class':'🎓','lesson':'📝',
+  'cat':'🐱','dog':'🐶','bird':'🦅','fish':'🐟','cow':'🐄','horse':'🐴','pig':'🐷',
+  'apple':'🍎','banana':'🍌','bread':'🍞','milk':'🥛','water':'💧',
+  'tea':'🍵','coffee':'☕','food':'🍽️',
+  'boy':'👦','girl':'👧','man':'👨','men':'👨','woman':'👩','women':'👩',
+  'child':'👶','children':'👶','people':'👥','friend':'🤝',
+  'student':'🧑‍🎓','students':'🧑‍🎓','teacher':'👩‍🏫','teachers':'👩‍🏫',
+  'mother':'👩','father':'👨','sister':'👧','brother':'👦',
+  'he':'👨','she':'👩','it':'🔷','we':'👥','they':'👥','you':'👤','i':'🙋',
+  'russia':'🇷🇺','moscow':'🏙️','surgut':'🌆','city':'🏙️','country':'🌍','world':'🌍',
+  'rain':'🌧️','snow':'❄️','day':'☀️','english':'🇬🇧',
+  'sport':'⚽','game':'🎮','music':'🎵','phone':'📱','computer':'💻','internet':'🌐',
+  'money':'💰','shop':'🛒','hospital':'🏥','bank':'🏦','park':'🌳','street':'🛣️',
+  'red':'🔴','blue':'🔵','green':'🟢','yellow':'🟡','white':'⬜','black':'⬛',
+  'shirt':'👕','dress':'👗','shoes':'👟','hat':'🎩','coat':'🧥','clothes':'👔',
+  'monday':'📅','tuesday':'📅','wednesday':'📅','thursday':'📅','friday':'📅','saturday':'📅','sunday':'📅',
+  'one':'1️⃣','two':'2️⃣','three':'3️⃣','four':'4️⃣','five':'5️⃣',
+  'six':'6️⃣','seven':'7️⃣','eight':'8️⃣','nine':'9️⃣','ten':'🔟',
+};
+function getWordEmoji(word) {
+  const key = word.toLowerCase().trim();
+  if(EMOJI_MAP[key]) return EMOJI_MAP[key];
+  // попробуем первое слово
+  const first = key.split(' ')[0];
+  return EMOJI_MAP[first] || '📝';
+}
+
+let searchQuery = '';
+let _lastSearchVal = '';
+
+function initSearch() {
+  const box = document.getElementById('searchBox');
+  if(!box) return;
+  const handler = () => {
+    const v = box.value.toLowerCase().trim();
+    if(v === _lastSearchVal) return;
+    _lastSearchVal = v;
+    searchQuery = v;
+    renderWords();
+  };
+  ['input','keyup','keydown','change','compositionend','paste','cut'].forEach(ev => box.addEventListener(ev, handler));
+  // Polling fallback для мобильного Chrome
+  setInterval(() => {
+    const box2 = document.getElementById('searchBox');
+    if(!box2) return;
+    const v = box2.value.toLowerCase().trim();
+    if(v !== _lastSearchVal) { _lastSearchVal = v; searchQuery = v; renderWords(); }
+  }, 300);
+}
+function setStatusFilter(val, el) {
+  statusFilter = val;
+  el.closest('.filters').querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderWords();
+}
+
+function renderLetterTabs() {
+  const letters = [...new Set(words.map(w => firstLetter(w.en)))].sort();
+  const wrap = document.getElementById('letterTabs');
+  if(!wrap) return;
+  let html = `<div class="filter-chip${letterFilter==='all'?' active':''}" onclick="setLetterFilter('all',this)" style="min-width:40px;text-align:center">Все</div>`;
+  letters.forEach(l => {
+    html += `<div class="filter-chip${letterFilter===l?' active':''}" onclick="setLetterFilter('${l}',this)" style="min-width:36px;text-align:center">${l}</div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+function setLetterFilter(val, el) {
+  letterFilter = val;
+  document.querySelectorAll('#letterTabs .filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderWords();
+}
+
+function renderWords() {
+  renderLetterTabs();
+  const search = searchQuery;
+  let filtered = words.filter(w => {
+    if(statusFilter !== 'all' && w.status !== statusFilter) return false;
+    if(letterFilter !== 'all' && firstLetter(w.en) !== letterFilter) return false;
+    if(search) {
+      const enMatch = w.en.toLowerCase().includes(search);
+      const ruMatch = w.ru.toLowerCase().includes(search);
+      if(!enMatch && !ruMatch) return false;
+    }
+    return true;
+  });
+  filtered.sort((a, b) => sortKey(a.en).localeCompare(sortKey(b.en)));
+  const countEl = document.getElementById('wordsCount');
+  if(countEl) countEl.textContent = `Показано: ${filtered.length} из ${words.length} слов`;
+  const el = document.getElementById('wordsList');
+  if(!el) return;
+  if(!filtered.length) {
+    el.innerHTML = `<div class="empty-state"><div class="emoji">${words.length ? '🔍' : '📭'}</div><div>${words.length ? 'Ничего не найдено' : 'Словарик пуст.<br>Добавь первое слово!'}</div></div>`;
+    return;
+  }
+  el.innerHTML = '';
+  let lastLetter = '';
+  filtered.forEach(w => {
+    const letter = firstLetter(w.en);
+    if(letter !== lastLetter) {
+      lastLetter = letter;
+      const div = document.createElement('div');
+      div.style.cssText = 'font-family:"Playfair Display",serif;font-size:20px;color:var(--blue);font-weight:700;padding:8px 0 2px;opacity:0.5;';
+      div.textContent = letter;
+      el.appendChild(div);
+    }
+    const card = document.createElement('div');
+    card.className = `word-card ${w.status !== 'new' ? w.status : ''}`;
+    const imgQuery = w.en.replace(/^a /i,'').replace(/^an /i,'').trim();
+    const emoji = getWordEmoji(imgQuery);
+    card.innerHTML = `
+      <div class="wc-top">
+        <div class="wc-img-wrap" style="font-size:32px">${emoji}</div>
+        <div class="wc-main" style="margin-left:10px">
+          <div class="wc-en">${w.en}</div>
+          ${w.tr ? `<div style="font-size:13px;color:var(--blue);opacity:0.7;margin-top:1px">${w.tr}</div>` : ''}
+          ${w.pron ? `<div style="font-size:13px;color:var(--brown);font-style:italic;margin-top:1px">«${w.pron}»</div>` : ''}
+          <div class="wc-ru">${w.ru}</div>
+          <div class="wc-meta">
+            ${w.status === 'learned' ? '<span class="tag learned">✓ Выучено</span>' : ''}
+            ${w.status === 'hard' ? '<span class="tag hard">😓 Сложное</span>' : ''}
+          </div>
+        </div>
+        <div class="wc-actions">
+          <button class="icon-btn" title="Прослушать" onclick="speak('${w.en.replace(/'/g,"\\'")}')">🔊</button>
+          ${!w.tr && !w.pron ? `<button class="icon-btn" title="Добавить произношение" onclick="fillOneWord('${w.id}')">🤖</button>` : ''}
+          ${w.status !== 'learned' ? `<button class="icon-btn btn-success" title="Выучено" onclick="setStatus('${w.id}','learned')">✓</button>` : ''}
+          ${w.status !== 'hard' ? `<button class="icon-btn btn-danger" title="Сложное" onclick="setStatus('${w.id}','hard')">😓</button>` : ''}
+          ${w.status !== 'new' ? `<button class="icon-btn" title="Новое" onclick="setStatus('${w.id}','new')">↩</button>` : ''}
+          <button class="icon-btn btn-danger" title="Удалить" onclick="deleteWord('${w.id}')">🗑</button>
+        </div>
+      </div>`;
+    el.appendChild(card);
+  });
+}
+
+function fillOneWord(id) {
+  const w = words.find(x => x.id === id);
+  if(!w) return;
+  const result = getPronunciation(w.en);
+  w.tr = result.tr;
+  w.pron = result.pron;
+  save();
+  renderWords();
+}
+
+function fillAllMissing() {
+  const missing = words.filter(w => !w.tr && !w.pron);
+  if(!missing.length) { showMsg('wordsCount', 'У всех слов уже есть произношение!', 'var(--green)'); return; }
+  missing.forEach(w => {
+    const result = getPronunciation(w.en);
+    w.tr = result.tr;
+    w.pron = result.pron;
+  });
+  save();
+  renderWords();
+  showMsg('wordsCount', `✓ Заполнено ${missing.length} слов!`, 'var(--green)');
+}
+
+function setStatus(id, status) {
+  const w = words.find(x => x.id === id);
+  if(w) { w.status = status; save(); renderWords(); }
+}
+
+function deleteWord(id) {
+  words = words.filter(x => x.id !== id);
+  save(); renderWords();
+}
+
+// ── TRAIN ──
+function trainInit() {
+  const filter = document.getElementById('trainTopic').value;
+  let pool = words.filter(w => filter === 'all' ? true : w.status === filter);
+  if(!pool.length) {
+    document.getElementById('trainEmpty').style.display = 'block';
+    document.getElementById('trainContent').style.display = 'none';
+    return;
+  }
+  document.getElementById('trainEmpty').style.display = 'none';
+  document.getElementById('trainContent').style.display = 'block';
+  trainWords = [...pool].sort(() => Math.random() - 0.5);
+  trainIdx = 0; trainFlipped = false; trainKnow = 0; trainHard = 0;
+  document.getElementById('trainDone').style.display = 'none';
+  document.getElementById('trainCard').style.display = 'flex';
+  document.getElementById('trainFlipRow').style.display = 'flex';
+  document.getElementById('trainRateRow').style.display = 'none';
+  updateTrainScore();
+  showTrain();
+}
+
+function showTrain() {
+  if(trainIdx >= trainWords.length) {
+    document.getElementById('trainCard').style.display = 'none';
+    document.getElementById('trainFlipRow').style.display = 'none';
+    document.getElementById('trainRateRow').style.display = 'none';
+    document.getElementById('trainDone').style.display = 'block';
+    document.getElementById('trainDone').textContent = `🎉 Тренировка завершена! Знаю: ${trainKnow}, Сложных: ${trainHard}`;
+    return;
+  }
+  const w = trainWords[trainIdx];
+  const mode = document.getElementById('trainMode').value;
+  trainFlipped = false;
+  document.getElementById('trainCard').classList.remove('flipped');
+  document.getElementById('tcFront').textContent = mode === 'en-ru' ? w.en : w.ru;
+  document.getElementById('tcBack').textContent = mode === 'en-ru' ? w.ru : w.en;
+  document.getElementById('tcEx').textContent = [w.tr, w.pron ? `«${w.pron}»` : ''].filter(Boolean).join('  ');
+  document.getElementById('tcHint').textContent = 'Нажми — увидишь перевод';
+  document.getElementById('tcIdx').textContent = trainIdx + 1;
+  document.getElementById('tcTotal').textContent = trainWords.length;
+  document.getElementById('trainFill').style.width = ((trainIdx / trainWords.length) * 100) + '%';
+  document.getElementById('trainFlipRow').style.display = 'flex';
+  document.getElementById('trainRateRow').style.display = 'none';
+}
+
+function flipTrain() {
+  if(trainFlipped) return;
+  trainFlipped = true;
+  document.getElementById('trainCard').classList.add('flipped');
+  document.getElementById('tcHint').textContent = 'Как ты знаешь это слово?';
+  document.getElementById('trainFlipRow').style.display = 'none';
+  document.getElementById('trainRateRow').style.display = 'flex';
+}
+
+function rateWord(rating) {
+  const w = trainWords[trainIdx];
+  if(rating === 'learned') { w.status = 'learned'; trainKnow++; }
+  else if(rating === 'hard') { w.status = 'hard'; trainHard++; }
+  save();
+  updateTrainScore();
+  trainIdx++;
+  showTrain();
+}
+
+function trainPrev() { if(trainIdx > 0){ trainIdx--; showTrain(); } }
+
+function speakCurrent() {
+  if(trainWords[trainIdx]) speak(trainWords[trainIdx].en);
+}
+
+function updateTrainScore() {
+  document.getElementById('tsKnow').textContent = trainKnow;
+  document.getElementById('tsHard').textContent = trainHard;
+}
+
+// ── PROGRESS ──
+function renderProgress() {
+  const total = words.length;
+  const learned = words.filter(w => w.status === 'learned').length;
+  const hard = words.filter(w => w.status === 'hard').length;
+  const newW = words.filter(w => w.status === 'new').length;
+  const pct = total ? Math.round(learned / total * 100) : 0;
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Всего слов</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--green)">${learned}</div><div class="stat-label">Выучено ✓</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--red)">${hard}</div><div class="stat-label">Сложных 😓</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--gold)">${pct}%</div><div class="stat-label">Прогресс</div></div>
+  `;
+
+  const el = document.getElementById('topicStats');
+  if(!total) { el.innerHTML = '<div class="empty-state"><div class="emoji">📭</div><div>Слов пока нет</div></div>'; return; }
+  el.innerHTML = `
+    <div class="topic-progress">
+      <div class="tp-header"><span class="tp-name">✓ Выучено</span><span class="tp-count">${learned} / ${total}</span></div>
+      <div class="tp-bar"><div class="tp-fill" style="width:${total ? Math.round(learned/total*100) : 0}%;background:var(--green)"></div></div>
+    </div>
+    <div class="topic-progress">
+      <div class="tp-header"><span class="tp-name">😓 Сложные</span><span class="tp-count">${hard} / ${total}</span></div>
+      <div class="tp-bar"><div class="tp-fill" style="width:${total ? Math.round(hard/total*100) : 0}%;background:var(--red)"></div></div>
+    </div>
+    <div class="topic-progress">
+      <div class="tp-header"><span class="tp-name">🆕 Новые</span><span class="tp-count">${newW} / ${total}</span></div>
+      <div class="tp-bar"><div class="tp-fill" style="width:${total ? Math.round(newW/total*100) : 0}%;background:var(--gold)"></div></div>
+    </div>`;
+}
+
+function clearAll() {
+  words = []; save(); renderWords(); renderProgress();
+}
+
+// init
+initSearch();
+renderWords();
+</script>
+</body>
+</html>
