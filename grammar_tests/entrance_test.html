@@ -258,7 +258,7 @@
         <input class="name-input" id="inp-group" type="number" inputmode="numeric" pattern="[0-9]*" min="100" max="999" placeholder="Номер группы" autocomplete="off">
       </div>
       <div style="background:#fff3dc;border:1.5px solid #f6ad55;border-radius:10px;padding:10px 16px;margin-bottom:1rem;font-size:13px;color:#92400e;text-align:left;">
-        ⏱ <b>Таймер включён:</b> 20 секунд на вопрос с выбором ответа, 30 секунд на вопросы с вводом. При истечении времени ответ засчитывается как неверный.
+        ⏱ <b>Таймер включён:</b> 1 минута на каждый вопрос. При истечении времени ответ засчитывается как неверный.
       </div>
       <button class="start-btn" onclick="startBasic()">▶ Начать тест</button>
     </div>
@@ -713,7 +713,7 @@ function showBasicQ() {
     area.appendChild(chk);
     setTimeout(function(){inp.focus();},50);
   }
-  var timerSec = (q.type==='open') ? 30 : 20;
+  var timerSec = 60;
   startBTimer(timerSec);
   bQStartTime=Date.now();
 }
@@ -860,7 +860,7 @@ function resetBTimerUI(){
 function updateBTimerUI(){
   document.getElementById('b-timer-val').textContent=bTimerSec;
   var c=document.getElementById('b-timer-chip');
-  if(c) c.className='timer-chip'+(bTimerSec<=5?' danger':bTimerSec<=9?' warn':'');
+  if(c) c.className='timer-chip'+(bTimerSec<=10?' danger':bTimerSec<=20?' warn':'');
 }
 function bTimeOut(){
   var q=bQuestions[bCur];
