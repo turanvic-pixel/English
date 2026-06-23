@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Rules of Reading — Шпаргалка</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', sans-serif; background: #f0ebe0; padding: 24px; color: #1a1a2e; }
+
+  .poster { max-width: 900px; margin: 0 auto; background: #fffdf7; border: 3px double #1a3a5c; padding: 30px; }
+  .poster-title { font-family: 'Playfair Display', serif; text-align: center; font-size: 30px; color: #1a3a5c; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .poster-sub { text-align: center; font-size: 13px; color: #888; margin-bottom: 24px; letter-spacing: 0.1em; text-transform: uppercase; }
+  hr.divider { border: none; border-top: 1.5px solid #d4c9a8; margin: 18px 0; }
+
+  .vowel-section { margin-bottom: 20px; }
+  .vowel-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+  .vowel-letter { font-family: 'Playfair Display', serif; font-size: 36px; color: #1a3a5c; line-height: 1; width: 36px; }
+  .vowel-title { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .rules-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .rule-card { border: 1px solid #d4c9a8; border-radius: 8px; padding: 10px 12px; background: #fffdf7; }
+  .rule-num { font-size: 10px; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 2px; }
+  .rule-sound { font-size: 18px; font-weight: 700; color: #1a3a5c; margin-bottom: 1px; }
+  .rule-ru { font-size: 12px; color: #8b4513; font-weight: 600; margin-bottom: 4px; font-style: italic; }
+  .rule-word { font-size: 14px; font-style: italic; color: #555; margin-bottom: 6px; }
+  .rule-examples { font-size: 12px; color: #444; line-height: 1.7; }
+  .rule-examples b { color: #1a3a5c; font-weight: 600; }
+
+  .combos-section { margin-top: 20px; }
+  .combos-title { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .combos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .combo-card { border: 1px solid #d4c9a8; border-radius: 8px; padding: 9px 11px; background: #fdf8f0; }
+  .combo-pattern { font-size: 15px; font-weight: 700; color: #8b4513; }
+  .combo-sound { font-size: 12px; color: #1a3a5c; font-weight: 600; margin-bottom: 1px; }
+  .combo-ru { font-size: 11px; color: #8b4513; font-style: italic; margin-bottom: 3px; }
+  .combo-ex { font-size: 11px; color: #666; line-height: 1.6; }
+
+  .consonants-section { margin-top: 20px; }
+  .cons-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .cons-card { border: 1px solid #d4c9a8; border-radius: 8px; padding: 9px 11px; background: #f0f4fa; }
+  .cons-pat { font-size: 15px; font-weight: 700; color: #1a3a5c; }
+  .cons-sound { font-size: 11px; color: #1a3a5c; font-weight: 600; margin-bottom: 2px; }
+  .cons-sound { font-size: 13px; color: #1a3a5c; font-weight: 600; margin-bottom: 1px; }
+  .cons-ru { font-size: 11px; color: #8b4513; font-style: italic; margin-bottom: 2px; }
+  .cons-ex { font-size: 11px; color: #555; }
+
+  .footer { text-align: center; font-size: 11px; color: #bbb; margin-top: 20px; }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .poster { border: 2px double #1a3a5c; }
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="poster-title">Rules of Reading</div>
+  <div class="poster-sub">Правила чтения гласных и согласных букв английского языка</div>
+  <hr class="divider">
+
+  <!-- A -->
+  <div class="vowel-section">
+    <div class="vowel-header">
+      <div class="vowel-letter">A</div>
+      <div class="vowel-title">три типа чтения</div>
+    </div>
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rule-num">Тип I — открытый слог</div>
+        <div class="rule-sound">[eɪ]</div>
+        <div class="rule-ru">произносим «эй»</div>
+        <div class="rule-word">pl<b>a</b>te, n<b>a</b>me</div>
+        <div class="rule-examples">plate late date hate gate<br>name game make lake take<br>cake save brave face place<br><b>table paper baker baby lazy</b></div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-num">Тип II — закрытый слог</div>
+        <div class="rule-sound">[æ]</div>
+        <div class="rule-ru">«э» — рот широко открыт</div>
+        <div class="rule-word">b<b>a</b>g, m<b>a</b>n</div>
+        <div class="rule-examples">bag man map mad sad bad hat<br>cap cat fat back black lamp<br>hand stand tram glad flat<br><b>apple battle grammar happy angry</b></div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-num">Тип III — перед r</div>
+        <div class="rule-sound">[ɑː]</div>
+        <div class="rule-ru">«а» — длинное, тянем</div>
+        <div class="rule-word">c<b>ar</b>, f<b>ar</b>m</div>
+        <div class="rule-examples">car bar arm harm farm park dark<br>art cart yard far star start mark<br>part hard sharp large charge march<br><b>farmer garden parcel market army party</b></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- E -->
+  <div class="vowel-section">
+    <div class="vowel-header">
+      <div class="vowel-letter">E</div>
+      <div class="vowel-title">три типа чтения</div>
+    </div>
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rule-num">Тип I — открытый слог</div>
+        <div class="rule-sound">[iː]</div>
+        <div class="rule-ru">«и» — длинное, тянем</div>
+        <div class="rule-word">tr<b>ee</b>, sh<b>e</b></div>
+        <div class="rule-examples">tree me he we be she these<br>see feet meet need week sheep<br>free green three greet sweet sleep<br><b>even recent fever freedom weekly feeling</b></div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-num">Тип II — закрытый слог</div>
+        <div class="rule-sound">[e]</div>
+        <div class="rule-ru">«э» — как в слове «это»</div>
+        <div class="rule-word">p<b>e</b>n, r<b>e</b>d</div>
+        <div class="rule-examples">pen ten men red bed leg let<br>yet pet tell well then dress spell<br>end tent desk west rest left next<br><b>pencil member letter lesson penny twenty</b></div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-num">Тип III — перед r</div>
+        <div class="rule-sound">[ɜː]</div>
+        <div class="rule-ru">«ё» без «й» — долгое «ёёё»</div>
+        <div class="rule-word">h<b>er</b>, t<b>er</b>m</div>
+        <div class="rule-examples">her hers term verb berth nerve serve<br><b>person perfect servant service certain clergy</b></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- I / Y -->
+  <div class="vowel-section">
+    <div class="vowel-header">
+      <div class="vowel-letter">I</div>
+      <div class="vowel-title">Y читается так же</div>
+    </div>
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rule-num">Тип I — открытый слог</div>
+        <div class="rule-sound">[aɪ]</div>
+        <div class="rule-ru">«ай» — как в слове «айда»</div>
+        <div class="rule-word">n<b>i</b>ne, m<b>y</b></div>
+        <div class="rule-examples">nine mine time wide nice like size<br>my try cry dry fry fly sky<br>die ice lie pie bye dye type<br><b>title rifle rival pilot piper private china</b></div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-num">Тип II — закрытый слог</div>
+        <div class="rule-sound">[ɪ]</div>
+        <div class="rule-ru">«и» — краткое, ненапряжённое</div>
+        <div class="rule-word">s<b>i</b>x, s<b>i</b>t</div>
+        <div class="rule-examples">six fix sit big lip did with<br>milk thick think drink pink bring wish<br>ill hill miss kiss rich ship switch<br><b>little middle dinner winter chicken kitchen</b></div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-num">Тип III — перед r</div>
+        <div class="rule-sound">[ɜː]</div>
+        <div class="rule-ru">«ё» без «й» — долгое «ёёё»</div>
+        <div class="rule-word">g<b>ir</b>l, s<b>ir</b></div>
+        <div class="rule-examples">girl sir fir firm firk dirt bird<br>shirt skirt birth thirst mirth third chirp<br><b>circle dirty firmly thirsty girlish circus birthday</b></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- O -->
+  <div class="vowel-section">
+    <div class="vowel-header">
+      <div class="vowel-letter">O</div>
+      <div class="vowel-title">три типа чтения</div>
+    </div>
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rule-num">Тип I — открытый слог</div>
+        <div class="rule-sound">[əʊ]</div>
+        <div class="rule-ru">«оу» — о плавно переходит в у</div>
+        <div class="rule-word">r<b>o</b>se, h<b>o</b>me</div>
+        <div class="rule-examples">rose go so toe nose bone tone<br>hope hole home note vote coke joke<br>those close globe slope smoke stone rope<br><b>sofa open over oval noble notice moment</b></div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-num">Тип II — закрытый слог</div>
+        <div class="rule-sound">[ɒ]</div>
+        <div class="rule-ru">«о» — короткое, тёмное</div>
+        <div class="rule-word">d<b>o</b>g, h<b>o</b>t</div>
+        <div class="rule-examples">dog hot lot pot top shop box<br>lock rock clock block shock cross off<br>stop drop frog lost soft fond strong<br><b>dollar bottle cotton doctor pocket stocking office</b></div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-num">Тип III — перед r</div>
+        <div class="rule-sound">[ɔː]</div>
+        <div class="rule-ru">«о» — длинное, округлённое</div>
+        <div class="rule-word">f<b>or</b>k, b<b>or</b>n</div>
+        <div class="rule-examples">fork or nor for form born corn<br>cork horn lord port sort horse force<br>north forth thorn short sport storm scorn<br><b>order border corner organ formal normal morning</b></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- U -->
+  <div class="vowel-section">
+    <div class="vowel-header">
+      <div class="vowel-letter">U</div>
+      <div class="vowel-title">три типа чтения</div>
+    </div>
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rule-num">Тип I — открытый слог</div>
+        <div class="rule-sound">[juː]</div>
+        <div class="rule-ru">«ю» — длинное, как «юла»</div>
+        <div class="rule-word">t<b>u</b>be, r<b>u</b>ler</div>
+        <div class="rule-examples">tube cube use hue ruler rule true<br><b>student stupid duty human blue glue clue</b></div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-num">Тип II — закрытый слог</div>
+        <div class="rule-sound">[ʌ]</div>
+        <div class="rule-ru">«а» — короткое, горловое</div>
+        <div class="rule-word">b<b>u</b>s, f<b>u</b>n</div>
+        <div class="rule-examples">bus up cup run fun cut hut<br>luck duck much such bunch jump dust<br>plus club brush drum shut dull<br><b>supper summer rubber funny running husband</b></div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-num">Тип III — перед r</div>
+        <div class="rule-sound">[ɜː]</div>
+        <div class="rule-ru">«ё» без «й» — долгое «ёёё»</div>
+        <div class="rule-word">ch<b>ur</b>ch, t<b>ur</b>n</div>
+        <div class="rule-examples">church turn burn curl hurt nurse purse<br><b>purple turkey murder further furnish curly burden</b></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Буквосочетания -->
+  <div class="combos-section">
+    <div class="combos-title">Буквосочетания гласных</div>
+    <div class="combos-grid">
+      <div class="combo-card">
+        <div class="combo-pattern">ai, ay</div>
+        <div class="combo-sound">[eɪ]</div>
+        <div class="combo-ru">«эй»</div>
+        <div class="combo-ex">rain main tail paint day say way stay daily sailor</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-pattern">ea</div>
+        <div class="combo-sound">[iː]</div>
+        <div class="combo-ru">«и» длинное</div>
+        <div class="combo-ex">tea sea leaf seat meat mean read heat teach season</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-pattern">ee</div>
+        <div class="combo-sound">[iː]</div>
+        <div class="combo-ru">«и» длинное</div>
+        <div class="combo-ex">tree see feet meet need week free green sweet sleep</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-pattern">oo</div>
+        <div class="combo-sound">[uː] / [ʊ]</div>
+        <div class="combo-ru">«у» длинное / «у» краткое</div>
+        <div class="combo-ex">spoon moon food cool / book look foot good wood</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-pattern">oi, oy</div>
+        <div class="combo-sound">[ɔɪ]</div>
+        <div class="combo-ru">«ой»</div>
+        <div class="combo-ex">boy toy joy oil coil soil coin join noise voice</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-pattern">ou, ow</div>
+        <div class="combo-sound">[aʊ]</div>
+        <div class="combo-ru">«ау»</div>
+        <div class="combo-ex">house out mouth round town down brown crowd flower</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-pattern">-ow</div>
+        <div class="combo-sound">[əʊ]</div>
+        <div class="combo-ru">«оу»</div>
+        <div class="combo-ex">show low slow blow window yellow shadow pillow fellow</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-pattern">au, aw</div>
+        <div class="combo-sound">[ɔː]</div>
+        <div class="combo-ru">«о» длинное</div>
+        <div class="combo-ex">saucer law raw paw saw pause cause autumn August</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-pattern">al(l)</div>
+        <div class="combo-sound">[ɔːl]</div>
+        <div class="combo-ru">«о» длинное</div>
+        <div class="combo-ex">ball all tall fall hall call wall small salt also always</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-pattern">w(h)a</div>
+        <div class="combo-sound">[wɒ]</div>
+        <div class="combo-ru">«о» краткое</div>
+        <div class="combo-ex">watch what wash want war warm ward warning washing</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-pattern">ass, ask, ast</div>
+        <div class="combo-sound">[ɑːs]</div>
+        <div class="combo-ru">«а» длинное</div>
+        <div class="combo-ex">glass pass class grass ask task flask mask fast last</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-pattern">old, old</div>
+        <div class="combo-sound">[əʊld]</div>
+        <div class="combo-ru">«оулд»</div>
+        <div class="combo-ex">cold old hold gold told fold scold holder older golden</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-pattern">igh</div>
+        <div class="combo-sound">[aɪ]</div>
+        <div class="combo-ru">«ай»</div>
+        <div class="combo-ex">tights high right night light might fight sight bright frighten</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Согласные -->
+  <div class="consonants-section">
+    <div class="combos-title">Согласные буквосочетания</div>
+    <div class="cons-grid">
+      <div class="cons-card">
+        <div class="cons-pat">ch</div>
+        <div class="cons-sound">[tʃ]</div>
+                <div class="cons-ru">«ч» — как в «чай»</div>
+        <div class="cons-ex">chess chair much</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">sh</div>
+        <div class="cons-sound">[ʃ]</div>
+                <div class="cons-ru">«ш» — как в «шум»</div>
+        <div class="cons-ex">she ship fish</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">th</div>
+        <div class="cons-sound">[θ] / [ð]</div>
+                <div class="cons-ru">«с» меж зубами / «з» меж зубами</div>
+        <div class="cons-ex">thank this</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">ph</div>
+        <div class="cons-sound">[f]</div>
+                <div class="cons-ru">«ф» — как в «фото»</div>
+        <div class="cons-ex">photo phone</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">wh</div>
+        <div class="cons-sound">[w] / [h]</div>
+                <div class="cons-ru">«в» / «х» (who)</div>
+        <div class="cons-ex">when who</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">ng</div>
+        <div class="cons-sound">[ŋ]</div>
+                <div class="cons-ru">«нг» — носовой, как в «длинный»</div>
+        <div class="cons-ex">English long</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">nk</div>
+        <div class="cons-sound">[ŋk]</div>
+                <div class="cons-ru">«нк» — носовой + к</div>
+        <div class="cons-ex">thanks pink</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">wr</div>
+        <div class="cons-sound">[r]</div>
+                <div class="cons-ru">«р» — w не читается</div>
+        <div class="cons-ex">write wrong</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">kn</div>
+        <div class="cons-sound">[n]</div>
+                <div class="cons-ru">«н» — k не читается</div>
+        <div class="cons-ex">know knee</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">c</div>
+        <div class="cons-sound">[s]/[k]</div>
+                <div class="cons-ru">«с» (перед e,i,y) / «к» (остальные)</div>
+        <div class="cons-ex">ceiling / call</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">j, ge</div>
+        <div class="cons-sound">[dʒ]</div>
+                <div class="cons-ru">«дж» — как в «джаз»</div>
+        <div class="cons-ex">just gentleman</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">tion</div>
+        <div class="cons-sound">[ʃn]</div>
+                <div class="cons-ru">«шн» — station = «стейшн»</div>
+        <div class="cons-ex">information</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">x</div>
+        <div class="cons-sound">[ks]</div>
+                <div class="cons-ru">«кс» — как в «такси»</div>
+        <div class="cons-ex">exam text</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">qu</div>
+        <div class="cons-sound">[kw]</div>
+                <div class="cons-ru">«кв» — как в «квест»</div>
+        <div class="cons-ex">queen quite</div>
+      </div>
+      <div class="cons-card">
+        <div class="cons-pat">s</div>
+        <div class="cons-sound">[z]</div>
+                <div class="cons-ru">«з» — между гласными</div>
+        <div class="cons-ex">his was these</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Rules of Reading • Таблицы для чтения слов</div>
+</div>
+</body>
+</html>
