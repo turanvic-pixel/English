@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Pronunciation Coach</title>
+<style>
+  :root{
+    --bg:#F4F5F2;
+    --ink:#1E2422;
+    --sub:#5B655F;
+    --line:#D7DAD3;
+    --card:#FFFFFF;
+    --good:#0F6E56;
+    --good-bg:#E1F5EE;
+    --bad:#993C1D;
+    --bad-bg:#FAECE7;
+    --accent:#185FA5;
+    --accent-bg:#E6F1FB;
+    --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans);
+    padding:32px 16px 64px; min-height:100vh;
+  }
+  .wrap{max-width:680px; margin:0 auto;}
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--sub); margin:0 0 6px;
+  }
+  h1{
+    font-family:var(--serif); font-weight:400; font-size:34px; margin:0 0 4px; letter-spacing:-.01em;
+  }
+  .sub{color:var(--sub); font-size:15px; margin:0 0 28px; line-height:1.5;}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:10px; padding:22px;
+    margin-bottom:20px;
+  }
+  label{display:block; font-size:13px; color:var(--sub); margin-bottom:6px; font-weight:600;}
+  textarea{
+    width:100%; border:1px solid var(--line); border-radius:8px; padding:12px 14px;
+    font-family:var(--serif); font-size:19px; resize:none; min-height:56px; color:var(--ink);
+    background:#FCFCFA;
+  }
+  textarea:focus{outline:none; border-color:var(--accent);}
+  .row{display:flex; gap:10px; align-items:center; margin-top:14px; flex-wrap:wrap;}
+  button{
+    font-family:var(--sans); font-size:14px; font-weight:600; border-radius:8px; cursor:pointer;
+    padding:11px 20px; border:1px solid var(--ink); background:var(--ink); color:#fff;
+    transition:transform .1s ease, opacity .15s ease;
+  }
+  button:active{transform:scale(.97);}
+  button.secondary{background:transparent; color:var(--ink); border:1px solid var(--line);}
+  button:disabled{opacity:.45; cursor:default;}
+  .mic-dot{
+    display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--bad);
+    margin-right:8px; vertical-align:middle; opacity:0; transition:opacity .2s;
+  }
+  .mic-dot.live{opacity:1; animation:pulse 1s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(153,60,29,.5);}70%{box-shadow:0 0 0 9px rgba(153,60,29,0);}100%{box-shadow:0 0 0 0 rgba(153,60,29,0);}}
+  .waves{display:flex; align-items:center; gap:3px; height:28px; margin-left:2px;}
+  .waves span{width:3px; background:var(--accent); border-radius:2px; height:6px; transition:height .1s;}
+  .status{font-size:13px; color:var(--sub); margin-top:10px; font-family:var(--mono);}
+  .unsupported{
+    background:var(--bad-bg); color:var(--bad); border-radius:8px; padding:14px 16px; font-size:14px; line-height:1.5;
+  }
+  .result-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;}
+  .score{font-family:var(--serif); font-size:40px; line-height:1;}
+  .score-label{font-size:12px; color:var(--sub); text-transform:uppercase; letter-spacing:.06em; font-family:var(--mono);}
+  .transcript{font-size:20px; line-height:2; font-family:var(--serif);}
+  .w{padding:2px 4px; border-radius:5px; margin:0 1px; display:inline-block;}
+  .w.ok{background:var(--good-bg); color:var(--good);}
+  .w.miss{background:var(--bad-bg); color:var(--bad); text-decoration:line-through; text-decoration-thickness:1.5px;}
+  .w.heard{background:var(--accent-bg); color:var(--accent);}
+  .legend{font-size:12px; color:var(--sub); margin-top:12px; display:flex; gap:16px; flex-wrap:wrap;}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .swatch{width:10px; height:10px; border-radius:3px;}
+  .tips h3{font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--sub); font-family:var(--mono); margin:0 0 12px; font-weight:600;}
+  .tip{
+    display:flex; gap:12px; padding:12px 0; border-top:1px solid var(--line);
+  }
+  .tip:first-of-type{border-top:none;}
+  .tip-word{font-family:var(--serif); font-size:17px; min-width:90px; color:var(--bad);}
+  .tip-body{font-size:14px; color:var(--ink); line-height:1.5;}
+  .history{margin-top:8px;}
+  .hitem{
+    display:flex; justify-content:space-between; align-items:center; padding:10px 0;
+    border-top:1px solid var(--line); font-size:14px;
+  }
+  .hitem:first-child{border-top:none;}
+  .hitem .txt{color:var(--sub); font-family:var(--serif); font-size:16px; max-width:440px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .hitem .pct{font-family:var(--mono); font-weight:600;}
+  .empty{color:var(--sub); font-size:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Pronunciation coach</p>
+  <h1>Как это прозвучало?</h1>
+  <p class="sub">Введите английскую фразу, произнесите её вслух — приложение сравнит распознанную речь с текстом и подскажет, над чем поработать.</p>
+
+  <div class="card">
+    <label for="target">Целевая фраза</label>
+    <textarea id="target">The weather in Amsterdam is quite unpredictable this week.</textarea>
+    <div class="row">
+      <button id="recBtn"><span class="mic-dot" id="dot"></span>Записать</button>
+      <button class="secondary" id="sampleBtn">Другая фраза</button>
+      <div class="waves" id="waves"></div>
+    </div>
+    <div class="status" id="status">Готово к записи</div>
+    <div id="unsupportedBox"></div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none;">
+    <div class="result-head">
+      <div>
+        <div class="score-label">Совпадение</div>
+        <div class="score" id="scoreVal">—</div>
+      </div>
+    </div>
+    <div class="transcript" id="transcriptView"></div>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--good-bg); border:1px solid var(--good);"></span>совпало</span>
+      <span><span class="swatch" style="background:var(--bad-bg); border:1px solid var(--bad);"></span>пропущено / не распознано</span>
+      <span><span class="swatch" style="background:var(--accent-bg); border:1px solid var(--accent);"></span>услышано лишнее</span>
+    </div>
+  </div>
+
+  <div class="card tips" id="tipsCard" style="display:none;">
+    <h3>Рекомендации</h3>
+    <div id="tipsBody"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--sub); font-family:var(--mono); margin:0 0 10px; font-weight:600;">История попыток</h3>
+    <div class="history" id="historyBox"><p class="empty">Пока нет попыток.</p></div>
+  </div>
+</div>
+
+<script>
+const SAMPLES = [
+  "The weather in Amsterdam is quite unpredictable this week.",
+  "She sells seashells by the seashore.",
+  "I would rather think this through before deciding.",
+  "Thirty-three thieves thought they thrilled the throne.",
+  "Could you repeat that a little more slowly, please?",
+  "World-wide web browsers vary in their speech recognition support."
+];
+
+const PATTERNS = [
+  { test: w => /th/i.test(w), tip: "Звук «th» ([θ]/[ð]): кончик языка между зубами, без «с» или «з». Например thing — не «синг»." },
+  { test: w => /^r|[aeiou]r/i.test(w), tip: "Английский «r» не раскатистый: язык не касается нёба, звук мягче русского «р»." },
+  { test: w => /\bw/i.test(w), tip: "«w» произносится с округлёнными губами, без участия зубов — не путайте с «v»." },
+  { test: w => /v/i.test(w) && !/w/i.test(w), tip: "«v» — верхние зубы касаются нижней губы, звук звонкий, длиннее русского «в»." },
+  { test: w => /ing$/i.test(w), tip: "Окончание «-ing»: звук [ŋ] произносится в нос, без явного «г» на конце." },
+  { test: w => /[bcdfgkpt]$/i.test(w) && w.length > 2, tip: "Конечный согласный часто нужно произносить отчётливо, не «проглатывать», как в русском." },
+  { test: w => /a.*e$/i.test(w) || /ee|ea/i.test(w), tip: "Долгие гласные: следите за длиной звука — краткая гласная меняет смысл слова." },
+];
+
+function genericTip(){
+  return "Проговорите слово медленно по слогам, затем повторите в естественном темпе, ориентируясь на ударение.";
+}
+
+let history = [];
+const targetEl = document.getElementById('target');
+const recBtn = document.getElementById('recBtn');
+const dot = document.getElementById('dot');
+const statusEl = document.getElementById('status');
+const wavesEl = document.getElementById('waves');
+const unsupportedBox = document.getElementById('unsupportedBox');
+const resultCard = document.getElementById('resultCard');
+const scoreVal = document.getElementById('scoreVal');
+const transcriptView = document.getElementById('transcriptView');
+const tipsCard = document.getElementById('tipsCard');
+const tipsBody = document.getElementById('tipsBody');
+const historyBox = document.getElementById('historyBox');
+
+for(let i=0;i<14;i++){
+  const s = document.createElement('span');
+  wavesEl.appendChild(s);
+}
+
+document.getElementById('sampleBtn').addEventListener('click', () => {
+  const cur = targetEl.value.trim();
+  let next = cur;
+  while(next === cur){
+    next = SAMPLES[Math.floor(Math.random()*SAMPLES.length)];
+  }
+  targetEl.value = next;
+  resultCard.style.display = 'none';
+  tipsCard.style.display = 'none';
+});
+
+const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+function normalizeWords(str){
+  return str.toLowerCase().replace(/[^a-z0-9'\s]/g,'').split(/\s+/).filter(Boolean);
+}
+
+function alignWords(target, heard){
+  const n = target.length, m = heard.length;
+  const dp = Array.from({length:n+1}, () => new Array(m+1).fill(0));
+  for(let i=1;i<=n;i++){
+    for(let j=1;j<=m;j++){
+      if(target[i-1] === heard[j-1]) dp[i][j] = dp[i-1][j-1]+1;
+      else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  let i=n, j=m; const matched = new Set(); const extraHeard = new Set();
+  const tOk = new Array(n).fill(false);
+  while(i>0 && j>0){
+    if(target[i-1] === heard[j-1]){ tOk[i-1]=true; i--; j--; }
+    else if(dp[i-1][j] >= dp[i][j-1]) i--;
+    else j--;
+  }
+  return { tOk, matchCount: dp[n][m] };
+}
+
+function renderResult(targetStr, heardStr){
+  const tWords = normalizeWords(targetStr);
+  const hWords = normalizeWords(heardStr);
+  const { tOk, matchCount } = alignWords(tWords, hWords);
+  const pct = tWords.length ? Math.round((matchCount / tWords.length) * 100) : 0;
+
+  scoreVal.textContent = pct + '%';
+  scoreVal.style.color = pct >= 80 ? 'var(--good)' : pct >= 50 ? 'var(--accent)' : 'var(--bad)';
+
+  const origWords = targetStr.trim().split(/\s+/);
+  transcriptView.innerHTML = origWords.map((w, idx) => {
+    const cls = tOk[idx] ? 'ok' : 'miss';
+    return `<span class="w ${cls}">${w}</span>`;
+  }).join(' ');
+
+  const missed = origWords.filter((w, idx) => !tOk[idx]);
+  if(missed.length){
+    tipsCard.style.display = 'block';
+    tipsBody.innerHTML = missed.slice(0,5).map(w => {
+      const clean = w.replace(/[^a-zA-Z']/g,'');
+      const found = PATTERNS.find(p => p.test(clean));
+      const tip = found ? found.tip : genericTip();
+      return `<div class="tip"><div class="tip-word">${clean}</div><div class="tip-body">${tip}</div></div>`;
+    }).join('');
+  } else {
+    tipsCard.style.display = 'block';
+    tipsBody.innerHTML = `<div class="tip-body" style="color:var(--good);">Все слова распознаны точно. Хорошая работа.</div>`;
+  }
+
+  resultCard.style.display = 'block';
+
+  history.unshift({ text: targetStr, pct });
+  history = history.slice(0, 8);
+  renderHistory();
+}
+
+function renderHistory(){
+  if(!history.length){
+    historyBox.innerHTML = '<p class="empty">Пока нет попыток.</p>';
+    return;
+  }
+  historyBox.innerHTML = history.map(h => `
+    <div class="hitem">
+      <span class="txt">${h.text}</span>
+      <span class="pct" style="color:${h.pct>=80?'var(--good)':h.pct>=50?'var(--accent)':'var(--bad)'}">${h.pct}%</span>
+    </div>
+  `).join('');
+}
+
+let waveInterval = null;
+function animateWaves(on){
+  const bars = wavesEl.querySelectorAll('span');
+  if(waveInterval) clearInterval(waveInterval);
+  if(!on){ bars.forEach(b => b.style.height = '6px'); return; }
+  waveInterval = setInterval(() => {
+    bars.forEach(b => b.style.height = (6 + Math.random()*22) + 'px');
+  }, 120);
+}
+
+if(!SpeechRecognitionCtor){
+  unsupportedBox.innerHTML = `<div class="unsupported">Распознавание речи не поддерживается этим браузером. Откройте страницу в Chrome или Edge с доступом к микрофону.</div>`;
+  recBtn.disabled = true;
+} else {
+  const recognition = new SpeechRecognitionCtor();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  let listening = false;
+
+  recognition.addEventListener('start', () => {
+    listening = true;
+    dot.classList.add('live');
+    statusEl.textContent = 'Слушаю...';
+    recBtn.textContent = 'Остановить';
+    animateWaves(true);
+  });
+
+  recognition.addEventListener('end', () => {
+    listening = false;
+    dot.classList.remove('live');
+    recBtn.innerHTML = '<span class="mic-dot" id="dot"></span>Записать';
+    animateWaves(false);
+  });
+
+  recognition.addEventListener('result', (e) => {
+    const transcript = e.results[0][0].transcript;
+    statusEl.textContent = 'Распознано: "' + transcript + '"';
+    renderResult(targetEl.value.trim(), transcript);
+  });
+
+  recognition.addEventListener('error', (e) => {
+    statusEl.textContent = 'Ошибка распознавания: ' + e.error + '. Проверьте доступ к микрофону.';
+  });
+
+  recBtn.addEventListener('click', () => {
+    if(listening){
+      recognition.stop();
+    } else {
+      if(!targetEl.value.trim()){ statusEl.textContent = 'Введите фразу для тренировки.'; return; }
+      resultCard.style.display = 'none';
+      tipsCard.style.display = 'none';
+      try { recognition.start(); }
+      catch(err){ statusEl.textContent = 'Не удалось запустить запись: ' + err.message; }
+    }
+  });
+}
+</script>
+</body>
+</html>
