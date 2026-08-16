@@ -321,6 +321,25 @@ body::before {
 }
 .rule:last-child { border-bottom: none; }
 .rule-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.name-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: Mulish, sans-serif;
+  color: #1a1a2e;
+  background: var(--surface2);
+  margin-bottom: 10px;
+  outline: none;
+  transition: border-color .15s;
+  box-sizing: border-box;
+}
+.name-input:focus { border-color: var(--accent); background: var(--surface); }
+.name-input.err { border-color: #dc2626; }
+.send-status { margin-top: .8rem; font-size: 13px; font-weight: 600; min-height: 18px; text-align: center; }
+.send-status.ok  { color: #15803d; }
+.send-status.err { color: #b91c1c; }
 .start-btn {
   width: 100%;
   max-width: 380px;
@@ -459,6 +478,10 @@ body::before {
       <div class="rule"><span class="rule-icon">💡</span><span>После каждого ответа — объяснение на русском</span></div>
       <div class="rule"><span class="rule-icon">🏆</span><span>Набери максимум баллов!</span></div>
     </div>
+    <div style="max-width:340px;margin:0 auto 4px;text-align:left;">
+      <input class="name-input" id="inp-name" type="text" placeholder="Имя и Фамилия" autocomplete="off">
+      <input class="name-input" id="inp-group" type="text" placeholder="Номер группы" autocomplete="off">
+    </div>
     <button class="start-btn" onclick="startGame()">Начать игру →</button>
   </div>
 
@@ -506,6 +529,7 @@ body::before {
       <div class="rstat"><div class="rstat-num amber" id="r-pct">0%</div><div class="rstat-label">Точность</div></div>
     </div>
     <div class="badges" id="r-badges"></div>
+    <div class="send-status" id="send-status"></div>
     <div class="result-btns">
       <button class="result-btn primary" onclick="restart()">Играть снова</button>
       <button class="result-btn secondary" onclick="goIntro()">Главная</button>
@@ -1166,9 +1190,19 @@ const QUESTIONS = [
 
 const LETTERS = ['A','B','C','D'];
 let order=[],cur=0,score=0,lives=3,wrong=0;
+let studentName='',studentGroup='';
+const TEST_NAME = 'Знакомство (A1)';
 function shuffle(a){return [...a].sort(()=>Math.random()-0.5);}
 
 function startGame(){
+  const nameEl=document.getElementById('inp-name');
+  const groupEl=document.getElementById('inp-group');
+  const name=nameEl.value.trim();
+  const group=groupEl.value.trim();
+  nameEl.classList.remove('err');groupEl.classList.remove('err');
+  if(!name){nameEl.classList.add('err');nameEl.focus();return;}
+  if(!group){groupEl.classList.add('err');groupEl.focus();return;}
+  studentName=name;studentGroup=group;
   document.getElementById('intro-screen').style.display='none';
   const gs=document.getElementById('game-screen');
   gs.style.display='flex';
@@ -1239,6 +1273,25 @@ function choose(idx,btn,shuffled,q){
   document.getElementById('next-btn').style.display='block';
 }
 function nextQ(){cur++;if(cur>=order.length||lives<=0){showResult();return;}loadQ();}
+function sendToTelegram(name, group, score, total, xpEarned){
+  var pct = Math.round(score/total*100);
+  var result = score + '/' + total + ' (' + pct + '%)';
+  var formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdfme_aKvoexXRSz7LTn5dxgY_7P2lBJsokU3puqehRxZVslw/formResponse';
+  var body = new FormData();
+  body.append('entry.1795360459', name);
+  body.append('entry.1572037373', group);
+  body.append('entry.1562414669', TEST_NAME);
+  body.append('entry.994594767', result);
+  body.append('entry.1290836239', xpEarned);
+  fetch(formUrl, {method:'POST', body:body, mode:'no-cors'})
+  .then(function(){
+    var el=document.getElementById('send-status');
+    if(el){el.textContent='✅ Результат отправлен преподавателю'; el.className='send-status ok';}
+  }).catch(function(){
+    var el=document.getElementById('send-status');
+    if(el){el.textContent='⚠️ Нет соединения — результат не отправлен'; el.className='send-status err';}
+  });
+}
 function showResult(){
   document.getElementById('game-screen').style.display='none';
   const rs=document.getElementById('result-screen');rs.style.display='flex';rs.classList.add('show');
@@ -1256,6 +1309,7 @@ function showResult(){
   else{msg='Не сдавайся! Повтори материал и попробуй снова — всё получится.';badges=['Начинающий'];}
   document.getElementById('r-msg').textContent=msg;
   document.getElementById('r-badges').innerHTML=badges.map(b=>`<span class="badge">${b}</span>`).join('');
+  sendToTelegram(studentName, studentGroup, score, total, score);
 }
 </script>
 </body>
