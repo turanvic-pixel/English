@@ -1790,6 +1790,7 @@ function openTense(tense){
   document.getElementById('tense-hub-header').style.background = T.color;
   document.getElementById('tense-hub-title').textContent = T.name;
   const body = document.getElementById('tense-hub-body');
+  const gradedSections = T.sections.filter(s=>!s.isExternal);
   body.innerHTML = T.sections.map(s=>{
     if(s.isExternal){
       return `
@@ -1805,21 +1806,44 @@ function openTense(tense){
     const key=`${tense}_${s.id}`;
     const rec=getRecord(key);
     const recHTML=rec?`<div class="record-chip"><span class="stars-s">${starsStr(rec.stars)}</span> Рекорд: ${rec.xp} XP · ${rec.pct}%</div>`:'';
+    const idx = gradedSections.findIndex(gs=>gs.id===s.id);
+    const unlocked = isSectionUnlocked(gradedSections, idx, `${tense}_`);
+    if(unlocked){
+      return `
+      <button class="section-btn" onclick="startSection('${tense}','${s.id}')">
+        <div class="sb-icon ${s.iclass}">${s.icon}</div>
+        <div>
+          <div class="sb-title">${s.title}</div>
+          <div class="sb-sub">${s.sub}</div>
+          ${recHTML}
+        </div>
+        <div class="sb-arrow">→</div>
+      </button>`;
+    }
+    const prevTitle = gradedSections[idx-1].title;
     return `
-    <button class="section-btn" onclick="startSection('${tense}','${s.id}')">
-      <div class="sb-icon ${s.iclass}">${s.icon}</div>
+    <button class="section-btn" disabled style="opacity:0.55;cursor:not-allowed;">
+      <div class="sb-icon ${s.iclass}">🔒</div>
       <div>
         <div class="sb-title">${s.title}</div>
-        <div class="sb-sub">${s.sub}</div>
+        <div class="sb-sub">Откроется после ${UNLOCK_THRESHOLD}%+ в ступени «${prevTitle}»</div>
         ${recHTML}
       </div>
-      <div class="sb-arrow">→</div>
+      <div class="sb-arrow">🔒</div>
     </button>`;
   }).join('');
   showScreen('tense-hub');
 }
 
 function startSection(tense, section){
+  const T0 = TENSES[tense];
+  const gradedSections = T0.sections.filter(s=>!s.isExternal);
+  const idx0 = gradedSections.findIndex(s=>s.id===section);
+  if(idx0 > 0 && !isSectionUnlocked(gradedSections, idx0, `${tense}_`)){
+    alert('Эта ступень заблокирована. Наберите ' + UNLOCK_THRESHOLD + '%+ в ступени «' + gradedSections[idx0-1].title + '», чтобы открыть следующую.');
+    openTense(tense);
+    return;
+  }
   navState = {tense, section, mixMode:null};
   const T = TENSES[tense];
   setAccent(T.color);
@@ -1860,12 +1884,24 @@ function showMixedSectionsHub(){
   ];
   document.getElementById('main').innerHTML = `
     <div style="padding:1rem 0 0;">
-      ${sections.map(s=>`
-        <button class="section-btn" style="border-top:3px solid #2C3E6B;" onclick="buildAndStartMixed('${s.id}')">
-          <div class="sb-icon icon-mix1">${s.icon}</div>
-          <div><div class="sb-title">${s.title}</div><div class="sb-sub">${s.sub}</div></div>
-          <div class="sb-arrow">→</div>
-        </button>`).join('')}
+      ${sections.map((s,idx)=>{
+        const unlocked = isSectionUnlocked(sections, idx, 'mix_sections_');
+        if(unlocked){
+          return `
+          <button class="section-btn" style="border-top:3px solid #2C3E6B;" onclick="buildAndStartMixed('${s.id}')">
+            <div class="sb-icon icon-mix1">${s.icon}</div>
+            <div><div class="sb-title">${s.title}</div><div class="sb-sub">${s.sub}</div></div>
+            <div class="sb-arrow">→</div>
+          </button>`;
+        }
+        const prevTitle = sections[idx-1].title;
+        return `
+        <button class="section-btn" disabled style="opacity:0.55;cursor:not-allowed;">
+          <div class="sb-icon icon-mix1">🔒</div>
+          <div><div class="sb-title">${s.title}</div><div class="sb-sub">Откроется после ${UNLOCK_THRESHOLD}%+ в ступени «${prevTitle}»</div></div>
+          <div class="sb-arrow">🔒</div>
+        </button>`;
+      }).join('')}
     </div>`;
   document.getElementById('hud-cur').textContent='—';
   document.getElementById('hud-ok').textContent='—';
@@ -1899,6 +1935,13 @@ function recordKey(){ return navState.mixMode ? `mix_${navState.mixMode}_${navSt
 const _memStore = {};
 function getRecord(key){ try{ return JSON.parse(localStorage.getItem('rec_'+key)||'null'); }catch(e){ return _memStore['rec_'+key]||null; } }
 function saveRecord(key,data){ try{ localStorage.setItem('rec_'+key,JSON.stringify(data)); }catch(e){} _memStore['rec_'+key]=data; }
+
+const UNLOCK_THRESHOLD = 75;
+function isSectionUnlocked(sections, idx, keyPrefix) {
+  if (idx === 0) return true;
+  const prevRec = getRecord(keyPrefix + sections[idx - 1].id);
+  return !!(prevRec && prevRec.pct >= UNLOCK_THRESHOLD);
+}
 function starsStr(n){ return '⭐'.repeat(n)+'☆'.repeat(3-n); }
 
 function renderRecords(){
@@ -2105,6 +2148,16 @@ const TENSE_TAG_MAP = {past:'t-past',pres:'t-pres',fut:'t-fut'};
 const TENSE_NAME_MAP = {past:'Past Simple',pres:'Present Simple',fut:'Future Simple'};
 
 function buildAndStartMixed(section){
+  const mixedSections = ['affirmative','question','shortanswer','negative','special'];
+  const midx = mixedSections.indexOf(section);
+  if(midx > 0){
+    const prevRec = getRecord('mix_sections_' + mixedSections[midx-1]);
+    if(!(prevRec && prevRec.pct >= UNLOCK_THRESHOLD)){
+      alert('Эта ступень заблокирована. Наберите ' + UNLOCK_THRESHOLD + '%+ в ступени «' + SECTION_LABELS[mixedSections[midx-1]] + '», чтобы открыть следующую.');
+      showMixedSectionsHub();
+      return;
+    }
+  }
   document.getElementById('quiz-title').textContent = SECTION_LABELS[section];
   navState.section = section;
   const lb = MIXED_SECTION_LABELS[section];
