@@ -1691,19 +1691,38 @@ function getAttemptNum(storageKey){
 
 
 
+const UNLOCK_THRESHOLD = 75;
+
+function isSectionUnlocked(sections, idx) {
+  if (idx === 0) return true;
+  const prevKey = 'pres_' + sections[idx - 1].id;
+  const prevRec = getRecord(prevKey);
+  return !!(prevRec && prevRec.pct >= UNLOCK_THRESHOLD);
+}
+
 function renderRootSections() {
   const T = TENSES['pres'];
   const el = document.getElementById('root-sections');
   if (!el || !T) return;
   setAccent(T.color);
-  el.innerHTML = T.sections.filter(s=>!s.isExternal).map(s => {
+  const sections = T.sections.filter(s=>!s.isExternal);
+  el.innerHTML = sections.map((s, idx) => {
     const key = 'pres_' + s.id;
     const rec = getRecord(key);
     const recHTML = rec ? '<div class="record-chip"><span class="stars-s">' + starsStr(rec.stars) + '</span> Рекорд: ' + rec.xp + ' XP · ' + rec.pct + '%</div>' : '';
-    return '<button class="section-btn" onclick="startSection(\'pres\',\''+s.id+'\');" style="border-top:3px solid #1A4A7A;margin-bottom:10px;">' +
-      '<div class="sb-icon ' + s.iclass + '">' + s.icon + '</div>' +
-      '<div><div class="sb-title">' + s.title + '</div><div class="sb-sub">' + s.sub + '</div>' + recHTML + '</div>' +
-      '<div class="sb-arrow">→</div></button>';
+    const unlocked = isSectionUnlocked(sections, idx);
+    if (unlocked) {
+      return '<button class="section-btn" onclick="startSection(\'pres\',\''+s.id+'\');" style="border-top:3px solid #1A4A7A;margin-bottom:10px;">' +
+        '<div class="sb-icon ' + s.iclass + '">' + s.icon + '</div>' +
+        '<div><div class="sb-title">' + s.title + '</div><div class="sb-sub">' + s.sub + '</div>' + recHTML + '</div>' +
+        '<div class="sb-arrow">→</div></button>';
+    } else {
+      const prevTitle = sections[idx - 1].title;
+      return '<button class="section-btn" disabled style="border-top:3px solid #999;margin-bottom:10px;opacity:0.55;cursor:not-allowed;">' +
+        '<div class="sb-icon ' + s.iclass + '">🔒</div>' +
+        '<div><div class="sb-title">' + s.title + '</div><div class="sb-sub">Откроется после ' + UNLOCK_THRESHOLD + '%+ в ступени «' + prevTitle + '»</div>' + recHTML + '</div>' +
+        '<div class="sb-arrow">🔒</div></button>';
+    }
   }).join('');
 }
 
@@ -1716,6 +1735,16 @@ function goRoot() {
 
 const _origStartSection = startSection;
 startSection = function(tense, section) {
+  if (tense === 'pres') {
+    const T = TENSES['pres'];
+    const sections = T.sections.filter(s=>!s.isExternal);
+    const idx = sections.findIndex(s => s.id === section);
+    if (idx > 0 && !isSectionUnlocked(sections, idx)) {
+      alert('Эта ступень заблокирована. Наберите ' + UNLOCK_THRESHOLD + '%+ в ступени «' + sections[idx - 1].title + '», чтобы открыть следующую.');
+      goRoot();
+      return;
+    }
+  }
   navState = {tense, section, mixMode:null};
   const T = TENSES[tense];
   setAccent(T.color);
