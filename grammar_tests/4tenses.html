@@ -1936,7 +1936,7 @@ const _memStore = {};
 function getRecord(key){ try{ return JSON.parse(localStorage.getItem('rec_'+key)||'null'); }catch(e){ return _memStore['rec_'+key]||null; } }
 function saveRecord(key,data){ try{ localStorage.setItem('rec_'+key,JSON.stringify(data)); }catch(e){} _memStore['rec_'+key]=data; }
 
-const UNLOCK_THRESHOLD = 75;
+const UNLOCK_THRESHOLD = 50;
 function isSectionUnlocked(sections, idx, keyPrefix) {
   if (idx === 0) return true;
   const prevRec = getRecord(keyPrefix + sections[idx - 1].id);
