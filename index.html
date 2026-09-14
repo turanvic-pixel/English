@@ -44,9 +44,15 @@
     font-weight:700;
   }
   header .role{
-    margin:0 0 1rem;
+    margin:0 0 .15rem;
     color:#CFE0F4;
     font-size:.86rem;
+    letter-spacing:.2px;
+  }
+  header .college{
+    margin:0 0 1.1rem;
+    color:#8FB4DC;
+    font-size:.78rem;
     letter-spacing:.2px;
   }
   header .epigraph{
@@ -58,6 +64,33 @@
     line-height:1.55;
     position:relative;
     padding:0 .4rem;
+  }
+  .skyline{
+    width:100%;
+    max-width:360px;
+    height:56px;
+    margin:1.3rem auto .2rem;
+    display:block;
+    opacity:.85;
+  }
+  header .quote2{
+    max-width:440px;
+    margin:1.1rem auto 0;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:12px;
+    padding:.7rem 1rem;
+    font-size:.8rem;
+    line-height:1.5;
+  }
+  header .quote2 .en{color:#fff;font-weight:600;}
+  header .quote2 .ru{color:#CFE0F4;display:block;margin-top:.2rem;}
+  header .quote2 .author{
+    display:block;
+    margin-top:.35rem;
+    font-style:italic;
+    color:#8FB4DC;
+    font-size:.75rem;
   }
   header .site-title{
     margin:1.5rem 0 0;
@@ -137,7 +170,34 @@
   <img class="teacher-photo" src="assets/turskene.jpg" alt="Турскене Татьяна Владимировна">
   <h1>Турскене Татьяна Владимировна</h1>
   <p class="role">Преподаватель английского языка</p>
+  <p class="college">АУ «Сургутский политехнический колледж»</p>
+
+  <svg class="skyline" viewBox="0 0 360 56" xmlns="http://www.w3.org/2000/svg" aria-label="Лондон">
+    <rect x="0" y="40" width="360" height="16" fill="#0A1830"/>
+    <rect x="10" y="30" width="18" height="26" fill="#1A4A7A"/>
+    <rect x="34" y="22" width="14" height="34" fill="#1A4A7A"/>
+    <rect x="300" y="24" width="16" height="32" fill="#1A4A7A"/>
+    <rect x="322" y="18" width="20" height="38" fill="#1A4A7A"/>
+    <g>
+      <rect x="164" y="8" width="14" height="40" fill="#E0A339"/>
+      <rect x="160" y="4" width="22" height="7" fill="#E0A339"/>
+      <polygon points="160,4 171,-6 182,4" fill="#E0A339"/>
+      <circle cx="171" cy="16" r="4.5" fill="#12233F"/>
+      <rect x="168" y="26" width="6" height="4" fill="#12233F"/>
+      <rect x="168" y="34" width="6" height="4" fill="#12233F"/>
+    </g>
+    <rect x="130" y="34" width="20" height="4" fill="#0A1830" opacity=".6"/>
+    <rect x="196" y="34" width="20" height="4" fill="#0A1830" opacity=".6"/>
+  </svg>
+
   <p class="epigraph">«Каждая ошибка — это не провал, а ступень, с которой видно чуть дальше»</p>
+
+  <div class="quote2">
+    <span class="en">One language sets you in a corridor for life. Two languages open every door along the way.</span>
+    <span class="ru">Один язык ставит тебя в коридор жизни. Два языка открывают каждую дверь на этом пути.</span>
+    <span class="author">Фрэнк Смит</span>
+  </div>
+
   <p class="site-title">English — все тесты и тренажёры</p>
 </header>
 
