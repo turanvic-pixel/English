@@ -26,18 +26,45 @@
   header{
     background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);
     color:#fff;
-    padding:2.6rem 1.4rem 3.2rem;
+    padding:2.4rem 1.4rem 3.4rem;
     text-align:center;
   }
-  header h1{
-    margin:0 0 .4rem;
-    font-size:2rem;
-    letter-spacing:.3px;
+  .teacher-photo{
+    width:104px;height:104px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid rgba(255,255,255,.55);
+    box-shadow:0 6px 20px rgba(0,0,0,.28);
+    margin-bottom:.9rem;
   }
-  header p{
-    margin:0;
+  header h1{
+    margin:0 0 .25rem;
+    font-size:1.55rem;
+    letter-spacing:.2px;
+    font-weight:700;
+  }
+  header .role{
+    margin:0 0 1rem;
     color:#CFE0F4;
-    font-size:.95rem;
+    font-size:.86rem;
+    letter-spacing:.2px;
+  }
+  header .epigraph{
+    max-width:420px;
+    margin:0 auto;
+    font-size:.86rem;
+    font-style:italic;
+    color:#B9D2EC;
+    line-height:1.55;
+    position:relative;
+    padding:0 .4rem;
+  }
+  header .site-title{
+    margin:1.5rem 0 0;
+    font-size:1.15rem;
+    font-weight:700;
+    color:#fff;
+    opacity:.92;
   }
   main{
     max-width:760px;
@@ -107,8 +134,11 @@
 <body>
 
 <header>
-  <h1>English</h1>
-  <p>Все тесты и тренажёры — открывай по ссылке</p>
+  <img class="teacher-photo" src="assets/turskene.jpg" alt="Турскене Татьяна Владимировна">
+  <h1>Турскене Татьяна Владимировна</h1>
+  <p class="role">Преподаватель английского языка</p>
+  <p class="epigraph">«Каждая ошибка — это не провал, а ступень, с которой видно чуть дальше»</p>
+  <p class="site-title">English — все тесты и тренажёры</p>
 </header>
 
 <main>
