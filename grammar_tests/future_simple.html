@@ -822,6 +822,7 @@ const TENSES = {
 };
 </script>
 <script>
+const UNLOCK_THRESHOLD = 50;
 
 const SECTION_LABELS = {
   affirmative:'Утвердительные предложения',
@@ -1755,7 +1756,6 @@ function getAttemptNum(storageKey){
 
 
 
-const UNLOCK_THRESHOLD = 50;
 
 function isSectionUnlocked(sections, idx) {
   if (idx === 0) return true;
