@@ -133,6 +133,55 @@
     margin-top:.2rem;
   }
   .stats.stats-loading .stat-num{ color:var(--line); }
+  .stat-card-clickable{ cursor:pointer; transition:box-shadow .15s,transform .1s; }
+  .stat-card-clickable:hover{ box-shadow:0 6px 22px rgba(59,46,28,.12); }
+  .stat-card-clickable:active{ transform:scale(.97); }
+  .stats-detail{
+    display:none;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    margin:-.3rem 0 1.3rem;
+    padding:.9rem 1rem;
+    box-shadow:0 4px 18px rgba(59,46,28,.06);
+  }
+  .stats-detail.open{ display:block; }
+  .stats-detail .sd-title{
+    font-size:.82rem;
+    font-weight:700;
+    color:var(--navy);
+    margin-bottom:.6rem;
+  }
+  .stats-detail .sd-back{
+    font-size:.78rem;
+    color:var(--blue);
+    cursor:pointer;
+    margin-bottom:.6rem;
+    display:inline-block;
+  }
+  .sd-chips{ display:flex; flex-wrap:wrap; gap:.5rem; }
+  .sd-chip{
+    background:var(--blue-light);
+    color:var(--navy);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:.35rem .8rem;
+    font-size:.8rem;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .sd-chip:hover{ background:var(--accent); color:#fff; }
+  .sd-students{ list-style:none; margin:0; padding:0; }
+  .sd-students li{
+    padding:.4rem 0;
+    border-bottom:1px solid var(--line);
+    font-size:.85rem;
+    color:var(--ink);
+    display:flex;
+    justify-content:space-between;
+  }
+  .sd-students li:last-child{ border-bottom:none; }
+  .sd-students .sd-count{ color:var(--sub); font-size:.78rem; }
   .group{
     background:#fff;
     border:1px solid var(--line);
@@ -313,11 +362,13 @@
       <div class="stat-num" id="stat-students">—</div>
       <div class="stat-label">учеников</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card stat-card-clickable" id="stat-groups-card">
       <div class="stat-num" id="stat-groups">—</div>
-      <div class="stat-label">групп</div>
+      <div class="stat-label">групп ▾</div>
     </div>
   </div>
+
+  <div class="stats-detail" id="stats-detail"></div>
 
   <div class="group">
     <div class="group-head"><span class="gicon">⏳</span><h2>Времена</h2><span class="count">5</span></div>
@@ -391,6 +442,47 @@
     return -1;
   }
 
+  var groupsData = {}; // { groupKey: { name, students: { studentKey: { name, count } } } }
+
+  function showGroupsList() {
+    var detail = document.getElementById('stats-detail');
+    var groupKeys = Object.keys(groupsData).sort();
+    var html = '<div class="sd-title">Группы (' + groupKeys.length + ')</div><div class="sd-chips">';
+    groupKeys.forEach(function(key){
+      var g = groupsData[key];
+      var studentCount = Object.keys(g.students).length;
+      html += '<span class="sd-chip" data-group="' + key.replace(/"/g,'&quot;') + '">' +
+        g.name + ' <span class="sd-count">(' + studentCount + ')</span></span>';
+    });
+    html += '</div>';
+    detail.innerHTML = html;
+    detail.classList.add('open');
+    Array.prototype.forEach.call(detail.querySelectorAll('.sd-chip'), function(chip){
+      chip.addEventListener('click', function(){
+        showGroupStudents(chip.getAttribute('data-group'));
+      });
+    });
+  }
+
+  function showGroupStudents(groupKey) {
+    var detail = document.getElementById('stats-detail');
+    var g = groupsData[groupKey];
+    if (!g) return;
+    var studentKeys = Object.keys(g.students).sort(function(a,b){
+      return g.students[a].name.localeCompare(g.students[b].name, 'ru');
+    });
+    var html = '<span class="sd-back" id="sd-back-link">← Все группы</span>' +
+      '<div class="sd-title">Группа ' + g.name + ' — ' + studentKeys.length + ' учеников</div>' +
+      '<ul class="sd-students">';
+    studentKeys.forEach(function(sk){
+      var s = g.students[sk];
+      html += '<li><span>' + s.name + '</span><span class="sd-count">' + s.count + ' тест(ов)</span></li>';
+    });
+    html += '</ul>';
+    detail.innerHTML = html;
+    document.getElementById('sd-back-link').addEventListener('click', showGroupsList);
+  }
+
   fetch(url).then(function(r){
     if (!r.ok) throw new Error('bad status');
     return r.arrayBuffer();
@@ -406,15 +498,24 @@
       var header = data[0];
       var nameIdx = findCol(header, /имя/i);
       var groupIdx = findCol(header, /групп/i);
-      // лист похож на результаты, только если нашёлся хотя бы столбец "Имя"
       if (nameIdx === -1) return;
       for (var r = 1; r < data.length; r++) {
         var row = data[r];
         if (!row || !row[nameIdx]) continue;
+        var studentName = String(row[nameIdx]).trim();
+        var studentKey = studentName.toLowerCase();
         totalRows++;
-        names[String(row[nameIdx]).trim().toLowerCase()] = true;
+        names[studentKey] = true;
+
         if (groupIdx >= 0 && row[groupIdx]) {
-          groups[String(row[groupIdx]).trim().toLowerCase()] = true;
+          var groupName = String(row[groupIdx]).trim();
+          var groupKey = groupName.toLowerCase();
+          groups[groupKey] = true;
+          if (!groupsData[groupKey]) groupsData[groupKey] = { name: groupName, students: {} };
+          if (!groupsData[groupKey].students[studentKey]) {
+            groupsData[groupKey].students[studentKey] = { name: studentName, count: 0 };
+          }
+          groupsData[groupKey].students[studentKey].count++;
         }
       }
     });
@@ -424,6 +525,18 @@
     document.getElementById('stat-groups').textContent = Object.keys(groups).length || '—';
     var block = document.getElementById('stats-block');
     if (block) block.classList.remove('stats-loading');
+
+    var card = document.getElementById('stat-groups-card');
+    if (card && Object.keys(groups).length) {
+      card.addEventListener('click', function(){
+        var detail = document.getElementById('stats-detail');
+        if (detail.classList.contains('open')) {
+          detail.classList.remove('open');
+        } else {
+          showGroupsList();
+        }
+      });
+    }
   }).catch(function(){
     var block = document.getElementById('stats-block');
     if (block) block.style.display = 'none';
