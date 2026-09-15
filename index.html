@@ -483,13 +483,19 @@
     document.getElementById('sd-back-link').addEventListener('click', showGroupsList);
   }
 
+  function normalizeTestName(name) {
+    return String(name || '')
+      .replace(/\s*\(\s*ступень\s*\d+\s*из\s*\d+\s*\)\s*$/i, '')
+      .trim();
+  }
+
   fetch(url).then(function(r){
     if (!r.ok) throw new Error('bad status');
     return r.arrayBuffer();
   }).then(function(buf){
     var wb = XLSX.read(buf, { type: 'array' });
-    var totalRows = 0;
     var names = {}, groups = {};
+    var submissionKeys = {}; // студент+группа+нормализованный тест -> true (ступени одного теста = 1 попытка)
 
     wb.SheetNames.forEach(function(sheetName){
       var ws = wb.Sheets[sheetName];
@@ -498,28 +504,38 @@
       var header = data[0];
       var nameIdx = findCol(header, /имя/i);
       var groupIdx = findCol(header, /групп/i);
+      var testIdx = findCol(header, /тест/i);
       if (nameIdx === -1) return;
       for (var r = 1; r < data.length; r++) {
         var row = data[r];
         if (!row || !row[nameIdx]) continue;
         var studentName = String(row[nameIdx]).trim();
         var studentKey = studentName.toLowerCase();
-        totalRows++;
         names[studentKey] = true;
 
-        if (groupIdx >= 0 && row[groupIdx]) {
-          var groupName = String(row[groupIdx]).trim();
-          var groupKey = groupName.toLowerCase();
+        var groupName = (groupIdx >= 0 && row[groupIdx]) ? String(row[groupIdx]).trim() : '';
+        var groupKey = groupName.toLowerCase();
+        var testBase = testIdx >= 0 ? normalizeTestName(row[testIdx]) : ('row' + r + sheetName);
+        var testKey = testBase.toLowerCase();
+
+        var submissionKey = studentKey + '||' + groupKey + '||' + testKey;
+        var isNewSubmission = !submissionKeys[submissionKey];
+        submissionKeys[submissionKey] = true;
+
+        if (groupName) {
           groups[groupKey] = true;
           if (!groupsData[groupKey]) groupsData[groupKey] = { name: groupName, students: {} };
           if (!groupsData[groupKey].students[studentKey]) {
             groupsData[groupKey].students[studentKey] = { name: studentName, count: 0 };
           }
-          groupsData[groupKey].students[studentKey].count++;
+          if (isNewSubmission) {
+            groupsData[groupKey].students[studentKey].count++;
+          }
         }
       }
     });
 
+    var totalRows = Object.keys(submissionKeys).length;
     document.getElementById('stat-submissions').textContent = totalRows;
     document.getElementById('stat-students').textContent = Object.keys(names).length || '—';
     document.getElementById('stat-groups').textContent = Object.keys(groups).length || '—';
