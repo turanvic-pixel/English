@@ -106,6 +106,32 @@
     margin:-1.6rem auto 3rem;
     padding:0 1.1rem;
   }
+  .stats{
+    display:flex;
+    gap:.8rem;
+    margin:0 0 1.3rem;
+  }
+  .stats .stat-card{
+    flex:1;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:.9rem .6rem;
+    text-align:center;
+    box-shadow:0 4px 18px rgba(59,46,28,.06);
+  }
+  .stats .stat-num{
+    font-size:1.5rem;
+    font-weight:700;
+    color:var(--blue);
+    line-height:1.1;
+  }
+  .stats .stat-label{
+    font-size:.72rem;
+    color:var(--sub);
+    margin-top:.2rem;
+  }
+  .stats.stats-loading .stat-num{ color:var(--line); }
   .group{
     background:#fff;
     border:1px solid var(--line);
@@ -277,6 +303,21 @@
 
 <main>
 
+  <div class="stats stats-loading" id="stats-block">
+    <div class="stat-card">
+      <div class="stat-num" id="stat-submissions">—</div>
+      <div class="stat-label">тестов пройдено</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-students">—</div>
+      <div class="stat-label">учеников</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-groups">—</div>
+      <div class="stat-label">групп</div>
+    </div>
+  </div>
+
   <div class="group">
     <div class="group-head"><span class="gicon">⏳</span><h2>Времена</h2><span class="count">5</span></div>
     <a class="item" href="grammar_tests/present_simple.html"><span class="dot"></span><span class="txt"><div class="title">Present Simple</div><div class="tag">5 ступеней · порог 50%</div></span><span class="arrow">→</span></a>
@@ -335,6 +376,41 @@
 </main>
 
 <footer>turanvic-pixel.github.io/English</footer>
+
+<script>
+(function(){
+  var SHEET_ID = '1tj6hNGzEEHGT9B3t68pCiWY3B6yo56dcwWIuWL37oLc';
+  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json';
+  fetch(url).then(function(r){
+    if(!r.ok) throw new Error('bad status');
+    return r.text();
+  }).then(function(text){
+    var json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1));
+    var cols = (json.table.cols || []).map(function(c){ return (c.label || '').trim(); });
+    var rows = json.table.rows || [];
+    var nameIdx = cols.findIndex(function(c){ return /имя/i.test(c); });
+    var groupIdx = cols.findIndex(function(c){ return /групп/i.test(c); });
+    var names = {}, groups = {};
+    rows.forEach(function(row){
+      var cells = row.c || [];
+      if (nameIdx >= 0 && cells[nameIdx] && cells[nameIdx].v) {
+        names[String(cells[nameIdx].v).trim().toLowerCase()] = true;
+      }
+      if (groupIdx >= 0 && cells[groupIdx] && cells[groupIdx].v) {
+        groups[String(cells[groupIdx].v).trim().toLowerCase()] = true;
+      }
+    });
+    document.getElementById('stat-submissions').textContent = rows.length;
+    document.getElementById('stat-students').textContent = Object.keys(names).length || '—';
+    document.getElementById('stat-groups').textContent = Object.keys(groups).length || '—';
+    var block = document.getElementById('stats-block');
+    if (block) block.classList.remove('stats-loading');
+  }).catch(function(){
+    var block = document.getElementById('stats-block');
+    if (block) block.style.display = 'none';
+  });
+})();
+</script>
 
 </body>
 </html>
