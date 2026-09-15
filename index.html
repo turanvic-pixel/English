@@ -377,30 +377,48 @@
 
 <footer>turanvic-pixel.github.io/English</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 (function(){
   var SHEET_ID = '1tj6hNGzEEHGT9B3t68pCiWY3B6yo56dcwWIuWL37oLc';
-  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json';
+  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=xlsx';
+
+  function findCol(headerRow, re) {
+    for (var i = 0; i < headerRow.length; i++) {
+      if (re.test(String(headerRow[i] || ''))) return i;
+    }
+    return -1;
+  }
+
   fetch(url).then(function(r){
-    if(!r.ok) throw new Error('bad status');
-    return r.text();
-  }).then(function(text){
-    var json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1));
-    var cols = (json.table.cols || []).map(function(c){ return (c.label || '').trim(); });
-    var rows = json.table.rows || [];
-    var nameIdx = cols.findIndex(function(c){ return /имя/i.test(c); });
-    var groupIdx = cols.findIndex(function(c){ return /групп/i.test(c); });
+    if (!r.ok) throw new Error('bad status');
+    return r.arrayBuffer();
+  }).then(function(buf){
+    var wb = XLSX.read(buf, { type: 'array' });
+    var totalRows = 0;
     var names = {}, groups = {};
-    rows.forEach(function(row){
-      var cells = row.c || [];
-      if (nameIdx >= 0 && cells[nameIdx] && cells[nameIdx].v) {
-        names[String(cells[nameIdx].v).trim().toLowerCase()] = true;
-      }
-      if (groupIdx >= 0 && cells[groupIdx] && cells[groupIdx].v) {
-        groups[String(cells[groupIdx].v).trim().toLowerCase()] = true;
+
+    wb.SheetNames.forEach(function(sheetName){
+      var ws = wb.Sheets[sheetName];
+      var data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      if (!data.length) return;
+      var header = data[0];
+      var nameIdx = findCol(header, /имя/i);
+      var groupIdx = findCol(header, /групп/i);
+      // лист похож на результаты, только если нашёлся хотя бы столбец "Имя"
+      if (nameIdx === -1) return;
+      for (var r = 1; r < data.length; r++) {
+        var row = data[r];
+        if (!row || !row[nameIdx]) continue;
+        totalRows++;
+        names[String(row[nameIdx]).trim().toLowerCase()] = true;
+        if (groupIdx >= 0 && row[groupIdx]) {
+          groups[String(row[groupIdx]).trim().toLowerCase()] = true;
+        }
       }
     });
-    document.getElementById('stat-submissions').textContent = rows.length;
+
+    document.getElementById('stat-submissions').textContent = totalRows;
     document.getElementById('stat-students').textContent = Object.keys(names).length || '—';
     document.getElementById('stat-groups').textContent = Object.keys(groups).length || '—';
     var block = document.getElementById('stats-block');
