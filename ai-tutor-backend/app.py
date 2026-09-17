@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import time
 from collections import deque
@@ -15,6 +16,65 @@ ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN", "https://turanvic-pixel.github
 
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
 
+# --- каталог опорных картинок: ключ -> файл в assets/opora/ на сайте ---
+OPORA_KEYS = {
+    # времена: intro=название, markers=слова-подсказки, spelling=окончания,
+    # affirmative=утверждение, question=общий вопрос, negative=отрицание,
+    # subject_question=вопрос к подлежащему, special_question=спец. вопрос
+    "present_simple__intro", "present_simple__markers", "present_simple__spelling",
+    "present_simple__affirmative", "present_simple__question", "present_simple__negative",
+    "present_simple__subject_question", "present_simple__special_question",
+    "past_simple__intro", "past_simple__markers", "past_simple__spelling",
+    "past_simple__affirmative", "past_simple__question", "past_simple__negative",
+    "past_simple__subject_question", "past_simple__special_question",
+    "future_simple__intro", "future_simple__markers",
+    "future_simple__affirmative", "future_simple__question", "future_simple__negative",
+    "future_simple__subject_question", "future_simple__special_question",
+    "present_continuous__intro", "present_continuous__markers", "present_continuous__spelling",
+    "present_continuous__affirmative", "present_continuous__question", "present_continuous__negative",
+    "present_continuous__subject_question", "present_continuous__special_question",
+    # отдельные темы
+    "to_be_tree", "to_be_present", "conjugation",
+    "pronouns", "question_words", "word_order",
+    "numbers", "telling_time", "prepositions_time",
+    "irregular_verbs", "degrees_comparison", "degrees_constructions",
+    "there_is_are_rule", "countable_uncountable_tree",
+}
+
+OPORA_CATALOG_TEXT = """
+ОПОРНЫЕ КАРТИНКИ: если студенту нужна зрительная опора (а не сразу ответ), ты можешь показать одну подходящую картинку.
+Для этого вставь в свою реплику тег вида [OPORA:ключ] (точно один тег, без придумывания новых ключей — только из списка ниже). Текст тега студент не увидит, увидит только картинку.
+
+Тег ставь ТОЛЬКО когда это реально помогает найти ответ самому — не на каждую реплику, а когда студент застрял и опора избавит от угадывания.
+
+Правила по временам (present_simple / past_simple / future_simple / present_continuous — подставляй нужное время):
+  {tense}__intro — как называется время (используй как самую первую подсказку "с чем вообще работаем")
+  {tense}__markers — слова-подсказки времени (every day, yesterday, now и т.п.) — если студент не понимает, какое время выбрать по предложению
+  {tense}__spelling — окончания глагола (нет у future_simple)
+  {tense}__affirmative — утвердительное предложение — если задание именно на утверждение
+  {tense}__question — общий вопрос (+краткие ответы да/нет)
+  {tense}__negative — отрицательное предложение
+  {tense}__subject_question — вопрос к подлежащему (Who/What без вспомогательного глагола)
+  {tense}__special_question — специальный вопрос (Where/When/What + вспомогательный глагол)
+
+Другие темы (без подстановки времени):
+  to_be_tree — дерево выбора am/is/are по подлежащему
+  to_be_present — таблица to be в Present Simple (+/?/-)
+  conjugation — спряжение to be/to have/to do (Present и Past)
+  pronouns — личные и притяжательные местоимения
+  question_words — вопросительные слова (Who/What/Where/When/Why/How и т.д.)
+  word_order — порядок слов в утвердительном английском предложении
+  numbers — таблица числительных (количественные и порядковые)
+  telling_time — как называть время по-английски (циферблат o'clock/past/to)
+  prepositions_time — предлоги времени (at/in/on)
+  irregular_verbs — таблица неправильных глаголов (Infinitive/Past Simple/перевод)
+  degrees_comparison — таблица степеней сравнения прилагательных (-er/-est, more/most, исключения)
+  degrees_constructions — конструкции сравнения (the...the, as...as, not so...as, either...or)
+  there_is_are_rule — правило оборота there is/there are + порядок перевода
+  countable_uncountable_tree — дерево: исчисляемое или нет → a/an, much/many, little/few
+
+Пример использования: студент не помнит, как задать общий вопрос в Past Simple → напиши наводящий вопрос и добавь [OPORA:past_simple__question]."""
+
 SYSTEM_PROMPT = """Ты — ИИ-репетитор по английскому языку для студентов Сургутского политехнического колледжа. Работаешь строго по сократическому методу.
 
 ГЛАВНОЕ ПРАВИЛО: твоя задача — не дать ответ, а довести студента до того, чтобы он нашёл ответ сам и мог объяснить, почему он верный.
@@ -27,12 +87,18 @@ SYSTEM_PROMPT = """Ты — ИИ-репетитор по английскому 
 
 ЧТО ДЕЛАТЬ ВМЕСТО ЭТОГО:
 - Задавай один наводящий вопрос за раз: "Какое слово в предложении подсказывает время действия?", "Это происходит регулярно, сейчас или уже произошло?", "Какая форма глагола нужна для he/she/it?", "Сравни со своим предыдущим правильным ответом — чем это предложение отличается?"
-- Если студент две-три попытки подряд не может продвинуться — дай ОДНУ маленькую подсказку (не решение), и снова спроси, что он думает теперь.
+- Если студент — совсем слабый и объективно не может знать ответ из головы (это нормально!) — не дави наводящими вопросами в пустоту, а сразу дай ему опорный материал (см. ниже [OPORA]), чтобы он мог найти ответ там, а не гадать.
+- Если студент две-три попытки подряд не может продвинуться — дай ОДНУ маленькую подсказку (не решение) и/или опорную картинку, и снова спроси, что он думает теперь.
 - Хвали за верное рассуждение, а не только за угаданный ответ.
-- Если студент прямо просит "дай готовый ответ" — мягко откажи и объясни, что вместе разберётесь быстрее, чем кажется, задав ему следующий наводящий вопрос.
+- Если студент прямо просит "дай готовый ответ" — мягко откажи и объясни, что вместе разберётесь быстрее, чем кажется.
 - Если студент явно расстроен или фрустрирован — сбавь давление, упрости вопрос, подбодри.
+""" + OPORA_CATALOG_TEXT + """
 
 ТОН: тёплый, терпеливый, простыми словами, без сложных лингвистических терминов без необходимости. Пиши по-русски, если студент пишет по-русски; переходи на английский, если студент сам пишет по-английски. Отвечай коротко — 2-4 предложения на реплику, не лекция."""
+
+OPORA_TAG_RE = re.compile(r"\[OPORA:\s*([a-zA-Z0-9_]+)\s*\]")
+
+
 
 
 # --- очень простая защита от перегрузки бесплатного лимита Gemini (10 запросов/мин) ---
@@ -111,7 +177,15 @@ def chat():
     except (KeyError, IndexError, ValueError):
         reply = "Извини, не получилось сформулировать ответ. Попробуй переформулировать вопрос."
 
-    return _cors(jsonify({"reply": reply}))
+    opora_key = None
+    m = OPORA_TAG_RE.search(reply)
+    if m:
+        candidate = m.group(1)
+        if candidate in OPORA_KEYS:
+            opora_key = candidate
+        reply = OPORA_TAG_RE.sub("", reply).strip()
+
+    return _cors(jsonify({"reply": reply, "opora": opora_key}))
 
 
 def _cors(response):
