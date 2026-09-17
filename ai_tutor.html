@@ -114,12 +114,21 @@
     border-bottom-right-radius:3px;
   }
   .msg.model{
-    background:#fff;
-    border:1px solid var(--line);
+    background:#E9F5EA;
+    border:1px solid #CFE8D2;
     color:var(--ink);
     margin-right:auto;
     border-bottom-left-radius:3px;
   }
+  .msg .opora-img{
+    display:block;
+    max-width:100%;
+    width:100%;
+    margin-top:.5rem;
+    border-radius:8px;
+    border:1px solid var(--line);
+  }
+  .msg:has(.opora-img){ max-width:92%; }
   .msg.system{
     background:transparent;
     color:var(--sub);
@@ -221,10 +230,18 @@
   var sendBtn = document.getElementById('send-btn');
   var startBtn = document.getElementById('start-btn');
 
-  function addMsg(role, text) {
+  function addMsg(role, text, opora) {
     var div = document.createElement('div');
     div.className = 'msg ' + role;
     div.textContent = text;
+    if (opora) {
+      var img = document.createElement('img');
+      img.src = 'assets/opora/' + opora + '.png';
+      img.alt = 'Опорный материал';
+      img.className = 'opora-img';
+      img.loading = 'lazy';
+      div.appendChild(img);
+    }
     messagesEl.appendChild(div);
     messagesEl.scrollTop = messagesEl.scrollHeight;
     return div;
@@ -275,7 +292,7 @@
     }).then(function(r){ return r.json(); }).then(function(data){
       typingEl.remove();
       var reply = data.reply || 'Извини, что-то пошло не так. Попробуй ещё раз.';
-      addMsg('model', reply);
+      addMsg('model', reply, data.opora);
       history.push({ role: 'model', text: reply });
     }).catch(function(){
       typingEl.remove();
