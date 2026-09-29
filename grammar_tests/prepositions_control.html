@@ -577,5 +577,14 @@ function getAttemptNum(storageKey){
 }
 
 </script>
+<div class="warn-overlay" id="warn-overlay">
+  <div class="warn-box">
+    <div class="warn-icon" id="warn-icon">⚠️</div>
+    <div class="warn-title" id="warn-title">Вы покинули страницу!</div>
+    <div class="warn-text" id="warn-text">Во время теста нельзя открывать другие вкладки.</div>
+    <div class="warn-count" id="warn-count"></div>
+    <button class="warn-btn" id="warn-btn" onclick="closeWarning()">Продолжить тест</button>
+  </div>
+</div>
 </body>
 </html>
