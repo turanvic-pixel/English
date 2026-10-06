@@ -1504,24 +1504,17 @@ function closeDialogue(tense){
 }
 
 // ── START ──
-var _dbg = document.createElement('div');
-_dbg.id = '_debug';
-_dbg.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.85);color:#0f0;font-size:11px;padding:8px;z-index:99999;max-height:40vh;overflow-y:auto;font-family:monospace;';
-document.body.appendChild(_dbg);
-function dbg(msg){ _dbg.innerHTML = msg + '<br>' + _dbg.innerHTML; }
-window.onerror = function(msg,src,line,col,err){ dbg('ERROR: '+msg+' (line '+line+')'); };
 
-try { goRoot(); dbg('goRoot OK'); } catch(e) { dbg('goRoot FAIL: '+e); }
+try { goRoot(); } catch(e) { console.error('goRoot FAIL', e); }
 
 (function fixIOSButtons(){
   var btns = document.querySelectorAll('.tense-card, .quiz-btn');
-  dbg('buttons found: '+btns.length);
   var map = {
-    'openTense_past':  function(){ dbg('tap past'); openTense('past'); },
-    'openTense_pres':  function(){ dbg('tap pres'); openTense('pres'); },
-    'openTense_fut':   function(){ dbg('tap fut');  openTense('fut');  },
-    'startMixed_sections': function(){ dbg('tap mix sections'); startMixed('sections'); },
-    'startMixed_30':   function(){ dbg('tap mix 30'); startMixed('30'); },
+    'openTense_past':  function(){ openTense('past'); },
+    'openTense_pres':  function(){ openTense('pres'); },
+    'openTense_fut':   function(){ openTense('fut');  },
+    'startMixed_sections': function(){ startMixed('sections'); },
+    'startMixed_30':   function(){ startMixed('30'); },
   };
   btns.forEach(function(btn){
     var oc = btn.getAttribute('onclick') || '';
@@ -1537,7 +1530,6 @@ try { goRoot(); dbg('goRoot OK'); } catch(e) { dbg('goRoot FAIL: '+e); }
       btn.addEventListener('touchend', function(e){ e.preventDefault(); fn(); });
     }
   });
-  dbg('listeners attached');
 })();
 
 function sendToGoogleForms(name, group, testName, result, xpEarned, timerOn) {
