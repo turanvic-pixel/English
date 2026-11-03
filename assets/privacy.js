@@ -4,7 +4,7 @@
   'use strict';
   var KEY = 'pv_consent_v1';
   var NAME_ID = /(^|-)inp-name|^f-name$/;
-  var PH_ON = 'Номер по списку (не фамилия!)';
+  var PH_ON = 'Данные';
   var PH_OFF = '↑ Сначала поставьте галочку согласия';
   var boxes = [];
   var consent = false;
@@ -49,7 +49,7 @@
     cb.id = 'pv-cb-' + boxes.length;
     var lb = document.createElement('label');
     lb.htmlFor = cb.id;
-    lb.textContent = 'Я согласен(на) передать преподавателю номер по списку, группу и результаты теста для учёта успеваемости. ' +
+    lb.textContent = 'Я согласен(на) передать преподавателю введённые данные (номер или псевдоним), группу и результаты теста для учёта успеваемости. ' +
       'Настоящие фамилию и имя вводить не нужно.';
     box.appendChild(cb); box.appendChild(lb);
     inp.parentNode.insertBefore(box, inp);
@@ -57,7 +57,7 @@
     // подпись у поля (ai_tutor)
     if (inp.id) {
       var lab = document.querySelector('label[for="' + inp.id + '"]');
-      if (lab && /Имя/i.test(lab.textContent)) lab.textContent = 'Номер по списку группы';
+      if (lab && /Имя/i.test(lab.textContent)) lab.textContent = 'Данные';
     }
     inp.removeAttribute('autocomplete');
     inp.setAttribute('autocomplete', 'off');
