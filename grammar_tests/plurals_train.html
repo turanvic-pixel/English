@@ -674,6 +674,7 @@ function showQuestion(){
   document.getElementById('feedback').textContent='';
   document.getElementById('feedback').className='feedback';
   document.getElementById('next-btn').style.display='none';
+  qAnswered=false;
 
   var correctText=q.plural;
   var opts=shuffle([q.plural].concat(q.wrong));
@@ -690,7 +691,9 @@ function showQuestion(){
   if(timerEnabled) startTimer();
 }
 
+var qAnswered=false;
 function checkAnswer(chosen){
+  if(qAnswered)return; qAnswered=true;
   clearTimer();
   var q=questions[cur];
   var correct=(q._sOpts[chosen]===q.plural);
@@ -737,6 +740,7 @@ function startTimer(){
 }
 function clearTimer(){clearInterval(timerInterval);timerInterval=null;}
 function timeOut(){
+  if(qAnswered)return; qAnswered=true;
   var q=questions[cur];
   document.getElementById('options').querySelectorAll('.opt-btn').forEach(function(b,i){
     b.disabled=true; if(q._sOpts[i]===q.plural) b.classList.add('correct');
@@ -766,9 +770,13 @@ function spawnXpPopup(text,cls){
   document.body.appendChild(el); setTimeout(function(){el.remove();},1100);
 }
 function useHint(){
-  if(hints<=0)return; hints--;
+  if(hints<=0||qAnswered)return; hints--; qAnswered=true;
+  clearTimer();
   document.getElementById('hint-count').textContent=hints;
   var q=questions[cur];
+  // Подсказка не снимает баллы: вопрос засчитывается верным, XP и серия не меняются
+  score++; results.push({ok:true,q:q});
+  document.getElementById('score-live').textContent=score;
   var fb=document.getElementById('feedback');
   fb.innerHTML='💡 Подсказка: правильный ответ — <b>«'+q.plural+'»</b>.';
   fb.className='feedback ok';
