@@ -726,7 +726,7 @@ const TENSES = {
 };
 </script>
 <script>
-const UNLOCK_THRESHOLD = 50;
+const UNLOCK_THRESHOLD = 75;
 
 const SECTION_LABELS = {
   affirmative:'Утвердительные предложения',
@@ -1438,7 +1438,9 @@ function showScore(){
   // Save record
   const key=recordKey();
   const prev=getRecord(key);
-  if(!prev||xp>prev.xp) saveRecord(key,{xp,stars,pct});
+  // pct в рекорде — ЛУЧШИЙ процент за все попытки (по нему открываются ступени), xp/stars — по лучшему XP
+  if(!prev||xp>prev.xp) saveRecord(key,{xp,stars,pct:Math.max(pct,prev&&prev.pct||0)});
+  else if(pct>(prev.pct||0)) saveRecord(key,{xp:prev.xp,stars:prev.stars,pct});
 
   // Launch confetti if 90%+
   if(pct>=90) setTimeout(launchConfetti,300);
@@ -1471,10 +1473,10 @@ function showScore(){
   const SECTION_ORDER = ['affirmative','question','shortanswer','negative','special'];
   const curIdx = navState.section ? SECTION_ORDER.indexOf(navState.section) : -1;
   const nextSection = (curIdx >= 0 && curIdx < SECTION_ORDER.length - 1) ? SECTION_ORDER[curIdx + 1] : null;
-  const nextBtn = (!navState.mixMode && nextSection && pct >= 50)
+  const nextBtn = (!navState.mixMode && nextSection && pct >= UNLOCK_THRESHOLD)
     ? `<button class="btn btn-primary" onclick="startSection('${navState.tense}','${nextSection}')" style="background:var(--accent)">Следующая ступень →</button>`
-    : (!navState.mixMode && nextSection && pct < 50)
-    ? `<div style="font-size:0.85rem;color:#c0392b;margin-top:8px;">🔒 Следующая ступень откроется при оценке 3 и выше</div>`
+    : (!navState.mixMode && nextSection && pct < UNLOCK_THRESHOLD)
+    ? `<div style="font-size:0.85rem;color:#c0392b;margin-top:8px;">🔒 Следующая ступень откроется при результате ${UNLOCK_THRESHOLD}% и выше (оценка 4)</div>`
     : '';
 
   const replayBtn = navState.mixMode==='30'
