@@ -726,7 +726,7 @@ const TENSES = {
 };
 </script>
 <script>
-const UNLOCK_THRESHOLD = 75;
+const UNLOCK_THRESHOLD = 50;
 
 const SECTION_LABELS = {
   affirmative:'Утвердительные предложения',
@@ -1476,7 +1476,7 @@ function showScore(){
   const nextBtn = (!navState.mixMode && nextSection && pct >= UNLOCK_THRESHOLD)
     ? `<button class="btn btn-primary" onclick="startSection('${navState.tense}','${nextSection}')" style="background:var(--accent)">Следующая ступень →</button>`
     : (!navState.mixMode && nextSection && pct < UNLOCK_THRESHOLD)
-    ? `<div style="font-size:0.85rem;color:#c0392b;margin-top:8px;">🔒 Следующая ступень откроется при результате ${UNLOCK_THRESHOLD}% и выше (оценка 4)</div>`
+    ? `<div style="font-size:0.85rem;color:#c0392b;margin-top:8px;">🔒 Следующая ступень откроется при результате ${UNLOCK_THRESHOLD}% и выше</div>`
     : '';
 
   const replayBtn = navState.mixMode==='30'
